@@ -32,7 +32,7 @@ public class AppTest {
 
     @Test
     public void simple() throws Exception {
-        mockMvc.perform(get("/mike"))
+        mockMvc.perform(get("/statuscheck"))
                 .andExpect(status().isOk());
     }
 }
