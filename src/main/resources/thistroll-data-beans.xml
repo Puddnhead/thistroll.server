@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<beans xsi:schemaLocation=" http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <bean id="com.thistroll.data.dynamodbconnectionprovider" class="com.thistroll.data.DynamoDBConnectionProvider"
+        c:endpointUrl="${aws.dynamodb.endpointUrl}" />
+
+    <bean id="com.thistroll.data.blogrepository" class="com.thistroll.data.BlogRepositoryImpl"
+        p:connectionProvider-ref="com.thistroll.data.dynamodbconnectionprovider" />
+</beans>

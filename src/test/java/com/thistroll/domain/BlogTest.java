@@ -1,6 +1,10 @@
 package com.thistroll.domain;
 
+import jdk.Exported;
+import junit.framework.TestCase;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,9 +15,8 @@ import static org.hamcrest.core.Is.is;
  *
  * Created by micha on 7/13/2017.
  */
-public class BlogTest {
+public class BlogTest extends TestCase {
 
-    @Test
     public void testEquals() throws Exception {
         Blog blog1 = new Blog.Builder()
                 .id("id1")

@@ -4,6 +4,18 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns="http://www.springframework.org/schema/beans">
 
+    <bean id="applicationProperties"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="false" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="searchSystemEnvironment" value="false" />
+        <property name="locations">
+            <list>
+                <value>classpath:thistroll-dev.properties</value>
+            </list>
+        </property>
+    </bean>
+
     <mvc:annotation-driven/>
     <import resource="classpath*:thistroll-rest-beans.xml" />
 </beans>

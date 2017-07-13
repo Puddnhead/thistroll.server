@@ -15,9 +15,20 @@ import static org.apache.commons.lang3.Validate.notNull;
 public class Blog {
 
     /**
-     * A GUID
+     * No partitions as this table will never be huge and this makes querying for recent blogs easier
+     */
+    public static final String PARTITION_KEY_NAME = "PARITITION_KEY";
+    public static final String PARTITION_KEY_VALUE = "NO_PARTITIONS";
+
+    /**
+     * Used as a primary key
      */
     private String id;
+
+    /**
+     * Used for sorting
+     */
+    private DateTime createdOn;
 
     private String title;
 
@@ -26,9 +37,20 @@ public class Blog {
      */
     private String text;
 
-    private DateTime createdOn;
-
     private DateTime lastUpdatedOn;
+
+    /**
+     * Used for partitioning
+     */
+    public static final String YEAR_PROPERTY = "year";
+
+    public static final String CREATED_ON_PROPERTY = "createdOn";
+    public static final String ID_PROPERTY = "id";
+    public static final String TITLE_PROPERTY = "title";
+    public static final String TEXT_PROPERTY = "text";
+    public static final String LAST_UPDATED_ON_PROPERTY = "lastUpdatedOn";
+
+    public static final String CREATED_ON_INDEX = "createdOnIndex";
 
     /**
      * Private constructor to force use of Builder
@@ -76,6 +98,17 @@ public class Blog {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, text, createdOn, lastUpdatedOn);
+    }
+
+    @Override
+    public String toString() {
+        return "Blog{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", text='" + text + '\'' +
+                ", createdOn=" + createdOn +
+                ", lastUpdatedOn=" + lastUpdatedOn +
+                '}';
     }
 
     /**
