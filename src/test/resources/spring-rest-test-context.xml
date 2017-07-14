@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<beans xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <bean id="applicationProperties"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="false" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="searchSystemEnvironment" value="false" />
+        <property name="locations">
+            <list>
+                <value>classpath:thistroll-dev.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <mvc:annotation-driven/>
+    <import resource="classpath*:thistroll-rest-beans.xml" />
+
+    <bean id="com.thistroll.data.blogrepository" class="org.mockito.Mockito" factory-method="mock"
+            c:classToMock="com.thistroll.data.BlogRepository" />
+</beans>

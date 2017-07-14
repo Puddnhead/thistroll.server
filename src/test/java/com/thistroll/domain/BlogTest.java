@@ -15,7 +15,7 @@ import static org.hamcrest.core.Is.is;
  *
  * Created by micha on 7/13/2017.
  */
-public class BlogTest extends TestCase {
+public class BlogTest {
 
     public void testEquals() throws Exception {
         Blog blog1 = new Blog.Builder()

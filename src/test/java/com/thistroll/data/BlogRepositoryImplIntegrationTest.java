@@ -1,9 +1,7 @@
 package com.thistroll.data;
 
 import com.thistroll.domain.Blog;
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import jdk.nashorn.internal.runtime.ECMAException;
-import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Integration test for BlogRepository
@@ -19,8 +17,8 @@ import static org.junit.Assert.*;
  * Created by MVW on 7/13/2017.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:spring-test-context.xml")
-//@Ignore
+@ContextConfiguration("classpath:spring-repository-test-context.xml")
+@Ignore
 public class BlogRepositoryImplIntegrationTest {
 
     @Autowired
@@ -41,15 +39,12 @@ public class BlogRepositoryImplIntegrationTest {
 
     @Test
     public void testGetMostRecentBlog() throws Exception {
-//        Blog blog1 = createBlogWithTitleAndText("Blog1", "Blog 1 Text");
-//        blog1 = blogRepository.create(blog1);
-//        Thread.sleep(2);
-//
-//        Blog blog2 = createBlogWithTitleAndText("Blog2", "Blog 2 Text");
-//        blog2 = blogRepository.create(blog2);
+        Blog blog1 = createBlogWithTitleAndText("Blog1", "Blog 1 Text");
+        blog1 = blogRepository.create(blog1);
+        Thread.sleep(2);
 
-        Blog blog1 = blogRepository.findById("afd898a4-ea63-42fb-b50d-46591293aecc");
-        Blog blog2 = blogRepository.findById("d1ab46c9-17a4-4169-8c06-1cfce1fb04df");
+        Blog blog2 = createBlogWithTitleAndText("Blog2", "Blog 2 Text");
+        blog2 = blogRepository.create(blog2);
 
         Blog result = blogRepository.getMostRecentBlog();
         assertThat(result, is(blog2));
