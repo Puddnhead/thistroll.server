@@ -21,7 +21,7 @@ public class Blog {
     /**
      * No partitions as this table will never be huge and this makes querying for recent blogs easier
      */
-    public static final String PARTITION_KEY_NAME = "PARITITION_KEY";
+    public static final String PARTITION_KEY_NAME = "PARTITION_KEY";
     public static final String PARTITION_KEY_VALUE = "NO_PARTITIONS";
 
     /**
