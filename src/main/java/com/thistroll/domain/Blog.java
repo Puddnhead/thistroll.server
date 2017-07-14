@@ -1,5 +1,9 @@
 package com.thistroll.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.thistroll.domain.util.DateTimeUtcISOSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
@@ -28,6 +32,7 @@ public class Blog {
     /**
      * Used for sorting
      */
+    @JsonSerialize(using = DateTimeUtcISOSerializer.class)
     private DateTime createdOn;
 
     private String title;
@@ -37,12 +42,8 @@ public class Blog {
      */
     private String text;
 
+    @JsonSerialize(using = DateTimeUtcISOSerializer.class)
     private DateTime lastUpdatedOn;
-
-    /**
-     * Used for partitioning
-     */
-    public static final String YEAR_PROPERTY = "year";
 
     public static final String CREATED_ON_PROPERTY = "createdOn";
     public static final String ID_PROPERTY = "id";
@@ -51,6 +52,17 @@ public class Blog {
     public static final String LAST_UPDATED_ON_PROPERTY = "lastUpdatedOn";
 
     public static final String CREATED_ON_INDEX = "createdOnIndex";
+
+    /**
+     * Private no-arg constructor for Jackson
+     */
+    private Blog() {
+        this.id = null;
+        this.title = null;
+        this.text = null;
+        this.createdOn = null;
+        this.lastUpdatedOn = null;
+    }
 
     /**
      * Private constructor to force use of Builder

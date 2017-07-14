@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/")
 public class HealthCheckController {
 
-	String testMessage;
-
 	@RequestMapping(value = "statuscheck", method = RequestMethod.GET)
 	public @ResponseBody String statuscheck() {
 		return "SUCCESS";
@@ -35,13 +33,4 @@ public class HealthCheckController {
 		return pojo;
 	}
 
-	@RequestMapping(value = "test/propertytest", method = RequestMethod.GET)
-	public @ResponseBody String propertyTest() {
-		return testMessage;
-	}
-
-	@Required
-	public void setTestMessage(String testMessage) {
-		this.testMessage = testMessage;
-	}
 }

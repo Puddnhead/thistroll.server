@@ -9,9 +9,8 @@
     <import resource="thistroll-service-beans.xml" />
 
     <!-- Controller beans -->
-    <bean id="com.thistroll.service.rest.healthcheckcontroller" class="com.thistroll.service.rest.HealthCheckController"
-            p:testMessage="${test.message}"/>
+    <bean id="com.thistroll.service.rest.healthcheckcontroller" class="com.thistroll.service.rest.HealthCheckController" />
 
     <bean id="com.thistroll.service.rest.blogservicecontroller" class="com.thistroll.service.rest.BlogServiceController"
-            p:blogService-ref="com.thistroll.service.impl.blogservice"/>
+            p:blogService-ref="com.thistroll.service.impl.blogservice" />
 </beans>

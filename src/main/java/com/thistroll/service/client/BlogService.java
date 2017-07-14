@@ -1,5 +1,7 @@
 package com.thistroll.service.client;
 
+import com.thistroll.domain.Blog;
+
 /**
  * Created by MVW on 7/11/2017.
  * Service for fetching blogs
@@ -7,10 +9,26 @@ package com.thistroll.service.client;
 public interface BlogService {
 
     /**
-     * TODO: Use a Blog Pojo instead of a string return type
+     * Create a new blog. All provided values except for title and text will be ignored. The returned object contains
+     * a generated ID.
+     *
+     * @param blog the blog object containing the title and text
+     * @return the created blog including generated values for ID, createdOn, and lastUpdatedOn
+     */
+    public Blog createBlog(Blog blog);
+
+    /**
+     * Fetches a blog by id
+     *
+     * @param id blog id
+     * @return the blog
+     */
+    public Blog getBlog(String id);
+
+    /**
      * Return the most recent blog
      *
      * @return the most recent blog
      */
-    public String getMostRecentBlog();
+    public Blog getMostRecentBlog();
 }

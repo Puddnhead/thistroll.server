@@ -11,6 +11,7 @@ import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.thistroll.domain.Blog;
+import org.apache.commons.lang3.NotImplementedException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -42,7 +43,7 @@ public class BlogRepositoryImpl implements BlogRepository {
 
     @Override
     public Blog update(Blog blog) {
-        return null;
+        throw new NotImplementedException("No updating yet");
     }
 
     @Override
@@ -89,7 +90,7 @@ public class BlogRepositoryImpl implements BlogRepository {
 
     @Override
     public List<Blog> getPageableBlogList(int pageNumber, int pageSize) {
-        return null;
+        throw new NotImplementedException("Not pageable yet");
     }
 
     /**
