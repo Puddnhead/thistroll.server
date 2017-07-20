@@ -1,11 +1,14 @@
 package com.thistroll.data;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.thistroll.domain.Blog;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -17,18 +20,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit test for {@link BlogRepositoryImpl}
+ * Unit test for {@link BlogRepositoryImpl}. Not stictly speaking a unit test, as this tests the functionality of
+ * {@link BlogMapper} as well
  *
  * Created by MVW on 7/13/2017.
  */
@@ -40,6 +48,9 @@ public class BlogRepositoryImplTest {
 
     @Mock
     private DynamoDBConnectionProvider connectionProvider;
+
+    @Mock
+    private AmazonDynamoDB amazonDynamoDB;
 
     @Mock
     private DynamoDB dynamoDB;
@@ -60,6 +71,7 @@ public class BlogRepositoryImplTest {
     public void setup() throws Exception {
         repository.setConnectionProvider(connectionProvider);
         when(connectionProvider.getDynamoDB()).thenReturn(dynamoDB);
+        when(connectionProvider.getAmazonDynamoDB()).thenReturn(amazonDynamoDB);
         when(dynamoDB.getTable(anyString())).thenReturn(blogTable);
     }
 
@@ -113,5 +125,34 @@ public class BlogRepositoryImplTest {
         assertThat(result.getText(), is(TEXT));
         assertThat(result.getCreatedOn(), is(nullValue()));
         assertThat(result.getLastUpdatedOn(), is(nullValue()));
+    }
+
+    @Test
+    public void testGetAllBlogs() throws Exception {
+        final long OLD_TIME = new DateTime().getMillis() - 1000;
+        final long RECENT_TIME = new DateTime().getMillis();
+
+        Map<String, AttributeValue> recentBlog = new HashMap<>();
+        recentBlog.put(Blog.ID_PROPERTY, new AttributeValue().withS("1"));
+        recentBlog.put(Blog.TITLE_PROPERTY, new AttributeValue().withS("BLOG1"));
+        recentBlog.put(Blog.CREATED_ON_PROPERTY, new AttributeValue().withN(RECENT_TIME + ""));
+
+        Map<String, AttributeValue> oldBlog = new HashMap<>();
+        oldBlog.put(Blog.ID_PROPERTY, new AttributeValue().withS("2"));
+        oldBlog.put(Blog.TITLE_PROPERTY, new AttributeValue().withS("BLOG2"));
+        oldBlog.put(Blog.CREATED_ON_PROPERTY, new AttributeValue().withN(OLD_TIME + ""));
+
+        ScanResult scanResult = mock(ScanResult.class);
+        when(scanResult.getItems()).thenReturn(Arrays.asList(oldBlog, recentBlog));
+        when(amazonDynamoDB.scan(any(ScanRequest.class))).thenReturn(scanResult);
+
+        List<Blog> result = repository.getAllBlogs();
+        assertThat(result.size(), is(2));
+        assertThat(result.get(0).getId(), is("1"));
+        assertThat(result.get(1).getId(), is("2"));
+        assertThat(result.get(0).getTitle(), is("BLOG1"));
+        assertThat(result.get(1).getTitle(), is("BLOG2"));
+        assertThat(result.get(0).getCreatedOn(), is(new DateTime(RECENT_TIME)));
+        assertThat(result.get(1).getCreatedOn(), is(new DateTime(OLD_TIME)));
     }
 }

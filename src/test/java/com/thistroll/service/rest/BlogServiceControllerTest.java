@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Arrays;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -56,7 +58,10 @@ public class BlogServiceControllerTest {
     @Before
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(this.wac).build();
+    }
 
+    @Test
+    public void testCreateBlog() throws Exception {
         doAnswer(invocationOnMock -> {
             Blog blog = (Blog) invocationOnMock.getArguments()[0];
             return new Blog.Builder()
@@ -68,19 +73,6 @@ public class BlogServiceControllerTest {
                     .build();
         }).when(blogRepository).create(any(Blog.class));
 
-        doAnswer(invocationOnMock -> {
-            String id = (String)invocationOnMock.getArguments()[0];
-            return new Blog.Builder()
-                    .id(id)
-                    .title("some title")
-                    .build();
-        }).when(blogRepository).findById(anyString());
-
-        when(blogRepository.getMostRecentBlog()).thenReturn(MOCK_BLOG);
-    }
-
-    @Test
-    public void testCreateBlog() throws Exception {
         Blog blog = new Blog.Builder()
                 .title("Drunk in Oaxaca")
                 .text("Listening to ...And Out Come the Wolves")
@@ -100,6 +92,14 @@ public class BlogServiceControllerTest {
 
     @Test
     public void testGetBlog() throws Exception {
+        doAnswer(invocationOnMock -> {
+            String id = (String)invocationOnMock.getArguments()[0];
+            return new Blog.Builder()
+                    .id(id)
+                    .title("some title")
+                    .build();
+        }).when(blogRepository).findById(anyString());
+
         MvcResult mvcResult = mockMvc.perform(get("/blog?id=blah"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -110,7 +110,15 @@ public class BlogServiceControllerTest {
 
     @Test
     public void testGetCurrentBlog() throws Exception {
+        when(blogRepository.getMostRecentBlog()).thenReturn(MOCK_BLOG);
         mockMvc.perform(get("/blog/current"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetAllBlogs() throws Exception {
+        when(blogRepository.getAllBlogs()).thenReturn(Arrays.asList(MOCK_BLOG, MOCK_BLOG));
+        mockMvc.perform(get("/blog/all"))
                 .andExpect(status().isOk());
     }
 }

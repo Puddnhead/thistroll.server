@@ -5,6 +5,8 @@ import com.thistroll.domain.Blog;
 import com.thistroll.service.client.BlogService;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.util.List;
+
 /**
  * Created by micha on 7/11/2017.
  * Implementation for {@link com.thistroll.service.client.BlogService}
@@ -26,6 +28,11 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Blog getBlog(String id) {
         return blogRepository.findById(id);
+    }
+
+    @Override
+    public List<Blog> getAllBlogs() {
+        return blogRepository.getAllBlogs();
     }
 
     @Required

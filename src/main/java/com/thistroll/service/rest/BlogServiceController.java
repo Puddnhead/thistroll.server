@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Created by MVW on 7/11/2017.
  * Rest layer for {@link com.thistroll.service.client.BlogService}
@@ -32,6 +34,12 @@ public class BlogServiceController implements BlogService {
     @Override
     public @ResponseBody Blog getBlog(@RequestParam String id) {
         return blogService.getBlog(id);
+    }
+
+    @RequestMapping(value = "blog/all", method = RequestMethod.GET)
+    @Override
+    public @ResponseBody List<Blog> getAllBlogs() {
+        return blogService.getAllBlogs();
     }
 
     @Required

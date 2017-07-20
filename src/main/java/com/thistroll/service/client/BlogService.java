@@ -2,6 +2,8 @@ package com.thistroll.service.client;
 
 import com.thistroll.domain.Blog;
 
+import java.util.List;
+
 /**
  * Created by MVW on 7/11/2017.
  * Service for fetching blogs
@@ -31,4 +33,12 @@ public interface BlogService {
      * @return the most recent blog
      */
     public Blog getMostRecentBlog();
+
+
+    /**
+     * Return all blogs ordered from most recent to oldest, including only id, title, and createdOn
+     *
+     * @return all blogs ordered from most recent to oldest, including only id, title, and createdOn
+     */
+    public List<Blog> getAllBlogs();
 }

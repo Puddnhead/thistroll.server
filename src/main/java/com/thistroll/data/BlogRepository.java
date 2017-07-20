@@ -53,6 +53,13 @@ public interface BlogRepository {
     void deleteBlog(String id);
 
     /**
+     * Fetches id, title, and createdOn for all blogs, sorted with most recent first and oldest last
+     *
+     * @return all blogs
+     */
+    List<Blog> getAllBlogs();
+
+    /**
      * Returns a subset of all blogs determined by pageNumber (1-based) and pageSize, ordered by createdOn date
      *
      * @param pageNumber a 1-based page number

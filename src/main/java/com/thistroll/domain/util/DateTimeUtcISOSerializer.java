@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class DateTimeUtcISOSerializer extends StdSerializer<DateTime> {
 
-    private static DateTimeFormatter formatter =
+    public static DateTimeFormatter FORMATTER =
             DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     public DateTimeUtcISOSerializer() {
@@ -26,6 +26,6 @@ public class DateTimeUtcISOSerializer extends StdSerializer<DateTime> {
     }
     @Override
     public void serialize(DateTime value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeString(formatter.print(value));
+        gen.writeString(FORMATTER.print(value));
     }
 }
