@@ -13,4 +13,7 @@
 
     <bean id="com.thistroll.service.rest.blogservicecontroller" class="com.thistroll.service.rest.BlogServiceController"
             p:blogService-ref="com.thistroll.service.impl.blogservice" />
+
+    <bean id="com.thistroll.servivce.rest.trollservicecontroller" class="com.thistroll.service.rest.TrollServiceController"
+          p:trollService-ref="com.thistroll.service.impl.trollserviceversion1" />
 </beans>
