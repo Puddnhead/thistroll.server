@@ -22,6 +22,6 @@ public class DateTimeSerializer extends StdSerializer<DateTime> {
 
     @Override
     public void serialize(DateTime value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeString(value.getMillis() + "");
+        gen.writeNumber(value.getMillis() + "");
     }
 }
