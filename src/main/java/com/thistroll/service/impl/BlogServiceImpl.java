@@ -3,6 +3,7 @@ package com.thistroll.service.impl;
 import com.thistroll.data.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.BlogService;
+import com.thistroll.service.exceptions.BlogNotFoundException;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.List;
@@ -17,7 +18,11 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Blog getMostRecentBlog() {
-        return blogRepository.getMostRecentBlog();
+        Blog blog = blogRepository.getMostRecentBlog();
+        if (blog == null) {
+            throw new BlogNotFoundException("No blogs available");
+        }
+        return blog;
     }
 
     @Override
@@ -27,7 +32,11 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Blog getBlog(String id) {
-        return blogRepository.findById(id);
+        Blog blog = blogRepository.findById(id);
+        if (blog == null) {
+            throw new BlogNotFoundException("No blog with id " + id);
+        }
+        return blog;
     }
 
     @Override
