@@ -4,28 +4,24 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.io.IOException;
 
 /**
  * Created by MVW on 7/13/2017.
  */
-public class DateTimeUtcISOSerializer extends StdSerializer<DateTime> {
+public class DateTimeSerializer extends StdSerializer<DateTime> {
 
-    public static DateTimeFormatter FORMATTER =
-            DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-
-    public DateTimeUtcISOSerializer() {
+    public DateTimeSerializer() {
         this(null);
     }
 
-    public DateTimeUtcISOSerializer(Class<DateTime> t) {
+    public DateTimeSerializer(Class<DateTime> t) {
         super(t);
     }
+
     @Override
     public void serialize(DateTime value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeString(FORMATTER.print(value));
+        gen.writeString(value.getMillis() + "");
     }
 }

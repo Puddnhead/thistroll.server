@@ -1,17 +1,12 @@
 package com.thistroll.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.thistroll.domain.util.DateTimeUtcISOSerializer;
-import org.apache.commons.lang3.StringUtils;
+import com.thistroll.domain.util.DateTimeSerializer;
 import org.joda.time.DateTime;
 
-import java.util.Date;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.Validate.notEmpty;
-import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * Created by MVW on 7/13/2017.
@@ -32,7 +27,7 @@ public class Blog {
     /**
      * Used for sorting
      */
-    @JsonSerialize(using = DateTimeUtcISOSerializer.class)
+    @JsonSerialize(using = DateTimeSerializer.class)
     private DateTime createdOn;
 
     private String title;
@@ -42,7 +37,7 @@ public class Blog {
      */
     private String text;
 
-    @JsonSerialize(using = DateTimeUtcISOSerializer.class)
+    @JsonSerialize(using = DateTimeSerializer.class)
     private DateTime lastUpdatedOn;
 
     public static final String CREATED_ON_PROPERTY = "createdOn";
