@@ -31,6 +31,7 @@ public class BlogRepositoryImpl implements BlogRepository {
         PutItemOutcome outcome = table
                 .putItem(new Item().withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, createdBlog.getId())
                         .withString(Blog.TITLE_PROPERTY, createdBlog.getTitle())
+                        .withString(Blog.LOCATION_PROPERTY, createdBlog.getLocation())
                         .withString(Blog.TEXT_PROPERTY, createdBlog.getText())
                         .withLong(Blog.CREATED_ON_PROPERTY, createdBlog.getCreatedOn().getMillis())
                         .withLong(Blog.LAST_UPDATED_ON_PROPERTY, createdBlog.getLastUpdatedOn().getMillis()));
@@ -91,7 +92,7 @@ public class BlogRepositoryImpl implements BlogRepository {
         ScanRequest scanRequest = new ScanRequest()
                 .withTableName(TABLE_NAME)
                 .withIndexName(Blog.CREATED_ON_INDEX)
-                .withAttributesToGet(Blog.ID_PROPERTY, Blog.TITLE_PROPERTY, Blog.CREATED_ON_PROPERTY);
+                .withAttributesToGet(Blog.ID_PROPERTY, Blog.TITLE_PROPERTY, Blog.LOCATION_PROPERTY, Blog.CREATED_ON_PROPERTY);
 
         ScanResult scanResult = amazonDynamoDB.scan(scanRequest);
         return BlogMapper.mapScanResultToBlogs(scanResult);
@@ -114,6 +115,7 @@ public class BlogRepositoryImpl implements BlogRepository {
         return new Blog.Builder()
                 .id(UUID.randomUUID().toString())
                 .title(blog.getTitle())
+                .location(blog.getLocation())
                 .text(blog.getText())
                 .createdOn(now)
                 .lastUpdatedOn(now)

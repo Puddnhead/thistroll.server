@@ -63,6 +63,7 @@ public class BlogRepositoryImplTest {
 
     public static final String ID = "id";
     public static final String TITLE = "title";
+    public static final String LOCATION = "location";
     public static final String TEXT = "text";
     public static final DateTime CREATED_ON = new DateTime();
     public static final DateTime LAST_UPDATED_ON = new DateTime(CREATED_ON.getMillis());
@@ -80,6 +81,7 @@ public class BlogRepositoryImplTest {
         Blog original = new Blog.Builder()
                 .title(TITLE)
                 .text(TEXT)
+                .location(LOCATION)
                 .build();
 
         when(blogTable.putItem(itemCaptor.capture())).thenReturn(mock(PutItemOutcome.class));
@@ -88,6 +90,7 @@ public class BlogRepositoryImplTest {
         Item item = itemCaptor.getValue();
         assertThat(item.getString(Blog.ID_PROPERTY), is(not(nullValue())));
         assertThat(item.getString(Blog.TITLE_PROPERTY), is(TITLE));
+        assertThat(item.getString(Blog.LOCATION_PROPERTY), is(LOCATION));
         assertThat(item.getString(Blog.TEXT_PROPERTY), is(TEXT));
         assertThat(item.getLong(Blog.CREATED_ON_PROPERTY) > 0L, is(true));
         assertThat(item.getLong(Blog.LAST_UPDATED_ON_PROPERTY) > 0L, is(true));
@@ -97,6 +100,7 @@ public class BlogRepositoryImplTest {
     public void testFindByIdWithDates() throws Exception {
         Item item = new Item().withPrimaryKey(Blog.ID_PROPERTY, ID)
                 .withString(Blog.TITLE_PROPERTY, TITLE)
+                .withString(Blog.LOCATION_PROPERTY, LOCATION)
                 .withString(Blog.TEXT_PROPERTY, TEXT)
                 .withLong(Blog.CREATED_ON_PROPERTY, CREATED_ON.getMillis())
                 .withLong(Blog.LAST_UPDATED_ON_PROPERTY, LAST_UPDATED_ON.getMillis());
@@ -104,9 +108,7 @@ public class BlogRepositoryImplTest {
         when(blogTable.getItem(any(GetItemSpec.class))).thenReturn(item);
 
         Blog result = repository.findById(ID);
-        assertThat(result.getId(), is(ID));
-        assertThat(result.getTitle(), is(TITLE));
-        assertThat(result.getText(), is(TEXT));
+        assertCommonFields(result);
         assertThat(result.getCreatedOn(), is(CREATED_ON));
         assertThat(result.getLastUpdatedOn(), is(LAST_UPDATED_ON));
     }
@@ -115,14 +117,13 @@ public class BlogRepositoryImplTest {
     public void testFindByIdWithNullDates() throws Exception {
         Item item = new Item().withPrimaryKey(Blog.ID_PROPERTY, ID)
                 .withString(Blog.TITLE_PROPERTY, TITLE)
+                .withString(Blog.LOCATION_PROPERTY, LOCATION)
                 .withString(Blog.TEXT_PROPERTY, TEXT);
 
         when(blogTable.getItem(any(GetItemSpec.class))).thenReturn(item);
 
         Blog result = repository.findById(ID);
-        assertThat(result.getId(), is(ID));
-        assertThat(result.getTitle(), is(TITLE));
-        assertThat(result.getText(), is(TEXT));
+        assertCommonFields(result);
         assertThat(result.getCreatedOn(), is(nullValue()));
         assertThat(result.getLastUpdatedOn(), is(nullValue()));
     }
@@ -154,5 +155,12 @@ public class BlogRepositoryImplTest {
         assertThat(result.get(1).getTitle(), is("BLOG2"));
         assertThat(result.get(0).getCreatedOn(), is(new DateTime(RECENT_TIME)));
         assertThat(result.get(1).getCreatedOn(), is(new DateTime(OLD_TIME)));
+    }
+
+    private void assertCommonFields(Blog blog) {
+        assertThat(blog.getId(), is(ID));
+        assertThat(blog.getTitle(), is(TITLE));
+        assertThat(blog.getLocation(), is(LOCATION));
+        assertThat(blog.getText(), is(TEXT));
     }
 }

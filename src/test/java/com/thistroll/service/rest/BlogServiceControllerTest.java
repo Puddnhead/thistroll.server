@@ -67,6 +67,7 @@ public class BlogServiceControllerTest {
             return new Blog.Builder()
                     .id(GENERATED_ID)
                     .title(blog.getTitle())
+                    .location(blog.getLocation())
                     .text(blog.getText())
                     .createdOn(NOW)
                     .lastUpdatedOn(NOW)
@@ -76,6 +77,7 @@ public class BlogServiceControllerTest {
         Blog blog = new Blog.Builder()
                 .title("Drunk in Oaxaca")
                 .text("Listening to ...And Out Come the Wolves")
+                .location("Oaxaca")
                 .build();
 
         String serializedBlog = objectMapper.writeValueAsString(blog);

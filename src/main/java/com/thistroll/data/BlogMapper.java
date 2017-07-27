@@ -30,24 +30,27 @@ public class BlogMapper {
             for (String key: item.keySet()) {
                 switch (key) {
                     case Blog.ID_PROPERTY:
-                        builder = builder.id(item.get(key).getS());
+                        builder.id(item.get(key).getS());
                         break;
                     case Blog.TITLE_PROPERTY:
-                        builder = builder.title(item.get(key).getS());
+                        builder.title(item.get(key).getS());
+                        break;
+                    case Blog.LOCATION_PROPERTY:
+                        builder.location(item.get(key).getS());
                         break;
                     case Blog.TEXT_PROPERTY:
-                        builder = builder.text(item.get(key).getS());
+                        builder.text(item.get(key).getS());
                         break;
                     case Blog.CREATED_ON_PROPERTY:
                         AttributeValue createdOnValue = item.get(key);
                         if (createdOnValue.getN() != null) {
-                            builder = builder.createdOn(new DateTime(Long.parseLong(createdOnValue.getN())));
+                            builder.createdOn(new DateTime(Long.parseLong(createdOnValue.getN())));
                         }
                         break;
                     case Blog.LAST_UPDATED_ON_PROPERTY:
                         AttributeValue lastUpdatedOnValue = item.get(key);
                         if (lastUpdatedOnValue.getN() != null) {
-                            builder = builder.lastUpdatedOn(new DateTime(Long.parseLong(lastUpdatedOnValue.getN())));
+                            builder.lastUpdatedOn(new DateTime(Long.parseLong(lastUpdatedOnValue.getN())));
                         }
                         break;
                 }
@@ -74,6 +77,9 @@ public class BlogMapper {
             if (item.get(Blog.CREATED_ON_PROPERTY) != null) {
                 builder.createdOn(new DateTime(Long.parseLong(item.get(Blog.CREATED_ON_PROPERTY).getN())));
             }
+            if (item.get(Blog.LOCATION_PROPERTY) != null) {
+                builder.location(item.get(Blog.LOCATION_PROPERTY).getS());
+            }
 
             blogs.add(0, builder.build());
         }
@@ -94,6 +100,7 @@ public class BlogMapper {
         Blog.Builder builder = new Blog.Builder()
                 .id(item.getString(Blog.ID_PROPERTY))
                 .title(item.getString(Blog.TITLE_PROPERTY))
+                .location(item.getString(Blog.LOCATION_PROPERTY))
                 .text(item.getString(Blog.TEXT_PROPERTY));
         if (item.isPresent(Blog.CREATED_ON_PROPERTY) && !item.isNull(Blog.CREATED_ON_PROPERTY)) {
             builder = builder.createdOn(new DateTime(item.getLong(Blog.CREATED_ON_PROPERTY)));

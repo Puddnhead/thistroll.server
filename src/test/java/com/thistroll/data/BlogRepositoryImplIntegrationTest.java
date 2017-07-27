@@ -26,6 +26,8 @@ public class BlogRepositoryImplIntegrationTest {
     @Autowired
     BlogRepository blogRepository;
 
+    public static final String LOCATION = "Lost in Latin America";
+
     @Test
     public void testCreateGetDelete() throws Exception {
         Blog blog = createBlogWithTitleAndText("Some title", "Some text");
@@ -69,6 +71,7 @@ public class BlogRepositoryImplIntegrationTest {
         return new Blog.Builder()
                 .title(title)
                 .text(text)
+                .location(LOCATION)
                 .build();
     }
 }

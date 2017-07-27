@@ -30,6 +30,8 @@ public class Blog {
     @JsonSerialize(using = DateTimeSerializer.class)
     private DateTime createdOn;
 
+    private String location;
+
     private String title;
 
     /**
@@ -42,6 +44,7 @@ public class Blog {
 
     public static final String CREATED_ON_PROPERTY = "createdOn";
     public static final String ID_PROPERTY = "id";
+    public static final String LOCATION_PROPERTY = "location";
     public static final String TITLE_PROPERTY = "title";
     public static final String TEXT_PROPERTY = "text";
     public static final String LAST_UPDATED_ON_PROPERTY = "lastUpdatedOn";
@@ -54,6 +57,7 @@ public class Blog {
     private Blog() {
         this.id = null;
         this.title = null;
+        this.location = null;
         this.text = null;
         this.createdOn = null;
         this.lastUpdatedOn = null;
@@ -62,12 +66,13 @@ public class Blog {
     /**
      * Private constructor to force use of Builder
      */
-    private Blog(String id, String title, String text, DateTime createdOn, DateTime lastUpdatedOn) {
-        this.id = id;
-        this.title = title;
-        this.text = text;
-        this.createdOn = createdOn;
-        this.lastUpdatedOn = lastUpdatedOn;
+    private Blog(Builder builder) {
+        this.id = builder.id;
+        this.title = builder.title;
+        this.location = builder.location;
+        this.text = builder.text;
+        this.createdOn = builder.createdOn;
+        this.lastUpdatedOn = builder.lastUpdatedOn;
     }
 
     public String getId() {
@@ -76,6 +81,10 @@ public class Blog {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     public String getText() {
@@ -96,6 +105,7 @@ public class Blog {
         if (o == null || getClass() != o.getClass()) return false;
         Blog blog = (Blog) o;
         return Objects.equals(title, blog.title) &&
+                Objects.equals(location, blog.location) &&
                 Objects.equals(id, blog.id) &&
                 Objects.equals(text, blog.text) &&
                 Objects.equals(createdOn, blog.createdOn) &&
@@ -104,7 +114,7 @@ public class Blog {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, text, createdOn, lastUpdatedOn);
+        return Objects.hash(id, title, location, text, createdOn, lastUpdatedOn);
     }
 
     @Override
@@ -112,6 +122,7 @@ public class Blog {
         return "Blog{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
+                ", location='" + location + '\'' +
                 ", text='" + text + '\'' +
                 ", createdOn=" + createdOn +
                 ", lastUpdatedOn=" + lastUpdatedOn +
@@ -124,6 +135,7 @@ public class Blog {
     public static final class Builder {
         private String id;
         private String title;
+        private String location;
         private String text;
         private DateTime createdOn;
         private DateTime lastUpdatedOn;
@@ -135,6 +147,11 @@ public class Blog {
 
         public Builder title(String title) {
             this.title = title;
+            return this;
+        }
+
+        public Builder location(String location) {
+            this.location = location;
             return this;
         }
 
@@ -159,7 +176,7 @@ public class Blog {
 
         public Blog build() {
             validate();
-            return new Blog(id, title, text, createdOn, lastUpdatedOn);
+            return new Blog(this);
         }
     }
 }

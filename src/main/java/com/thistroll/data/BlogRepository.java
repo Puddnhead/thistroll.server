@@ -53,7 +53,7 @@ public interface BlogRepository {
     void deleteBlog(String id);
 
     /**
-     * Fetches id, title, and createdOn for all blogs, sorted with most recent first and oldest last
+     * Fetches id, location, title, and createdOn for all blogs, sorted with most recent first and oldest last
      *
      * @return all blogs
      */

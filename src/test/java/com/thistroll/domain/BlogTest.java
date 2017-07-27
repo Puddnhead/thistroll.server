@@ -1,10 +1,6 @@
 package com.thistroll.domain;
 
-import jdk.Exported;
-import junit.framework.TestCase;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,16 +13,19 @@ import static org.hamcrest.core.Is.is;
  */
 public class BlogTest {
 
+    @Test
     public void testEquals() throws Exception {
         Blog blog1 = new Blog.Builder()
                 .id("id1")
                 .title("title1")
+                .location("antarctica")
                 .text("text1")
                 .build();
 
         Blog blog2 = new Blog.Builder()
                 .id("id1")
                 .title("title1")
+                .location("antarctica")
                 .text("text1")
                 .createdOn(blog1.getCreatedOn())
                 .lastUpdatedOn(blog1.getLastUpdatedOn())
@@ -35,6 +34,7 @@ public class BlogTest {
         Blog blog3 = new Blog.Builder()
                 .id("id2")
                 .title("title1")
+                .location("antarctica")
                 .text("text1")
                 .build();
 
