@@ -1,9 +1,15 @@
 package com.thistroll.service.impl;
 
 import com.thistroll.service.client.TrollService;
+import com.thistroll.service.exceptions.UnsupportedSpeechException;
 import org.joda.time.DateTime;
 
-import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by MVW on 7/21/2017.
@@ -11,7 +17,7 @@ import java.util.*;
 public class HardcodedTrollService implements TrollService {
 
     private static final Map<String, String> HARDCODED_ANSWERS;
-    public static final List<String> CONFUSED_RESPONSES;
+    private static final List<String> CONFUSED_RESPONSES;
 
     private static final DateTime BIRTHDATE = new DateTime(2017, 7, 21, 0, 0);
 
@@ -48,10 +54,16 @@ public class HardcodedTrollService implements TrollService {
     public String trollSpeak(String statement) {
         HARDCODED_ANSWERS.put("HOW OLD ARE YOU", calculateAge());
 
-        String normalized = statement.replaceAll("\\?", "")
-                .toUpperCase()
-                .replaceAll("WHAT IS", "WHAT'S")
-                .trim();
+        String normalized;
+        try {
+            normalized = URLDecoder.decode(statement, "UTF-8")
+                    .replaceAll("\\?", "")
+                    .toUpperCase()
+                    .replaceAll("WHAT IS", "WHAT'S")
+                    .trim();
+        } catch (UnsupportedEncodingException e) {
+            throw new UnsupportedSpeechException("Could not decode speech");
+        }
         String response = HARDCODED_ANSWERS.get(normalized);
 
         if (response == null) {
