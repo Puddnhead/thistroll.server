@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Created by MVW on 7/21/2017.
  */
-public class TrollServiceVersion1 implements TrollService {
+public class HardcodedTrollService implements TrollService {
 
     private static final Map<String, String> HARDCODED_ANSWERS;
     public static final List<String> CONFUSED_RESPONSES;
@@ -17,7 +17,7 @@ public class TrollServiceVersion1 implements TrollService {
 
     static {
         HARDCODED_ANSWERS = new HashMap<>();
-        HARDCODED_ANSWERS.put("WHAT'S YOUR NAME", "I'm Lucius! Mucho gusto.");
+        HARDCODED_ANSWERS.put("WHAT'S YOUR NAME", "I'm Pan! Mucho gusto.");
         HARDCODED_ANSWERS.put("WHAT'S THE CAPITAL OF UKRAINE", "Kiev of course!");
 
         CONFUSED_RESPONSES = Arrays.asList(

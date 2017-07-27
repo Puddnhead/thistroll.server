@@ -11,5 +11,5 @@
     <bean id="com.thistroll.service.impl.blogservice" class="com.thistroll.service.impl.BlogServiceImpl"
         p:blogRepository-ref="com.thistroll.data.blogrepository" />
 
-    <bean id="com.thistroll.service.impl.trollserviceversion1" class="com.thistroll.service.impl.TrollServiceVersion1" />
+    <bean id="com.thistroll.service.impl.hardcodedtrollservice" class="com.thistroll.service.impl.HardcodedTrollService" />
 </beans>
