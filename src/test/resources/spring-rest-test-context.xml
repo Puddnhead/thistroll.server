@@ -21,4 +21,7 @@
 
     <bean id="com.thistroll.data.blogrepository" class="org.mockito.Mockito" factory-method="mock"
             c:classToMock="com.thistroll.data.BlogRepository" />
+
+    <bean id="com.thistroll.data.s3clientprovider" class="org.mockito.Mockito" factory-method="mock"
+          c:classToMock="com.thistroll.data.S3ClientProvider" />
 </beans>

@@ -11,5 +11,10 @@
     <bean id="com.thistroll.service.impl.blogservice" class="com.thistroll.service.impl.BlogServiceImpl"
         p:blogRepository-ref="com.thistroll.data.blogrepository" />
 
+    <bean id="com.thistroll.service.impl.blogimagesservice" class="com.thistroll.service.impl.BlogImagesServiceImpl"
+        p:bucketName="${blogImages.bucketName}"
+        p:imageBucketUrl="${blogImages.bucketUrl}"
+        p:s3ClientProvider-ref="com.thistroll.data.s3clientprovider" />
+
     <bean id="com.thistroll.service.impl.hardcodedtrollservice" class="com.thistroll.service.impl.HardcodedTrollService" />
 </beans>

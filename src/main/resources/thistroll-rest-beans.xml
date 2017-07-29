@@ -12,8 +12,11 @@
     <bean id="com.thistroll.service.rest.healthcheckcontroller" class="com.thistroll.service.rest.HealthCheckController" />
 
     <bean id="com.thistroll.service.rest.blogservicecontroller" class="com.thistroll.service.rest.BlogServiceController"
-            p:blogService-ref="com.thistroll.service.impl.blogservice" />
+        p:blogService-ref="com.thistroll.service.impl.blogservice" />
+
+    <bean id="com.thisttroll.service.rest.blogimagesservicecontroller" class="com.thistroll.service.rest.BlogImagesServiceController"
+        p:blogImagesService-ref="com.thistroll.service.impl.blogimagesservice" />
 
     <bean id="com.thistroll.servivce.rest.trollservicecontroller" class="com.thistroll.service.rest.TrollServiceController"
-          p:trollService-ref="com.thistroll.service.impl.hardcodedtrollservice" />
+        p:trollService-ref="com.thistroll.service.impl.hardcodedtrollservice" />
 </beans>

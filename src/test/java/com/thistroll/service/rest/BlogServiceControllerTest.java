@@ -4,17 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thistroll.data.BlogRepository;
 import com.thistroll.domain.Blog;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 
@@ -28,23 +21,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Integration Tests for blog service
  *
  * Created by MVW on 7/13/2017.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration("classpath:spring-rest-test-context.xml")
-public class BlogServiceControllerTest {
-
-    private MockMvc mockMvc;
-
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    protected WebApplicationContext wac;
+public class BlogServiceControllerTest extends ControllerTestBase {
 
     @Autowired
     BlogRepository blogRepository;
@@ -54,11 +37,6 @@ public class BlogServiceControllerTest {
     public static final String GENERATED_ID = "generatedId";
     public static final DateTime NOW = new DateTime();
     public static final Blog MOCK_BLOG = new Blog.Builder().title("blah").build();
-
-    @Before
-    public void setup() throws Exception {
-        this.mockMvc = webAppContextSetup(this.wac).build();
-    }
 
     @Test
     public void testCreateBlog() throws Exception {

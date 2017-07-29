@@ -10,6 +10,8 @@
     <bean id="com.thistroll.data.dynamodbconnectionprovider" class="com.thistroll.data.DynamoDBConnectionProvider"
         c:endpointUrl="${aws.dynamodb.endpointUrl}" />
 
+    <bean id="com.thistroll.data.s3clientprovider" class="com.thistroll.data.S3ClientProvider" />
+
     <bean id="com.thistroll.data.blogrepository" class="com.thistroll.data.BlogRepositoryImpl"
         p:connectionProvider-ref="com.thistroll.data.dynamodbconnectionprovider" />
 </beans>
