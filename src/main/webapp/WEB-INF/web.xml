@@ -13,8 +13,8 @@
 	</servlet>
 
 	<filter>
-		<filter-name>AccessControlFilter</filter-name>
-		<filter-class>com.thistroll.server.filters.AccessControlFilter</filter-class>
+		<filter-name>com.thistroll.server.filters.accessControlFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 
 	<servlet-mapping>
@@ -23,7 +23,7 @@
 	</servlet-mapping>
 
 	<filter-mapping>
-		<filter-name>AccessControlFilter</filter-name>
+		<filter-name>com.thistroll.server.filters.accessControlFilter</filter-name>
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
 
