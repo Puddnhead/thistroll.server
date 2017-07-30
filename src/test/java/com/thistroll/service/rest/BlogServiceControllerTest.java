@@ -80,7 +80,7 @@ public class BlogServiceControllerTest extends ControllerTestBase {
                     .build();
         }).when(blogRepository).findById(anyString());
 
-        MvcResult mvcResult = mockMvc.perform(get("/blog?id=blah"))
+        MvcResult mvcResult = mockMvc.perform(get("/blog/blah"))
                 .andExpect(status().isOk())
                 .andReturn();
         String responseBody = mvcResult.getResponse().getContentAsString();

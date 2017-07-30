@@ -47,7 +47,7 @@ public class BlogImagesServiceControllerTest extends ControllerTestBase {
 
     @Test
     public void testGetImages() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/blog/images?blogId=id"))
+        MvcResult mvcResult = mockMvc.perform(get("/blog/id/images"))
                 .andExpect(status().isOk())
                 .andReturn();
         String responseBody = mvcResult.getResponse().getContentAsString();
