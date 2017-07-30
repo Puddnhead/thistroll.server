@@ -13,30 +13,30 @@ import java.util.List;
  * Rest layer for {@link com.thistroll.service.client.BlogService}
  */
 @Controller
-@RequestMapping("/")
+@RequestMapping("/blog")
 public class BlogServiceController implements BlogService {
 
     private BlogService blogService;
 
-    @RequestMapping(value = "blog/current", method = RequestMethod.GET)
+    @RequestMapping(value = "/current", method = RequestMethod.GET)
     @Override
     public @ResponseBody Blog getMostRecentBlog() {
         return blogService.getMostRecentBlog();
     }
 
-    @RequestMapping(value = "blog", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @Override
     public @ResponseBody Blog createBlog(@RequestBody Blog blog) {
         return blogService.createBlog(blog);
     }
 
-    @RequestMapping(value = "blog", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Override
-    public @ResponseBody Blog getBlog(@RequestParam String id) {
+    public @ResponseBody Blog getBlog(@PathVariable String id) {
         return blogService.getBlog(id);
     }
 
-    @RequestMapping(value = "blog/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     @Override
     public @ResponseBody List<Blog> getAllBlogs() {
         return blogService.getAllBlogs();
