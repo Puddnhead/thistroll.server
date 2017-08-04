@@ -24,8 +24,7 @@
         </property>
     </bean>
 
-    <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter"
-          p:origins="#{'${accessControl.origins}'.split(',')}" />
+    <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter" />
 
     <import resource="classpath*:thistroll-rest-beans.xml" />
 
