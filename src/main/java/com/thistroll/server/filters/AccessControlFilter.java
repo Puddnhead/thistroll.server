@@ -27,7 +27,7 @@ public class AccessControlFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         String origin = httpServletRequest.getHeader(HEADER_NAME);
-        if (origins.contains(origin.toLowerCase())) {
+        if (origin != null && origins.contains(origin.toLowerCase())) {
             httpServletResponse.addHeader("Access-Control-Allow-Origin", origin);
         }
         filterChain.doFilter(servletRequest, httpServletResponse);
