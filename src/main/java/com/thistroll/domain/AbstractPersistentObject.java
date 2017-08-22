@@ -9,8 +9,9 @@ import java.util.Objects;
 /**
  * Abstract Persistent Class
  *
- * Inheriting class is responsible for setting inherited fields during construction. Because AbstractBuilder inheritance
- * is a pain in the ass.
+ * Uses an abstract builder, which is kind of a pain in the ass.
+ *
+ * Also uses the canEqual() style equals method, because sublcasses add state. This is also kind of a pain in the ass.
  */
 public abstract class AbstractPersistentObject {
     /**
@@ -36,7 +37,7 @@ public abstract class AbstractPersistentObject {
         this.lastUpdatedOn = null;
     }
 
-    protected AbstractPersistentObject(AbstractPersistentObjectBuilder builder) {
+    protected AbstractPersistentObject(Builder builder) {
         this.id = builder.id;
         this.createdOn = builder.createdOn;
         this.lastUpdatedOn = builder.lastUpdatedOn;
@@ -72,5 +73,26 @@ public abstract class AbstractPersistentObject {
 
     public boolean canEqual(Object o) {
         return false;
+    }
+
+    public static abstract class Builder<T> {
+        protected String id;
+        protected DateTime createdOn;
+        protected DateTime lastUpdatedOn;
+
+        public T id(String id) {
+            this.id = id;
+            return (T)this;
+        }
+
+        public T createdOn(DateTime createdOn) {
+            this.createdOn = createdOn;
+            return (T)this;
+        }
+
+        public T lastUpdatedOn(DateTime lastUpdatedOn) {
+            this.lastUpdatedOn = lastUpdatedOn;
+            return (T)this;
+        }
     }
 }

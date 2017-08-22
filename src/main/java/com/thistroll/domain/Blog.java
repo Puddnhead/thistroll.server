@@ -101,7 +101,7 @@ public class Blog extends AbstractPersistentObject {
     /**
      * Builder class
      */
-    public static final class Builder extends AbstractPersistentObjectBuilder<Builder> {
+    public static final class Builder extends AbstractPersistentObject.Builder<Builder> {
         private String title;
         private String location;
         private String text;

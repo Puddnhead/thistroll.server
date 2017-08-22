@@ -96,7 +96,7 @@ public class User extends AbstractPersistentObject {
         return o instanceof User;
     }
 
-    public static final class Builder extends AbstractPersistentObjectBuilder<Builder> {
+    public static final class Builder extends AbstractPersistentObject.Builder<Builder> {
         private String username;
         private Set<UserRole> roles = Collections.emptySet();
         private String email;
