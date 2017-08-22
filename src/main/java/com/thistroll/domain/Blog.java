@@ -1,9 +1,5 @@
 package com.thistroll.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.thistroll.domain.util.DateTimeSerializer;
-import org.joda.time.DateTime;
-
 import java.util.Objects;
 
 import static org.apache.commons.lang3.Validate.notEmpty;
@@ -11,7 +7,7 @@ import static org.apache.commons.lang3.Validate.notEmpty;
 /**
  * Created by MVW on 7/13/2017.
  */
-public class Blog {
+public class Blog extends AbstractPersistentObject {
 
     /**
      * No partitions as this table will never be huge and this makes querying for recent blogs easier
@@ -19,28 +15,14 @@ public class Blog {
     public static final String PARTITION_KEY_NAME = "PARTITION_KEY";
     public static final String PARTITION_KEY_VALUE = "NO_PARTITIONS";
 
-    /**
-     * Used as a primary key
-     */
-    private String id;
+    private final String location;
 
-    /**
-     * Used for sorting
-     */
-    @JsonSerialize(using = DateTimeSerializer.class)
-    private DateTime createdOn;
-
-    private String location;
-
-    private String title;
+    private final String title;
 
     /**
      * Blog text - encoded HTML (@apos; and the like)
      */
-    private String text;
-
-    @JsonSerialize(using = DateTimeSerializer.class)
-    private DateTime lastUpdatedOn;
+    private final String text;
 
     public static final String CREATED_ON_PROPERTY = "createdOn";
     public static final String ID_PROPERTY = "id";
@@ -55,28 +37,20 @@ public class Blog {
      * Private no-arg constructor for Jackson
      */
     private Blog() {
-        this.id = null;
+        super();
         this.title = null;
         this.location = null;
         this.text = null;
-        this.createdOn = null;
-        this.lastUpdatedOn = null;
     }
 
     /**
      * Private constructor to force use of Builder
      */
     private Blog(Builder builder) {
-        this.id = builder.id;
+        super(builder);
         this.title = builder.title;
         this.location = builder.location;
         this.text = builder.text;
-        this.createdOn = builder.createdOn;
-        this.lastUpdatedOn = builder.lastUpdatedOn;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getTitle() {
@@ -91,30 +65,25 @@ public class Blog {
         return text;
     }
 
-    public DateTime getCreatedOn() {
-        return createdOn;
-    }
-
-    public DateTime getLastUpdatedOn() {
-        return lastUpdatedOn;
-    }
-
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof Blog)) return false;
+        if (!super.equals(o)) return false;
         Blog blog = (Blog) o;
-        return Objects.equals(title, blog.title) &&
+        return blog.canEqual(this) &&
+                Objects.equals(title, blog.title) &&
                 Objects.equals(location, blog.location) &&
-                Objects.equals(id, blog.id) &&
-                Objects.equals(text, blog.text) &&
-                Objects.equals(createdOn, blog.createdOn) &&
-                Objects.equals(lastUpdatedOn, blog.lastUpdatedOn);
+                Objects.equals(text, blog.text);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, title, location, text, createdOn, lastUpdatedOn);
+    public final int hashCode() {
+        return Objects.hash(title, location, text, super.hashCode());
+    }
+
+    public boolean canEqual(Object o) {
+        return o instanceof Blog;
     }
 
     @Override
@@ -132,18 +101,10 @@ public class Blog {
     /**
      * Builder class
      */
-    public static final class Builder {
-        private String id;
+    public static final class Builder extends AbstractPersistentObjectBuilder<Builder> {
         private String title;
         private String location;
         private String text;
-        private DateTime createdOn;
-        private DateTime lastUpdatedOn;
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
 
         public Builder title(String title) {
             this.title = title;
@@ -157,16 +118,6 @@ public class Blog {
 
         public Builder text(String text) {
             this.text = text;
-            return this;
-        }
-
-        public Builder createdOn(DateTime createdOn) {
-            this.createdOn = createdOn;
-            return this;
-        }
-
-        public Builder lastUpdatedOn(DateTime lastUpdatedOn) {
-            this.lastUpdatedOn = lastUpdatedOn;
             return this;
         }
 
