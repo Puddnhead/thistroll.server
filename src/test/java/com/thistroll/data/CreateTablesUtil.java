@@ -23,7 +23,7 @@ public class CreateTablesUtil {
 
     private static void createBlogTable() {
         DynamoDB dynamoDB = createConnection();
-        String tableName = "blog";
+        final String TABLE_NAME = "blog";
 
         try {
             System.out.println("Attempting to create table; please wait...");
@@ -58,7 +58,7 @@ public class CreateTablesUtil {
                             .withWriteCapacityUnits((long) 1))
                     .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
 
-            List<KeySchemaElement> indexKeySchema = new ArrayList<KeySchemaElement>();
+            List<KeySchemaElement> indexKeySchema = new ArrayList<>();
 
             indexKeySchema.add(new KeySchemaElement()
                     .withAttributeName(Blog.PARTITION_KEY_NAME)
@@ -71,7 +71,7 @@ public class CreateTablesUtil {
 
 
             CreateTableRequest createTableRequest = new CreateTableRequest()
-                    .withTableName("blog")
+                    .withTableName(TABLE_NAME)
                     .withProvisionedThroughput(new ProvisionedThroughput()
                             .withReadCapacityUnits((long) 5)
                             .withWriteCapacityUnits((long) 1))
@@ -88,10 +88,6 @@ public class CreateTablesUtil {
             System.err.println("Unable to create table: ");
             System.err.println(e.getMessage());
         }
-    }
-
-    private static void createSecondaryIndex() {
-        DynamoDB dynamoDB = createConnection();
     }
 
     private static DynamoDB createConnection() {
