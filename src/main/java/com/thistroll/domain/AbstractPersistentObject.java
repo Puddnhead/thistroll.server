@@ -14,6 +14,11 @@ import java.util.Objects;
  * Also uses the canEqual() style equals method, because sublcasses add state. This is also kind of a pain in the ass.
  */
 public abstract class AbstractPersistentObject {
+
+    public static final String CREATED_ON_PROPERTY = "createdOn";
+    public static final String ID_PROPERTY = "id";
+    public static final String LAST_UPDATED_ON_PROPERTY = "lastUpdatedOn";
+
     /**
      * Used as a primary key
      */

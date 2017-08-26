@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.thistroll.domain.Blog;
+import com.thistroll.domain.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ import java.util.List;
 public class CreateTablesUtil {
 
     public static void main(String[] args) {
-        createBlogTable();
+        createUserTable();
     }
 
     private static void createBlogTable() {
@@ -78,6 +79,75 @@ public class CreateTablesUtil {
                     .withAttributeDefinitions(attributeDefinitions)
                     .withKeySchema(tableKeySchema)
                     .withGlobalSecondaryIndexes(createdOnIndex);
+
+            Table table = dynamoDB.createTable(createTableRequest);
+            table.waitForActive();
+            System.out.println(table.getDescription());
+
+        }
+        catch (Exception e) {
+            System.err.println("Unable to create table: ");
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private static void createUserTable() {
+        DynamoDB dynamoDB = createConnection();
+        final String TABLE_NAME = "thistroll_user";
+
+        try {
+            System.out.println("Attempting to create table; please wait...");
+
+            // Attribute definitions
+            List<AttributeDefinition> attributeDefinitions = Arrays.asList(
+                    new AttributeDefinition()
+                            .withAttributeName(User.PARTITION_KEY_NAME)
+                            .withAttributeType("S"),
+                    new AttributeDefinition()
+                            .withAttributeName(User.ID_PROPERTY)
+                            .withAttributeType("S"),
+                    new AttributeDefinition()
+                            .withAttributeName(User.USERNAME_PROPERTY_NAME)
+                            .withAttributeType("S")
+            );
+
+            // Table key schema
+            List<KeySchemaElement> tableKeySchema = Arrays.asList(
+                    new KeySchemaElement()
+                            .withAttributeName(User.PARTITION_KEY_NAME)
+                            .withKeyType(KeyType.HASH),
+                    new KeySchemaElement()
+                            .withAttributeName(User.ID_PROPERTY)
+                            .withKeyType(KeyType.RANGE));  //Partition key
+
+            // Username Index
+            GlobalSecondaryIndex usernameIndex = new GlobalSecondaryIndex()
+                    .withIndexName(User.USERNAME_INDEX)
+                    .withProvisionedThroughput(new ProvisionedThroughput()
+                            .withReadCapacityUnits((long) 10)
+                            .withWriteCapacityUnits((long) 1))
+                    .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
+
+            List<KeySchemaElement> indexKeySchema = new ArrayList<>();
+
+            indexKeySchema.add(new KeySchemaElement()
+                    .withAttributeName(User.PARTITION_KEY_NAME)
+                    .withKeyType(KeyType.HASH));  //Partition key
+            indexKeySchema.add(new KeySchemaElement()
+                    .withAttributeName(User.USERNAME_PROPERTY_NAME)
+                    .withKeyType(KeyType.RANGE));  //Sort key
+
+            usernameIndex.setKeySchema(indexKeySchema);
+
+
+            CreateTableRequest createTableRequest = new CreateTableRequest()
+                    .withTableName(TABLE_NAME)
+                    .withProvisionedThroughput(new ProvisionedThroughput()
+                            .withReadCapacityUnits((long) 5)
+                            .withWriteCapacityUnits((long) 1))
+                    .withAttributeDefinitions(attributeDefinitions)
+                    .withKeySchema(tableKeySchema)
+                    .withGlobalSecondaryIndexes(usernameIndex);
 
             Table table = dynamoDB.createTable(createTableRequest);
             table.waitForActive();

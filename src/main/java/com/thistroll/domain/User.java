@@ -13,6 +13,21 @@ import static org.apache.commons.lang3.Validate.notEmpty;
  */
 public class User extends AbstractPersistentObject {
 
+    /**
+     * No partitions for now, because I can't think of any sensible way of doing it
+     */
+    public static final String PARTITION_KEY_NAME = "PARTITION_KEY";
+    public static final String PARTITION_KEY_VALUE = "NO_PARTITIONS";
+
+    public static final String USERNAME_PROPERTY_NAME = "username";
+    public static final String ROLES_PROPERTY_NAME = "roles";
+    public static final String EMAIL_PROPERTY_NAME = "email";
+    public static final String FIRST_NAME_PROPERTY_NAME = "firstName";
+    public static final String LAST_NAME_PROPERTY_NAME = "lastName";
+    public static final String NOTIFICATIONS_PROPERTY_NAME = "notifactionsEnabled";
+
+    public static final String USERNAME_INDEX = "usernameIndex";
+
     private final String username;
 
     private final Set<UserRole> roles;
