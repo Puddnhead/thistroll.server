@@ -1,4 +1,4 @@
-package com.thistroll.data;
+package com.thistroll.data.impl;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * Created by MVW on 7/13/2017.
  */
-class DynamoDBConnectionProvider {
+public class DynamoDBConnectionProvider {
 
     private AmazonDynamoDB amazonDynamoDB;
 

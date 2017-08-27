@@ -1,12 +1,9 @@
 package com.thistroll.service.impl;
 
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.thistroll.data.S3ClientProvider;
+import com.thistroll.data.impl.S3ClientProvider;
 import com.thistroll.service.client.BlogImagesService;
 import org.springframework.beans.factory.annotation.Required;
 

@@ -1,24 +1,15 @@
-package com.thistroll.data;
+package com.thistroll.data.impl;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
-import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.thistroll.domain.Blog;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,7 +21,6 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,40 +30,21 @@ import static org.mockito.Mockito.when;
  *
  * Created by MVW on 7/13/2017.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class BlogRepositoryImplTest {
+public class BlogRepositoryImplTest extends AbstractRepositoryTest {
 
     @InjectMocks
     private BlogRepositoryImpl repository;
 
-    @Mock
-    private DynamoDBConnectionProvider connectionProvider;
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String LOCATION = "location";
+    private static final String TEXT = "text";
+    private static final DateTime CREATED_ON = new DateTime();
+    private static final DateTime LAST_UPDATED_ON = new DateTime(CREATED_ON.getMillis());
 
-    @Mock
-    private AmazonDynamoDB amazonDynamoDB;
-
-    @Mock
-    private DynamoDB dynamoDB;
-
-    @Mock
-    private Table blogTable;
-
-    @Captor
-    private ArgumentCaptor<Item> itemCaptor;
-
-    public static final String ID = "id";
-    public static final String TITLE = "title";
-    public static final String LOCATION = "location";
-    public static final String TEXT = "text";
-    public static final DateTime CREATED_ON = new DateTime();
-    public static final DateTime LAST_UPDATED_ON = new DateTime(CREATED_ON.getMillis());
-
-    @Before
-    public void setup() throws Exception {
-        repository.setConnectionProvider(connectionProvider);
-        when(connectionProvider.getDynamoDB()).thenReturn(dynamoDB);
-        when(connectionProvider.getAmazonDynamoDB()).thenReturn(amazonDynamoDB);
-        when(dynamoDB.getTable(anyString())).thenReturn(blogTable);
+    @Override
+    void setConnectionProvider(DynamoDBConnectionProvider dynamoDBConnectionProvider) {
+        repository.setConnectionProvider(dynamoDBConnectionProvider);
     }
 
     @Test
@@ -84,7 +55,7 @@ public class BlogRepositoryImplTest {
                 .location(LOCATION)
                 .build();
 
-        when(blogTable.putItem(itemCaptor.capture())).thenReturn(mock(PutItemOutcome.class));
+        when(mockTable.putItem(itemCaptor.capture())).thenReturn(mock(PutItemOutcome.class));
         repository.create(original);
 
         Item item = itemCaptor.getValue();
@@ -105,7 +76,7 @@ public class BlogRepositoryImplTest {
                 .withLong(Blog.CREATED_ON_PROPERTY, CREATED_ON.getMillis())
                 .withLong(Blog.LAST_UPDATED_ON_PROPERTY, LAST_UPDATED_ON.getMillis());
 
-        when(blogTable.getItem(any(GetItemSpec.class))).thenReturn(item);
+        when(mockTable.getItem(any(GetItemSpec.class))).thenReturn(item);
 
         Blog result = repository.findById(ID);
         assertCommonFields(result);
@@ -120,7 +91,7 @@ public class BlogRepositoryImplTest {
                 .withString(Blog.LOCATION_PROPERTY, LOCATION)
                 .withString(Blog.TEXT_PROPERTY, TEXT);
 
-        when(blogTable.getItem(any(GetItemSpec.class))).thenReturn(item);
+        when(mockTable.getItem(any(GetItemSpec.class))).thenReturn(item);
 
         Blog result = repository.findById(ID);
         assertCommonFields(result);

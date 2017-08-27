@@ -1,4 +1,4 @@
-package com.thistroll.data;
+package com.thistroll.data.api;
 
 import com.thistroll.domain.Blog;
 

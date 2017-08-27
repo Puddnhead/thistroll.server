@@ -7,11 +7,14 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns="http://www.springframework.org/schema/beans">
 
-    <bean id="com.thistroll.data.dynamodbconnectionprovider" class="com.thistroll.data.DynamoDBConnectionProvider"
+    <bean id="com.thistroll.data.dynamodbconnectionprovider" class="com.thistroll.data.impl.DynamoDBConnectionProvider"
         c:endpointUrl="${aws.dynamodb.endpointUrl}" />
 
-    <bean id="com.thistroll.data.s3clientprovider" class="com.thistroll.data.S3ClientProvider" />
+    <bean id="com.thistroll.data.s3clientprovider" class="com.thistroll.data.impl.S3ClientProvider" />
 
-    <bean id="com.thistroll.data.blogrepository" class="com.thistroll.data.BlogRepositoryImpl"
+    <bean id="com.thistroll.data.blogrepository" class="com.thistroll.data.impl.BlogRepositoryImpl"
         p:connectionProvider-ref="com.thistroll.data.dynamodbconnectionprovider" />
+
+    <bean id="com.thistroll.data.userrepository" class="com.thistroll.data.impl.UserRepositoryImpl"
+          p:connectionProvider-ref="com.thistroll.data.dynamodbconnectionprovider" />
 </beans>

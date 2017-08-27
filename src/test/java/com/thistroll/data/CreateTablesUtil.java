@@ -107,7 +107,7 @@ public class CreateTablesUtil {
                             .withAttributeName(User.ID_PROPERTY)
                             .withAttributeType("S"),
                     new AttributeDefinition()
-                            .withAttributeName(User.USERNAME_PROPERTY_NAME)
+                            .withAttributeName(User.USERNAME_PROPERTY)
                             .withAttributeType("S")
             );
 
@@ -134,7 +134,7 @@ public class CreateTablesUtil {
                     .withAttributeName(User.PARTITION_KEY_NAME)
                     .withKeyType(KeyType.HASH));  //Partition key
             indexKeySchema.add(new KeySchemaElement()
-                    .withAttributeName(User.USERNAME_PROPERTY_NAME)
+                    .withAttributeName(User.USERNAME_PROPERTY)
                     .withKeyType(KeyType.RANGE));  //Sort key
 
             usernameIndex.setKeySchema(indexKeySchema);

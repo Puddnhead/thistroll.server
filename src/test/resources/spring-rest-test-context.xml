@@ -20,8 +20,8 @@
     <import resource="classpath*:thistroll-rest-beans.xml" />
 
     <bean id="com.thistroll.data.blogrepository" class="org.mockito.Mockito" factory-method="mock"
-            c:classToMock="com.thistroll.data.BlogRepository" />
+            c:classToMock="com.thistroll.data.api.BlogRepository" />
 
     <bean id="com.thistroll.data.s3clientprovider" class="org.mockito.Mockito" factory-method="mock"
-          c:classToMock="com.thistroll.data.S3ClientProvider" />
+          c:classToMock="com.thistroll.data.impl.S3ClientProvider" />
 </beans>

@@ -11,6 +11,9 @@
     <bean id="com.thistroll.service.impl.blogservice" class="com.thistroll.service.impl.BlogServiceImpl"
         p:blogRepository-ref="com.thistroll.data.blogrepository" />
 
+    <bean id="com.thistroll.service.impl.userservice" class="com.thistroll.service.impl.UserServiceImpl"
+        p:userRepository-ref="com.thistroll.data.userrepository" />
+
     <bean id="com.thistroll.service.impl.blogimagesservice" class="com.thistroll.service.impl.BlogImagesServiceImpl"
         p:bucketName="${blogImages.bucketName}"
         p:imageBucketUrl="${blogImages.bucketUrl}"

@@ -1,4 +1,4 @@
-package com.thistroll.domain;
+package com.thistroll.service.client.dto;
 
 import com.thistroll.domain.enums.UserRole;
 
@@ -6,28 +6,12 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-
 /**
- * Created by MVW on 8/22/2017.
+ * DTO for a create user request
+ *
+ * Created by MVW on 8/26/2017.
  */
-public class User extends AbstractPersistentObject {
-
-    /**
-     * No partitions for now, because I can't think of any sensible way of doing it
-     */
-    public static final String PARTITION_KEY_NAME = "PARTITION_KEY";
-    public static final String PARTITION_KEY_VALUE = "NO_PARTITIONS";
-
-    public static final String USERNAME_PROPERTY = "username";
-    public static final String ROLES_PROPERTY = "roles";
-    public static final String EMAIL_PROPERTY = "email";
-    public static final String FIRST_NAME_PROPERTY = "firstName";
-    public static final String LAST_NAME_PROPERTY = "lastName";
-    public static final String NOTIFICATIONS_PROPERTY = "notificationsEnabled";
-    public static final String PASSWORD_PROPERTY = "password";
-
-    public static final String USERNAME_INDEX = "usernameIndex";
+public class CreateUserRequest {
 
     private final String username;
 
@@ -39,28 +23,30 @@ public class User extends AbstractPersistentObject {
 
     private final String lastName;
 
+    private final String password;
+
     private final boolean notificationsEnabled;
 
     /**
      * No-arg constructor for Jackson
      */
-    public User() {
-        super();
+    public CreateUserRequest() {
         this.username = null;
         this.roles = null;
         this.email = null;
         this.firstName = null;
         this.lastName = null;
+        this.password = null;
         this.notificationsEnabled = false;
     }
 
-    public User(User.Builder builder) {
-        super(builder);
+    public CreateUserRequest(Builder builder) {
         this.username = builder.username;
         this.roles = builder.roles;
         this.email = builder.email;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
+        this.password = builder.password;
         this.notificationsEnabled = builder.notificationsEnabled;
     }
 
@@ -84,6 +70,10 @@ public class User extends AbstractPersistentObject {
         return lastName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public boolean isNotificationsEnabled() {
         return notificationsEnabled;
     }
@@ -91,33 +81,29 @@ public class User extends AbstractPersistentObject {
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof User)) return false;
-        if (!super.equals(o)) return false;
-        User user = (User) o;
-        return user.canEqual(this) &&
-                notificationsEnabled == user.notificationsEnabled &&
-                Objects.equals(username, user.username) &&
-                Objects.equals(roles, user.roles) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(firstName, user.firstName) &&
-                Objects.equals(lastName, user.lastName);
+        if (o == null || !(o instanceof CreateUserRequest)) return false;
+        CreateUserRequest that = (CreateUserRequest) o;
+        return notificationsEnabled == that.notificationsEnabled &&
+                Objects.equals(username, that.username) &&
+                Objects.equals(roles, that.roles) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(password, that.password);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(super.hashCode(), username, roles, email, firstName, lastName, notificationsEnabled, super.hashCode());
+        return Objects.hash(username, roles, email, firstName, lastName, password, notificationsEnabled);
     }
 
-    public boolean canEqual(Object o) {
-        return o instanceof User;
-    }
-
-    public static final class Builder extends AbstractPersistentObject.Builder<Builder> {
+    public static final class Builder {
         private String username;
         private Set<UserRole> roles = Collections.emptySet();
         private String email;
         private String firstName;
         private String lastName;
+        private String password;
         private boolean notificationsEnabled = false;
 
         public Builder username(String username) {
@@ -145,19 +131,18 @@ public class User extends AbstractPersistentObject {
             return this;
         }
 
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
         public Builder notificationsEnabled(boolean notificationsEnabled) {
             this.notificationsEnabled = notificationsEnabled;
             return this;
         }
 
-        private void validate() {
-            notEmpty(username);
-            notEmpty(email);
-        }
-
-        public User build() {
-            validate();
-            return new User(this);
+        public CreateUserRequest build() {
+            return new CreateUserRequest(this);
         }
     }
 }

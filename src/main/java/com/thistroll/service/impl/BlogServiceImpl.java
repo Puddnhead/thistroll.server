@@ -1,6 +1,6 @@
 package com.thistroll.service.impl;
 
-import com.thistroll.data.BlogRepository;
+import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.BlogService;
 import com.thistroll.service.exceptions.BlogNotFoundException;

@@ -1,10 +1,11 @@
-package com.thistroll.data;
+package com.thistroll.data.impl;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import org.apache.commons.lang3.NotImplementedException;
 import org.joda.time.DateTime;
@@ -28,8 +29,7 @@ public class BlogRepositoryImpl implements BlogRepository {
         Blog createdBlog = createBlogWithGeneratedIdAndDates(blog);
         Table table = getBlogTable();
 
-        PutItemOutcome outcome = table
-                .putItem(new Item().withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, createdBlog.getId())
+        table.putItem(new Item().withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, createdBlog.getId())
                         .withString(Blog.TITLE_PROPERTY, createdBlog.getTitle())
                         .withString(Blog.LOCATION_PROPERTY, createdBlog.getLocation())
                         .withString(Blog.TEXT_PROPERTY, createdBlog.getText())

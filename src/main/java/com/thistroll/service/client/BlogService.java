@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Created by MVW on 7/11/2017.
- * Service for fetching blogs
+ * Service for CRUD operations on blogs
  */
 public interface BlogService {
 

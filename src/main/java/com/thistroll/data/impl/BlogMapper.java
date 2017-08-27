@@ -1,4 +1,4 @@
-package com.thistroll.data;
+package com.thistroll.data.impl;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -19,10 +19,10 @@ public class BlogMapper {
     /**
      * Maps a query result to a sorted list of blogs, handling cases for null dates
      *
-     * @param queryResult
-     * @return
+     * @param queryResult result of the query
+     * @return a list of blogs
      */
-    public static List<Blog> mapQueryResultToBlogs(QueryResult queryResult) {
+    static List<Blog> mapQueryResultToBlogs(QueryResult queryResult) {
         List<Blog> blogs = new ArrayList<>();
 
         for (Map<String, AttributeValue> item: queryResult.getItems()) {
@@ -67,7 +67,7 @@ public class BlogMapper {
      * @param scanResult the scan result
      * @return a list of blogs
      */
-    public static List<Blog> mapScanResultToBlogs(ScanResult scanResult) {
+    static List<Blog> mapScanResultToBlogs(ScanResult scanResult) {
         List<Blog> blogs = new ArrayList<>();
 
         for (Map<String, AttributeValue> item: scanResult.getItems()) {
@@ -92,7 +92,7 @@ public class BlogMapper {
      *
      * @return the mapped blog or null if Item is null
      */
-    public static Blog mapItemToBlog(Item item) {
+    static Blog mapItemToBlog(Item item) {
         if (item == null) {
             return null;
         }

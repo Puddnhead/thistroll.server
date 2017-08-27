@@ -1,7 +1,7 @@
 package com.thistroll.service.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thistroll.data.BlogRepository;
+import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import org.joda.time.DateTime;
 import org.junit.Test;

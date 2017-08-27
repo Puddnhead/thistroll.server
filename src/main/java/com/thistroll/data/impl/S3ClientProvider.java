@@ -1,4 +1,4 @@
-package com.thistroll.data;
+package com.thistroll.data.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;

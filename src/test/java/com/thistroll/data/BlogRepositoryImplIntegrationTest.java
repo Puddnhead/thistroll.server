@@ -1,5 +1,6 @@
 package com.thistroll.data;
 
+import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import org.junit.Ignore;
 import org.junit.Test;

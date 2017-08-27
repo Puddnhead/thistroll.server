@@ -14,6 +14,9 @@
     <bean id="com.thistroll.service.rest.blogservicecontroller" class="com.thistroll.service.rest.BlogServiceController"
         p:blogService-ref="com.thistroll.service.impl.blogservice" />
 
+    <bean id="com.thistroll.service.rest.userservicecontroller" class="com.thistroll.service.rest.UserServiceController"
+        p:userService-ref="com.thistroll.service.impl.userservice" />
+
     <bean id="com.thisttroll.service.rest.blogimagesservicecontroller" class="com.thistroll.service.rest.BlogImagesServiceController"
         p:blogImagesService-ref="com.thistroll.service.impl.blogimagesservice" />
 
