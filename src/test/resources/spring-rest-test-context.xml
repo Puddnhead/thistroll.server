@@ -19,9 +19,15 @@
     <mvc:annotation-driven/>
     <import resource="classpath*:thistroll-rest-beans.xml" />
 
+    <!-- Mock repositories -->
+    <bean id="com.thistroll.data.userrepository" class="org.mockito.Mockito" factory-method="mock"
+          c:classToMock="com.thistroll.data.api.UserRepository" />
+
     <bean id="com.thistroll.data.blogrepository" class="org.mockito.Mockito" factory-method="mock"
             c:classToMock="com.thistroll.data.api.BlogRepository" />
 
+    <!-- Other mocks -->
     <bean id="com.thistroll.data.s3clientprovider" class="org.mockito.Mockito" factory-method="mock"
           c:classToMock="com.thistroll.data.impl.S3ClientProvider" />
+
 </beans>

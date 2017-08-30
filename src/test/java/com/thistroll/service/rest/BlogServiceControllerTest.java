@@ -32,8 +32,6 @@ public class BlogServiceControllerTest extends ControllerTestBase {
     @Autowired
     BlogRepository blogRepository;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     public static final String GENERATED_ID = "generatedId";
     public static final DateTime NOW = new DateTime();
     public static final Blog MOCK_BLOG = new Blog.Builder().title("blah").build();
