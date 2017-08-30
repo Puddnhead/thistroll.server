@@ -150,13 +150,7 @@ public class User extends AbstractPersistentObject {
             return this;
         }
 
-        private void validate() {
-            notEmpty(username);
-            notEmpty(email);
-        }
-
         public User build() {
-            validate();
             return new User(this);
         }
     }

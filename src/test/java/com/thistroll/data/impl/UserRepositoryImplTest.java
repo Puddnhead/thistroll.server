@@ -1,11 +1,14 @@
 package com.thistroll.data.impl;
 
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
-import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.internal.IteratorSupport;
+import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.thistroll.data.exceptions.DuplicateUsernameException;
+import com.thistroll.data.exceptions.ValidationException;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,14 +19,19 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
+ * Not strictly a unit test, as a lot of these tests test logic in the UserValidationUtil
+ *
  * Created by MVW on 8/27/2017.
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -32,6 +40,16 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
     @InjectMocks
     private UserRepositoryImpl userRepository;
 
+    @Mock
+    private Index mockIndex;
+
+    @Mock
+    private ItemCollection<QueryOutcome> mockItemCollection;
+
+    @Mock
+    private IteratorSupport<Item, QueryOutcome> mockIteratorSupport;
+
+    private static final String ID = UUID.randomUUID().toString();
     private static final String USERNAME = "BobbyBriscuit";
     private static final String FIRST_NAME = "Bobby";
     private static final String LAST_NAME = "Briscuit";
@@ -45,21 +63,23 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
         userRepository.setConnectionProvider(dynamoDBConnectionProvider);
     }
 
+    @Before
+    public void setup() throws Exception {
+        when(mockTable.getIndex(anyString())).thenReturn(mockIndex);
+        when(mockIndex.query(any(QuerySpec.class))).thenReturn(mockItemCollection);
+        when(mockItemCollection.iterator()).thenReturn(mockIteratorSupport);
+        when(mockIteratorSupport.hasNext()).thenReturn(false);
+    }
+
     @Test
     public void testCreateUserGeneratesIdAndDatesAndHashesPassword() throws Exception {
         final String IGNORED_ID = "abc";
         final DateTime IGNORED_DATE = new DateTime(0);
 
-        User suppliedUser = new User.Builder()
+        User suppliedUser = createDefaultUserBuilder()
                 .id(IGNORED_ID)
                 .createdOn(IGNORED_DATE)
                 .lastUpdatedOn(IGNORED_DATE)
-                .username(USERNAME)
-                .firstName(FIRST_NAME)
-                .lastName(LAST_NAME)
-                .roles(ROLES)
-                .notificationsEnabled(NOTIFICATIONS_ENABLED)
-                .email(EMAIL)
                 .build();
 
         when(mockTable.putItem(itemCaptor.capture())).thenReturn(mock(PutItemOutcome.class));
@@ -88,48 +108,119 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
         assertThat(item.getBoolean(User.NOTIFICATIONS_PROPERTY), is(NOTIFICATIONS_ENABLED));
     }
 
-    @Test
+    @Test(expected = ValidationException.class)
     public void testCreateUserUsernameMustBeAlphanumeric() throws Exception {
-
+        User invalidUser = createDefaultUserBuilder()
+                .username("*user")
+                .build();
+        userRepository.createUser(invalidUser, PASSWORD);
     }
 
-    @Test
+    @Test(expected = ValidationException.class)
     public void testCreateUserPasswordIsAtLeast6Characters() throws Exception {
-
+        User invalidUser = createDefaultUserBuilder().build();
+        userRepository.createUser(invalidUser, "123");
     }
 
-    @Test
+    @Test(expected = ValidationException.class)
     public void testMaximumUsernameLength() throws Exception {
-
+        User invalidUser = createDefaultUserBuilder()
+                .username(StringUtils.repeat('a', 257))
+                .build();
+        userRepository.createUser(invalidUser, PASSWORD);
     }
 
-    @Test
+    @Test(expected = ValidationException.class)
+    public void testMinimumUsernameLength() throws Exception {
+        User invalidUser = createDefaultUserBuilder()
+                .username("b")
+                .build();
+        userRepository.createUser(invalidUser, PASSWORD);
+    }
+
+    @Test(expected = ValidationException.class)
     public void testMaximumFirstNameLength() throws Exception {
-
+        User invalidUser = createDefaultUserBuilder()
+                .firstName(StringUtils.repeat('a', 257))
+                .build();
+        userRepository.createUser(invalidUser, PASSWORD);
     }
 
-    @Test
+    @Test(expected = ValidationException.class)
     public void testMaximumLastNameLength() throws Exception {
-
+        User invalidUser = createDefaultUserBuilder()
+                .firstName(StringUtils.repeat('a', 257))
+                .build();
+        userRepository.createUser(invalidUser, PASSWORD);
     }
 
-    @Test
+    @Test(expected = ValidationException.class)
     public void testEmailFormat() throws Exception {
-        
+        User invalidUser = createDefaultUserBuilder()
+                .email("JoeatJoedotcom")
+                .build();
+        userRepository.createUser(invalidUser, PASSWORD);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testEmailRequired() throws Exception {
+        User invalidUser = createDefaultUserBuilder()
+                .email(null)
+                .build();
+        userRepository.createUser(invalidUser, PASSWORD);
     }
 
     @Test
     public void testGetByIdWithNullValues() throws Exception {
+        Item item = new Item()
+                .withPrimaryKey(User.ID_PROPERTY, ID)
+                .withString(User.EMAIL_PROPERTY, EMAIL)
+                .withString(User.USERNAME_PROPERTY, USERNAME)
+                .withBoolean(User.NOTIFICATIONS_PROPERTY, NOTIFICATIONS_ENABLED);
+        when(mockTable.getItem(any(GetItemSpec.class))).thenReturn(item);
 
-    }
-
-    @Test
-    public void testCreateUserFailsForDuplicateUsername() throws Exception {
-
+        User user = userRepository.getUserById(ID);
+        assertCommonFields(user);
     }
 
     @Test
     public void testGetByUsernameWithNullValues() throws Exception {
+        Item item = new Item()
+                .withPrimaryKey(User.ID_PROPERTY, ID)
+                .withString(User.EMAIL_PROPERTY, EMAIL)
+                .withString(User.USERNAME_PROPERTY, USERNAME)
+                .withBoolean(User.NOTIFICATIONS_PROPERTY, NOTIFICATIONS_ENABLED);
 
+        when(mockIteratorSupport.hasNext()).thenReturn(true);
+        when(mockIteratorSupport.next()).thenReturn(item);
+
+        User user = userRepository.getUserByUsername(USERNAME);
+        assertCommonFields(user);
+    }
+
+    @Test(expected = DuplicateUsernameException.class)
+    public void testCreateUserFailsForDuplicateUsername() throws Exception {
+        when(mockIteratorSupport.hasNext()).thenReturn(true);
+        when(mockIteratorSupport.next()).thenReturn(mock(Item.class));
+
+        User user = createDefaultUserBuilder().build();
+        userRepository.createUser(user, PASSWORD);
+    }
+
+    private void assertCommonFields(User user) {
+        assertThat(user.getId(), is(ID));
+        assertThat(user.getUsername(), is(USERNAME));
+        assertThat(user.getEmail(), is(EMAIL));
+        assertThat(user.isNotificationsEnabled(), is(NOTIFICATIONS_ENABLED));
+    }
+
+    private User.Builder createDefaultUserBuilder() {
+        return new User.Builder()
+                .username(USERNAME)
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .roles(ROLES)
+                .notificationsEnabled(NOTIFICATIONS_ENABLED)
+                .email(EMAIL);
     }
 }

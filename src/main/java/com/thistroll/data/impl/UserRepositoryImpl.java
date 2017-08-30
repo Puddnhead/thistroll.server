@@ -1,10 +1,10 @@
 package com.thistroll.data.impl;
 
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.thistroll.data.api.UserRepository;
+import com.thistroll.data.exceptions.DuplicateUsernameException;
 import com.thistroll.domain.User;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.joda.time.DateTime;
@@ -23,6 +23,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User createUser(User user, String password) {
+        // These validation methods throw runtime exceptions
+        UserValidationUtil.validateUser(user);
+        UserValidationUtil.validatePassword(password);
+
+        if (getUserByUsername(user.getUsername()) != null) {
+            throw new DuplicateUsernameException();
+        }
+
         Table userTable = getUserTable();
         User createdUser = createUserWithGeneratedIdAndDates(user);
 
@@ -53,7 +61,17 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserByUsername(String username) {
-        return null;
+        Table table = getUserTable();
+        Index index = table.getIndex(User.USERNAME_INDEX);
+        QuerySpec spec = new QuerySpec()
+                .withHashKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE)
+                .withRangeKeyCondition(new RangeKeyCondition(User.USERNAME_PROPERTY).eq(username));
+        ItemCollection<QueryOutcome> items = index.query(spec);
+        if (!items.iterator().hasNext()) {
+            return null;
+        }
+        Item item = items.iterator().next();
+        return UserMapper.mapItemToUser(item);
     }
 
     @Override

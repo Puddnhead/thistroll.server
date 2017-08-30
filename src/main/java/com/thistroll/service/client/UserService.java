@@ -16,7 +16,7 @@ public interface UserService {
      * @param createUserRequest the request to create the user, including a plain-text password
      * @return the generated user, including IDs and generated dates but omitting the password
      */
-    public User createUser(CreateUserRequest createUserRequest);
+    User createUser(CreateUserRequest createUserRequest);
 
     /**
      * Find a user by user id
@@ -24,5 +24,13 @@ public interface UserService {
      * @param id the user id
      * @return the user or null if it cannot be found
      */
-    public User getUserById(String id);
+    User getUserById(String id);
+
+    /**
+     * Find a user by username
+     *
+     * @param username the username
+     * @return the user or null if it cannot be found
+     */
+    User getUserByUsername(String username);
 }

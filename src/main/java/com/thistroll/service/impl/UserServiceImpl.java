@@ -37,6 +37,16 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public User getUserByUsername(String username) {
+        User user = userRepository.getUserByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException("Could not locate user with username: " + username);
+        }
+
+        return user;
+    }
+
     @Required
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;

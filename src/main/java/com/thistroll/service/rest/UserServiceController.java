@@ -29,6 +29,12 @@ public class UserServiceController implements UserService {
         return userService.getUserById(id);
     }
 
+    @RequestMapping(value ="/username/{username}", method = RequestMethod.GET)
+    @Override
+    public @ResponseBody User getUserByUsername(@PathVariable String username) {
+        return userService.getUserByUsername(username);
+    }
+
     @Required
     public void setUserService(UserService userService) {
         this.userService = userService;
