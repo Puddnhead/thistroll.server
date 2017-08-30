@@ -1,7 +1,6 @@
 package com.thistroll.service.impl;
 
 import com.google.common.collect.Sets;
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
@@ -18,10 +17,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
+ * Unit test for {@link UserServiceImpl}
  * Created by MVW on 8/27/2017.
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -45,13 +45,13 @@ public class UserServiceImplTest {
     @Captor
     private ArgumentCaptor<String> idCaptor;
 
-    public static final String USERNAME = "JoeDirt";
-    public static final String FIRST_NAME = "Joseph";
-    public static final String LAST_NAME = "Dirt";
-    public static final String PASSWORD = "password123";
-    public static final String EMAIL = "joe@dirt.com";
-    public static final Set<UserRole> ROLES = Sets.newHashSet(UserRole.ADMIN, UserRole.USER);
-    public static final boolean NOTIFICATIONS_ENABLED = true;
+    private static final String USERNAME = "JoeDirt";
+    private static final String FIRST_NAME = "Joseph";
+    private static final String LAST_NAME = "Dirt";
+    private static final String PASSWORD = "password123";
+    private static final String EMAIL = "joe@dirt.com";
+    private static final Set<UserRole> ROLES = Sets.newHashSet(UserRole.ADMIN, UserRole.USER);
+    private static final boolean NOTIFICATIONS_ENABLED = true;
 
     @Before
     public void setup() throws Exception {
