@@ -82,12 +82,4 @@ public class UserServiceImplTest {
         assertThat(providatedUser.getRoles(), is(ROLES));
         assertThat(providatedUser.isNotificationsEnabled(), is(NOTIFICATIONS_ENABLED));
     }
-
-    @Test
-    public void testGetUserById() throws Exception {
-        String userId = "blah";
-        User user = userService.getUserById(userId);
-        assertThat(idCaptor.getValue(), is(userId));
-        assertThat(user, is(mockUser));
-    }
 }

@@ -2,7 +2,9 @@ package com.thistroll.service.rest;
 
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.CreateUserRequest;
+import com.thistroll.service.client.dto.UpdateUserRequest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,8 +17,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -29,10 +30,10 @@ public class UserServiceControllerTest extends ControllerTestBase {
     @Autowired
     private UserRepository userRepository;
 
-    public static final String GENERATED_ID = UUID.randomUUID().toString();
-    public static final String USERNAME = "SamBradford";
-    public static final String EMAIL = "sammy@vikings.com";
-    public static final String PASSWORD = "password123";
+    private static final String GENERATED_ID = UUID.randomUUID().toString();
+    private static final String USERNAME = "SamBradford";
+    private static final String EMAIL = "sammy@vikings.com";
+    private static final String PASSWORD = "password123";
 
     @Test
     public void testCreateUser() throws Exception {
@@ -76,6 +77,31 @@ public class UserServiceControllerTest extends ControllerTestBase {
                 .andReturn();
         String responseBody = mvcResult.getResponse().getContentAsString();
         assertThat(responseBody.contains(GENERATED_ID), is(true));
+    }
+
+    @Test
+    public void testUpdateUser() throws Exception {
+        when(userRepository.updateUser(any(User.class))).thenReturn(createUser());
+        when(userRepository.getUserById(anyString())).thenReturn(createUser());
+
+        UpdateUserRequest request = new UpdateUserRequest.Builder()
+                .email(EMAIL)
+                .userId(GENERATED_ID)
+                .build();
+        String serializedUpdateUserRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializedUpdateUserRequest))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception {
+        when(userRepository.deleteUser(anyString())).thenReturn(Outcome.SUCCESS);
+
+        mockMvc.perform(delete("/user/someId"))
+                .andExpect(status().isAccepted());
     }
 
     private User createUser() {

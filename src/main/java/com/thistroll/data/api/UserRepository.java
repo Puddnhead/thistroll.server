@@ -1,6 +1,7 @@
 package com.thistroll.data.api;
 
 import com.thistroll.domain.User;
+import com.thistroll.domain.enums.Outcome;
 
 /**
  * API for CRUD operations on {@link com.thistroll.domain.User} objects
@@ -47,6 +48,7 @@ public interface UserRepository {
      * Delete the user with the given id
      *
      * @param id user id
+     * @return success if the user was deleted else failure
      */
-    void deleteUser(String id);
+    Outcome deleteUser(String id);
 }

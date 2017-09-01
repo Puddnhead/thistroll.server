@@ -1,7 +1,9 @@
 package com.thistroll.service.client;
 
 import com.thistroll.domain.User;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.CreateUserRequest;
+import com.thistroll.service.client.dto.UpdateUserRequest;
 
 /**
  * Service for CRUD operations on users
@@ -33,4 +35,24 @@ public interface UserService {
      * @return the user or null if it cannot be found
      */
     User getUserByUsername(String username);
+
+    /**
+     * Update the following fields of a user:
+     *      firstName
+     *      lastName
+     *      email
+     *      notificationsEnabled
+     *
+     * @param request the request containing the fields to upadte. null values are ignored.
+     * @return the updated user
+     */
+    User updateUser(UpdateUserRequest request);
+
+    /**
+     * Guess
+     *
+     * @param userId guess
+     * @return success if the user was deleted otherwise failure
+     */
+    Outcome deleteUser(String userId);
 }

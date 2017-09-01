@@ -2,9 +2,13 @@ package com.thistroll.service.impl;
 
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.CreateUserRequest;
+import com.thistroll.service.client.dto.UpdateUserRequest;
 import com.thistroll.service.exceptions.UserNotFoundException;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -45,6 +49,48 @@ public class UserServiceImpl implements UserService {
         }
 
         return user;
+    }
+
+    @Override
+    public User updateUser(UpdateUserRequest request) {
+        User previousState = null;
+
+        if (StringUtils.isNotEmpty(request.getUserId())) {
+            previousState = userRepository.getUserById(request.getUserId());
+        } else if (StringUtils.isNotEmpty(request.getUsername())){
+            previousState = userRepository.getUserByUsername(request.getUsername());
+        }
+
+        if (previousState == null) {
+            throw new UserNotFoundException("Cannot update user because it could not be found");
+        }
+
+        User.Builder builder = new User.Builder()
+                .id(previousState.getId())
+                .username(previousState.getUsername())
+                .lastUpdatedOn(new DateTime());
+
+        if (StringUtils.isNotEmpty(request.getEmail())) {
+            builder = builder.email(request.getEmail());
+        }
+        if (StringUtils.isNotEmpty(request.getFirstName())) {
+            builder = builder.firstName(request.getFirstName());
+        }
+        if (StringUtils.isNotEmpty(request.getLastName())) {
+            builder = builder.lastName(request.getLastName());
+        }
+        if (request.isNotificationsEnabled() != null) {
+            builder = builder.notificationsEnabled(request.isNotificationsEnabled());
+        } else {
+            builder = builder.notificationsEnabled(previousState.isNotificationsEnabled());
+        }
+
+        return userRepository.updateUser(builder.build());
+    }
+
+    @Override
+    public Outcome deleteUser(String userId) {
+        return userRepository.deleteUser(userId);
     }
 
     @Required

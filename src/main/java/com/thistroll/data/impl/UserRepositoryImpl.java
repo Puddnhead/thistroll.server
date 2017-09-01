@@ -1,15 +1,22 @@
 package com.thistroll.data.impl;
 
 import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
+import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.data.exceptions.DuplicateUsernameException;
 import com.thistroll.domain.User;
+import com.thistroll.domain.enums.Outcome;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -70,18 +77,47 @@ public class UserRepositoryImpl implements UserRepository {
         if (!items.iterator().hasNext()) {
             return null;
         }
+
         Item item = items.iterator().next();
         return UserMapper.mapItemToUser(item);
     }
 
     @Override
     public User updateUser(User user) {
-        return null;
+        Table table = getUserTable();
+
+        List<AttributeUpdate> attributeUpdates = new ArrayList<>();
+        attributeUpdates.add(new AttributeUpdate(User.LAST_UPDATED_ON_PROPERTY).put(user.getLastUpdatedOn().getMillis()));
+        attributeUpdates.add(new AttributeUpdate(User.NOTIFICATIONS_PROPERTY).put(user.isNotificationsEnabled()));
+        if (StringUtils.isNotEmpty(user.getEmail())) {
+            attributeUpdates.add(new AttributeUpdate(User.EMAIL_PROPERTY).put(user.getEmail()));
+        }
+        if (StringUtils.isNotEmpty(user.getFirstName())) {
+            attributeUpdates.add(new AttributeUpdate(User.FIRST_NAME_PROPERTY).put(user.getFirstName()));
+        }
+        if (StringUtils.isNotEmpty(user.getLastName())) {
+            attributeUpdates.add(new AttributeUpdate(User.LAST_NAME_PROPERTY).put(user.getLastName()));
+        }
+
+        UpdateItemSpec updateItemSpec = new UpdateItemSpec()
+                .withPrimaryKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE, User.ID_PROPERTY, user.getId())
+                .withAttributeUpdate(attributeUpdates);
+        table.updateItem(updateItemSpec);
+
+        return getUserById(user.getId());
     }
 
     @Override
-    public void deleteUser(String id) {
-
+    public Outcome deleteUser(String id) {
+        Table table = getUserTable();
+        DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
+                .withPrimaryKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE, User.ID_PROPERTY, id)
+                .withReturnValues(ReturnValue.ALL_OLD);
+        DeleteItemOutcome outcome = table.deleteItem(deleteItemSpec);
+        if (outcome.getDeleteItemResult().getAttributes() == null) {
+            return Outcome.FAILURE;
+        }
+        return Outcome.SUCCESS;
     }
 
     private User createUserWithGeneratedIdAndDates(User user) {
