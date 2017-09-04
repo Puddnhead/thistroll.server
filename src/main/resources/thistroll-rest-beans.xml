@@ -25,6 +25,6 @@
 
     <!-- This controller is only included for local integration testing of the session services - should not be exposed
             in production -->
-    <bean id="com.thistroll.service.rest.sessionservicecontroller" class="com.thistroll.service.rest.SessionServiceController"
-        p:sessionService-ref="com.thistroll.service.impl.sessionservice" />
+    <!-- <bean id="com.thistroll.service.rest.sessionservicecontroller" class="com.thistroll.service.rest.SessionServiceController"
+        p:sessionService-ref="com.thistroll.service.impl.sessionservice" /> -->
 </beans>
