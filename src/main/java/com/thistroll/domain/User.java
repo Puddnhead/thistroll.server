@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-
 /**
  * Created by MVW on 8/22/2017.
  */
@@ -54,7 +52,7 @@ public class User extends AbstractPersistentObject {
         this.notificationsEnabled = false;
     }
 
-    public User(User.Builder builder) {
+    private User(User.Builder builder) {
         super(builder);
         this.username = builder.username;
         this.roles = builder.roles;

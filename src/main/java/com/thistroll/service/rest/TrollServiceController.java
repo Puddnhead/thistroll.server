@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
+ * Rest layer from {@link TrollService}
+ *
  * Created by MVW on 7/21/2017.
  */
 @Controller
