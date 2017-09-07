@@ -3,6 +3,7 @@ package com.thistroll.service.impl;
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.BlogService;
+import com.thistroll.service.client.dto.UpdateBlogRequest;
 import com.thistroll.service.exceptions.BlogNotFoundException;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -34,9 +35,19 @@ public class BlogServiceImpl implements BlogService {
     public Blog getBlog(String id) {
         Blog blog = blogRepository.findById(id);
         if (blog == null) {
-            throw new BlogNotFoundException("No blog with id " + id);
+            throw new BlogNotFoundException("Could not find blog with id " + id);
         }
         return blog;
+    }
+
+    @Override
+    public Blog updateBlog(UpdateBlogRequest request) {
+        Blog oldBlog = getBlog(request.getBlogId());
+        if (oldBlog == null) {
+            throw new BlogNotFoundException("Could not find a blog with id " + request.getBlogId());
+        }
+
+        return blogRepository.update(request);
     }
 
     @Override

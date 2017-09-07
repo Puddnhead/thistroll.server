@@ -30,7 +30,7 @@ public class CreateUserRequest {
     /**
      * No-arg constructor for Jackson
      */
-    public CreateUserRequest() {
+    private CreateUserRequest() {
         this.username = null;
         this.roles = null;
         this.email = null;
@@ -40,7 +40,7 @@ public class CreateUserRequest {
         this.notificationsEnabled = false;
     }
 
-    public CreateUserRequest(Builder builder) {
+    private CreateUserRequest(Builder builder) {
         this.username = builder.username;
         this.roles = builder.roles;
         this.email = builder.email;

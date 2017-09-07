@@ -16,7 +16,7 @@ public class LoginRequest {
     /**
      * No-arg constructor for Jackson
      */
-    public LoginRequest() {
+    private LoginRequest() {
         this.username = null;
         this.password = null;
     }

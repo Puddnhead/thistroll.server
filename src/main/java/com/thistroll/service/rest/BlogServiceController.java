@@ -2,6 +2,7 @@ package com.thistroll.service.rest;
 
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.BlogService;
+import com.thistroll.service.client.dto.UpdateBlogRequest;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,12 @@ public class BlogServiceController implements BlogService {
     @Override
     public @ResponseBody Blog getBlog(@PathVariable String id) {
         return blogService.getBlog(id);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @Override
+    public @ResponseBody Blog updateBlog(@RequestBody UpdateBlogRequest request) {
+        return blogService.updateBlog(request);
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)

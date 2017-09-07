@@ -33,7 +33,7 @@ public class UpdateUserRequest {
     /**
      * No-arg constructor for Jackson
      */
-    public UpdateUserRequest() {
+    private UpdateUserRequest() {
         this.userId = null;
         this.username = null;
         this.firstName = null;
@@ -42,7 +42,7 @@ public class UpdateUserRequest {
         this.notificationsEnabled = null;
     }
 
-    public UpdateUserRequest(Builder builder) {
+    private UpdateUserRequest(Builder builder) {
         this.userId = builder.userId;
         this.username = builder.username;
         this.firstName = builder.firstName;

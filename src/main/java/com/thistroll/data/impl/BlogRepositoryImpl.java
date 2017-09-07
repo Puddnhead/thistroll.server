@@ -4,13 +4,17 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
+import com.thistroll.service.client.dto.UpdateBlogRequest;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -40,8 +44,25 @@ public class BlogRepositoryImpl implements BlogRepository {
     }
 
     @Override
-    public Blog update(Blog blog) {
-        throw new NotImplementedException("No updating yet");
+    public Blog update(UpdateBlogRequest request) {
+        Table table = getBlogTable();
+
+        List<AttributeUpdate> attributeUpdates = new ArrayList<>();
+        attributeUpdates.add(new AttributeUpdate(Blog.LAST_UPDATED_ON_PROPERTY).put(new DateTime().getMillis()));
+        attributeUpdates.add(new AttributeUpdate(Blog.LOCATION_PROPERTY).put(request.getLocation()));
+        if (StringUtils.isNotEmpty(request.getTitle())) {
+            attributeUpdates.add(new AttributeUpdate(Blog.TITLE_PROPERTY).put(request.getTitle()));
+        }
+        if (StringUtils.isNotEmpty(request.getText())) {
+            attributeUpdates.add(new AttributeUpdate(Blog.TEXT_PROPERTY).put(request.getText()));
+        }
+
+        UpdateItemSpec updateItemSpec = new UpdateItemSpec()
+                .withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, request.getBlogId())
+                .withAttributeUpdate(attributeUpdates);
+        table.updateItem(updateItemSpec);
+
+        return findById(request.getBlogId());
     }
 
     @Override

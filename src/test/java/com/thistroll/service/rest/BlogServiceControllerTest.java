@@ -1,8 +1,8 @@
 package com.thistroll.service.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
+import com.thistroll.service.client.dto.UpdateBlogRequest;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -30,11 +31,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BlogServiceControllerTest extends ControllerTestBase {
 
     @Autowired
-    BlogRepository blogRepository;
+    private BlogRepository blogRepository;
 
-    public static final String GENERATED_ID = "generatedId";
-    public static final DateTime NOW = new DateTime();
-    public static final Blog MOCK_BLOG = new Blog.Builder().title("blah").build();
+    private static final String GENERATED_ID = "generatedId";
+    private static final DateTime NOW = new DateTime();
+    private static final Blog MOCK_BLOG = new Blog.Builder().title("blah").build();
 
     @Test
     public void testCreateBlog() throws Exception {
@@ -97,6 +98,21 @@ public class BlogServiceControllerTest extends ControllerTestBase {
     public void testGetAllBlogs() throws Exception {
         when(blogRepository.getAllBlogs()).thenReturn(Arrays.asList(MOCK_BLOG, MOCK_BLOG));
         mockMvc.perform(get("/blog/all"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUpdateBlog() throws Exception {
+        UpdateBlogRequest updateBlogRequest = new UpdateBlogRequest.Builder()
+                .blogId(GENERATED_ID)
+                .build();
+        String serializedUpdateRequest = objectMapper.writeValueAsString(updateBlogRequest);
+        when(blogRepository.findById(GENERATED_ID)).thenReturn(MOCK_BLOG);
+        when(blogRepository.update(any(UpdateBlogRequest.class))).thenReturn(MOCK_BLOG);
+
+        mockMvc.perform(put("/blog")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializedUpdateRequest))
                 .andExpect(status().isOk());
     }
 }

@@ -1,6 +1,7 @@
 package com.thistroll.data.api;
 
 import com.thistroll.domain.Blog;
+import com.thistroll.service.client.dto.UpdateBlogRequest;
 
 import java.util.List;
 
@@ -21,13 +22,13 @@ public interface BlogRepository {
     Blog create(Blog blog);
 
     /**
-     * Updates the given blog. Returns the updated instance with a new lastUpdatedOn value. Ignores the provided
-     * lastUpdated on value
+     * Updates the given blog. Will set a "location" to null or empty as per the request but ignores empty "title" and
+     * "text" updates.
      *
-     * @param blog the blog to update
+     * @param request the update request
      * @return the updated blog with a new lastUpdatedOn value
      */
-    Blog update(Blog blog);
+    Blog update(UpdateBlogRequest request);
 
     /**
      * Returns the blog with the given id

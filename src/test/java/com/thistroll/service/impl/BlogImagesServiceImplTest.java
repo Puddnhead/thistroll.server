@@ -22,6 +22,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 /**
+ * Unit test of {@link BlogImagesServiceImpl}
+ *
  * Created by MVW on 7/29/2017.
  */
 @RunWith(MockitoJUnitRunner.class)
