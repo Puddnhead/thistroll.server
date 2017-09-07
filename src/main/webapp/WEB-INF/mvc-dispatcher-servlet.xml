@@ -24,8 +24,12 @@
         </property>
     </bean>
 
-    <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter" />
-
     <import resource="classpath*:thistroll-rest-beans.xml" />
 
+    <!-- Servlet Filters -->
+    <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter" />
+
+    <bean id="com.thistroll.server.filters.sessionFilter" class="com.thistroll.server.filters.SessionFilter"
+        p:sessionService-ref="com.thistroll.service.impl.sessionservice"
+        p:environment="${env:prod}" />
 </beans>

@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -172,11 +173,7 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
 
     @Test
     public void testGetByIdWithNullValues() throws Exception {
-        Item item = new Item()
-                .withPrimaryKey(User.ID_PROPERTY, ID)
-                .withString(User.EMAIL_PROPERTY, EMAIL)
-                .withString(User.USERNAME_PROPERTY, USERNAME)
-                .withBoolean(User.NOTIFICATIONS_PROPERTY, NOTIFICATIONS_ENABLED);
+        Item item = createItemWithCommonValues();
         when(mockTable.getItem(any(GetItemSpec.class))).thenReturn(item);
 
         User user = userRepository.getUserById(ID);
@@ -185,12 +182,7 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
 
     @Test
     public void testGetByUsernameWithNullValues() throws Exception {
-        Item item = new Item()
-                .withPrimaryKey(User.ID_PROPERTY, ID)
-                .withString(User.EMAIL_PROPERTY, EMAIL)
-                .withString(User.USERNAME_PROPERTY, USERNAME)
-                .withBoolean(User.NOTIFICATIONS_PROPERTY, NOTIFICATIONS_ENABLED);
-
+        Item item = createItemWithCommonValues();
         when(mockIteratorSupport.hasNext()).thenReturn(true);
         when(mockIteratorSupport.next()).thenReturn(item);
 
@@ -205,6 +197,33 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
 
         User user = createDefaultUserBuilder().build();
         userRepository.createUser(user, PASSWORD);
+    }
+
+    @Test
+    public void testGetUserWithCredentials() throws Exception {
+        Item item = createItemWithCommonValues()
+                .withString(User.PASSWORD_PROPERTY, UserRepositoryImpl.hashPassword(PASSWORD));
+        when(mockIteratorSupport.hasNext()).thenReturn(true);
+        when(mockIteratorSupport.next()).thenReturn(item);
+        User user = userRepository.getUserWithCredentials(USERNAME, PASSWORD);
+        assertCommonFields(user);
+    }
+
+    @Test
+    public void testGetUserWithCredentialsMissingUserReturnsNull() throws Exception {
+        when(mockIteratorSupport.hasNext()).thenReturn(false);
+        User user = userRepository.getUserWithCredentials(USERNAME, PASSWORD);
+        assertThat(user, is(nullValue()));
+    }
+
+    @Test
+    public void testGetUserWithCredentialsInvalidPasswordReturnsNull() throws Exception {
+        Item item = createItemWithCommonValues()
+                .withString(User.PASSWORD_PROPERTY, "randomPassword");
+        when(mockIteratorSupport.hasNext()).thenReturn(true);
+        when(mockIteratorSupport.next()).thenReturn(item);
+        User user = userRepository.getUserWithCredentials(USERNAME, PASSWORD);
+        assertThat(user, is(nullValue()));
     }
 
     private void assertCommonFields(User user) {
@@ -222,5 +241,13 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
                 .roles(ROLES)
                 .notificationsEnabled(NOTIFICATIONS_ENABLED)
                 .email(EMAIL);
+    }
+
+    private Item createItemWithCommonValues() {
+        return new Item()
+                .withPrimaryKey(User.ID_PROPERTY, ID)
+                .withString(User.EMAIL_PROPERTY, EMAIL)
+                .withString(User.USERNAME_PROPERTY, USERNAME)
+                .withBoolean(User.NOTIFICATIONS_PROPERTY, NOTIFICATIONS_ENABLED);
     }
 }

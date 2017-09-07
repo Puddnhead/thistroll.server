@@ -5,10 +5,14 @@ import com.google.common.cache.CacheBuilder;
 import com.thistroll.domain.Session;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.server.RequestValues;
 import com.thistroll.service.client.SessionService;
 import com.thistroll.service.client.UserService;
+import com.thistroll.service.client.dto.LoginRequest;
+import com.thistroll.service.exceptions.InvalidCredentialsException;
 import com.thistroll.service.exceptions.SessionNotFoundException;
 import com.thistroll.service.exceptions.UserNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -24,9 +28,34 @@ public class SessionServiceImpl implements SessionService {
 
     private long sessionExpirationInMillis;
 
-    private Cache<String, Session> sessionCache = null;
+    private static Cache<String, Session> sessionCache = null;
 
     private UserService userService;
+
+    @Override
+    public Session login(LoginRequest loginRequest) throws InvalidCredentialsException {
+        User user = userService.getUserWithCredentials(loginRequest.getUsername(), loginRequest.getPassword());
+        if (user == null) {
+            throw new InvalidCredentialsException("The username or the password was incorrect");
+        }
+        return createSessionForUser(user);
+    }
+
+    @Override
+    public Outcome logout() {
+        Outcome outcome = Outcome.FAILURE;
+        Session session = RequestValues.getSession();
+
+        if (session != null && StringUtils.isNotEmpty(session.getId())) {
+            String sessionId = session.getId();
+            outcome = deleteSession(sessionId);
+        }
+
+        RequestValues.setSession(null);
+        RequestValues.setSessionCookieHeaderInResponse();
+
+        return outcome;
+    }
 
     @Override
     public Session createSessionByUserId(String userId) {
@@ -77,14 +106,17 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Outcome deleteSession(String sessionId) {
+        Outcome outcome;
         Cache cache = getSessionCache();
         Session session = (Session)cache.getIfPresent(sessionId);
-        if (session == null) {
-            throw new SessionNotFoundException("Session with id " + sessionId + " does not exist or is expired");
+        if (session != null) {
+            cache.invalidate(sessionId);
+            outcome = Outcome.SUCCESS;
+        } else {
+            outcome = Outcome.FAILURE;
         }
 
-        cache.invalidate(sessionId);
-        return Outcome.SUCCESS;
+        return outcome;
     }
 
     /**

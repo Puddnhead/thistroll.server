@@ -51,4 +51,14 @@ public interface UserRepository {
      * @return success if the user was deleted else failure
      */
     Outcome deleteUser(String id);
+
+    /**
+     * Returns a user matching the provided credentials. If the there is no user with a given username and password,
+     * returns null
+     *
+     * @param username the username
+     * @param password the password
+     * @return a user if one exists for the given credentials else null
+     */
+    User getUserWithCredentials(String username, String password);
 }

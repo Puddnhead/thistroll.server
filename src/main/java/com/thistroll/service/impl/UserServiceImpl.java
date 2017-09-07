@@ -12,11 +12,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
+ * Implementation class for {@link UserService}
+ *
  * Created by MVW on 8/26/2017.
  */
 public class UserServiceImpl implements UserService {
 
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     public User createUser(CreateUserRequest createUserRequest) {
@@ -49,6 +51,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return user;
+    }
+
+    @Override
+    public User getUserWithCredentials(String username, String password) {
+        return userRepository.getUserWithCredentials(username, password);
     }
 
     @Override

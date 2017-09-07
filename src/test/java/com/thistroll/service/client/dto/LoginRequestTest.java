@@ -1,0 +1,20 @@
+package com.thistroll.service.client.dto;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+/**
+ * Unit test for {@link LoginRequest}
+ *
+ * Created by MVW on 9/6/2017.
+ */
+public class LoginRequestTest {
+
+    @Test
+    public void testEquals() throws Exception {
+        EqualsVerifier.forClass(LoginRequest.class);
+    }
+
+}

@@ -37,6 +37,16 @@ public interface UserService {
     User getUserByUsername(String username);
 
     /**
+     * Find a user with a given username and password. Returns null if a user cannot be found or the password is
+     * incorrect
+     *
+     * @param username the username
+     * @param password the password
+     * @return a user if the credentials are valid else null
+     */
+    User getUserWithCredentials(String username, String password);
+
+    /**
      * Update the following fields of a user:
      *      firstName
      *      lastName

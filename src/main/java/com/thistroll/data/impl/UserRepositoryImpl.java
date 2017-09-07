@@ -50,7 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .withString(User.ROLES_PROPERTY, UserMapper.serializeRoles(createdUser.getRoles()))
                 .withString(User.EMAIL_PROPERTY, createdUser.getEmail())
                 .withBoolean(User.NOTIFICATIONS_PROPERTY, createdUser.isNotificationsEnabled())
-                .withString(User.PASSWORD_PROPERTY, DigestUtils.sha256Hex(password)));
+                .withString(User.PASSWORD_PROPERTY, hashPassword(password)));
 
         return createdUser;
     }
@@ -68,17 +68,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserByUsername(String username) {
-        Table table = getUserTable();
-        Index index = table.getIndex(User.USERNAME_INDEX);
-        QuerySpec spec = new QuerySpec()
-                .withHashKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE)
-                .withRangeKeyCondition(new RangeKeyCondition(User.USERNAME_PROPERTY).eq(username));
-        ItemCollection<QueryOutcome> items = index.query(spec);
-        if (!items.iterator().hasNext()) {
+        Item item = getUserItemByUsername(username);
+        if (item == null) {
             return null;
         }
-
-        Item item = items.iterator().next();
         return UserMapper.mapItemToUser(item);
     }
 
@@ -120,6 +113,35 @@ public class UserRepositoryImpl implements UserRepository {
         return Outcome.SUCCESS;
     }
 
+    @Override
+    public User getUserWithCredentials(String username, String password) {
+        Item item = getUserItemByUsername(username);
+        if (item != null) {
+            String hashedPassword = item.getString(User.PASSWORD_PROPERTY);
+            // If there is a user with the given username and their password matches the provided password
+            if (StringUtils.isNotEmpty(hashedPassword) && hashedPassword.equals(hashPassword(password))) {
+                return UserMapper.mapItemToUser(item);
+            }
+        }
+
+        // Else return null
+        return null;
+    }
+
+    private Item getUserItemByUsername(String username) {
+        Table table = getUserTable();
+        Index index = table.getIndex(User.USERNAME_INDEX);
+        QuerySpec spec = new QuerySpec()
+                .withHashKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE)
+                .withRangeKeyCondition(new RangeKeyCondition(User.USERNAME_PROPERTY).eq(username));
+        ItemCollection<QueryOutcome> items = index.query(spec);
+        if (!items.iterator().hasNext()) {
+            return null;
+        }
+
+        return items.iterator().next();
+    }
+
     private User createUserWithGeneratedIdAndDates(User user) {
         DateTime now = new DateTime();
 
@@ -139,6 +161,10 @@ public class UserRepositoryImpl implements UserRepository {
     private Table getUserTable() {
         DynamoDB dynamoDB = connectionProvider.getDynamoDB();
         return dynamoDB.getTable(TABLE_NAME);
+    }
+
+    static String hashPassword(String password) {
+        return DigestUtils.sha256Hex(password);
     }
 
     @Required

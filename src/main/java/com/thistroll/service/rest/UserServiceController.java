@@ -6,6 +6,7 @@ import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.CreateUserRequest;
 import com.thistroll.service.client.dto.UpdateUserRequest;
 import com.thistroll.service.exceptions.DeleteFailedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -55,6 +56,11 @@ public class UserServiceController implements UserService {
         }
 
         return outcome;
+    }
+
+    @Override
+    public User getUserWithCredentials(String username, String password) {
+        throw new NotImplementedException("Unimplemented");
     }
 
     @Required
