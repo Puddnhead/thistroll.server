@@ -1,6 +1,7 @@
 package com.thistroll.data.api;
 
 import com.thistroll.domain.Blog;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
 
 import java.util.List;
@@ -49,9 +50,9 @@ public interface BlogRepository {
      * Deletes the blog with the provided id
      *
      * @param id blog id
-     * @throws com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException if no blog with the given id exists
+     * @returns success if the blog could be deleted or failure if the blog cannot be located
      */
-    void deleteBlog(String id);
+    Outcome deleteBlog(String id);
 
     /**
      * Fetches id, location, title, and createdOn for all blogs, sorted with most recent first and oldest last

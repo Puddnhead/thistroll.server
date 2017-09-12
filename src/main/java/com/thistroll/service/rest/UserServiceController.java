@@ -47,7 +47,7 @@ public class UserServiceController implements UserService {
     }
 
     @RequestMapping(value="/{userId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Override
     public @ResponseBody Outcome deleteUser(@PathVariable String userId) {
         Outcome outcome = userService.deleteUser(userId);

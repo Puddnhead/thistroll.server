@@ -1,9 +1,11 @@
 package com.thistroll.service.rest;
 
 import com.thistroll.domain.Blog;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.BlogService;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +49,13 @@ public class BlogServiceController implements BlogService {
     @Override
     public @ResponseBody List<Blog> getAllBlogs() {
         return blogService.getAllBlogs();
+    }
+
+    @RequestMapping(value = "/{blogId}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Override
+    public @ResponseBody Outcome deleteBlog(@PathVariable String blogId) {
+        return blogService.deleteBlog(blogId);
     }
 
     @Required

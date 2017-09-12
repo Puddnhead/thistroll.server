@@ -8,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -98,13 +99,18 @@ public class BlogRepositoryImpl implements BlogRepository {
     }
 
     @Override
-    public void deleteBlog(String id) {
+    public Outcome deleteBlog(String id) {
         Table table = getBlogTable();
 
         DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
-                .withPrimaryKey(new PrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, id));
+                .withPrimaryKey(new PrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, id))
+                .withReturnValues(ReturnValue.ALL_OLD);
 
-        table.deleteItem(deleteItemSpec);
+        DeleteItemOutcome outcome = table.deleteItem(deleteItemSpec);
+        if (outcome.getDeleteItemResult().getAttributes() == null) {
+            return Outcome.FAILURE;
+        }
+        return Outcome.SUCCESS;
     }
 
     @Override

@@ -101,7 +101,7 @@ public class UserServiceControllerTest extends ControllerTestBase {
         when(userRepository.deleteUser(anyString())).thenReturn(Outcome.SUCCESS);
 
         mockMvc.perform(delete("/user/someId"))
-                .andExpect(status().isAccepted());
+                .andExpect(status().isNoContent());
     }
 
     private User createUser() {

@@ -2,6 +2,7 @@ package com.thistroll.service.impl;
 
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.BlogService;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
 import com.thistroll.service.exceptions.BlogNotFoundException;
@@ -56,6 +57,12 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public List<Blog> getAllBlogs() {
         return blogRepository.getAllBlogs();
+    }
+
+    @PreAuthorize("isAdmin()")
+    @Override
+    public Outcome deleteBlog(String blogId) {
+        return blogRepository.deleteBlog(blogId);
     }
 
     @Required

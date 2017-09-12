@@ -18,9 +18,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -114,5 +112,12 @@ public class BlogServiceControllerTest extends ControllerTestBase {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializedUpdateRequest))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testDeleteBlog() throws Exception {
+        mockMvc.perform(delete("/blog/bogusid")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 }
