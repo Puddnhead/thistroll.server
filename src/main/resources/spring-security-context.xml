@@ -19,7 +19,8 @@
 
     <security:http authentication-manager-ref="thistroll.security.authenticationManager"
         entry-point-ref="thistroll.security.forbiddenEntryPoint"
-        use-expressions="true" >
+        use-expressions="true"
+        create-session="stateless" >
         <security:csrf disabled="true" />
     </security:http>
 
