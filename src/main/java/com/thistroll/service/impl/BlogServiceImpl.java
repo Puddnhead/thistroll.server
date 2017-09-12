@@ -6,6 +6,7 @@ import com.thistroll.service.client.BlogService;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
 import com.thistroll.service.exceptions.BlogNotFoundException;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class BlogServiceImpl implements BlogService {
         return blog;
     }
 
+    @PreAuthorize("isAdmin()")
     @Override
     public Blog createBlog(Blog blog) {
         return blogRepository.create(blog);
@@ -40,6 +42,7 @@ public class BlogServiceImpl implements BlogService {
         return blog;
     }
 
+    @PreAuthorize("isAdmin()")
     @Override
     public Blog updateBlog(UpdateBlogRequest request) {
         Blog oldBlog = getBlog(request.getBlogId());

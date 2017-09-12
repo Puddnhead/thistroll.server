@@ -1,15 +1,18 @@
 package com.thistroll.domain;
 
 import com.thistroll.domain.enums.UserRole;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
+ * A user object
+ *
  * Created by MVW on 8/22/2017.
  */
-public class User extends AbstractPersistentObject {
+public class User extends AbstractPersistentObject implements UserDetails {
 
     /**
      * No partitions for now, because I can't think of any sensible way of doing it
@@ -60,6 +63,43 @@ public class User extends AbstractPersistentObject {
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.notificationsEnabled = builder.notificationsEnabled;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+
+        if (roles != null) {
+            roles.stream()
+                    .forEach(role -> grantedAuthorities.add(new SimpleGrantedAuthority(role.name())));
+        }
+
+        return grantedAuthorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public String getUsername() {

@@ -10,6 +10,7 @@ import com.thistroll.service.exceptions.UserNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * Implementation class for {@link UserService}
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
 
+    @PreAuthorize("isAdmin()")
     @Override
     public User createUser(CreateUserRequest createUserRequest) {
         User user = new User.Builder()
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.createUser(user, createUserRequest.getPassword());
     }
 
+    @PreAuthorize("isAdmin()")
     @Override
     public User getUserById(String id) {
         User user = userRepository.getUserById(id);
@@ -43,6 +46,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @PreAuthorize("isAdmin()")
     @Override
     public User getUserByUsername(String username) {
         User user = userRepository.getUserByUsername(username);
@@ -58,6 +62,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.getUserWithCredentials(username, password);
     }
 
+    @PreAuthorize("isAdmin()")
     @Override
     public User updateUser(UpdateUserRequest request) {
         User previousState = null;
@@ -95,6 +100,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.updateUser(builder.build());
     }
 
+    @PreAuthorize("isAdmin()")
     @Override
     public Outcome deleteUser(String userId) {
         return userRepository.deleteUser(userId);

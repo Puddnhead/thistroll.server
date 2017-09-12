@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <beans xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
 
 
     http://www.springframework.org/schema/mvc
@@ -25,6 +25,7 @@
     </bean>
 
     <import resource="classpath*:thistroll-rest-beans.xml" />
+    <import resource="classpath*:spring-security-context.xml" />
 
     <!-- Servlet Filters -->
     <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter" />
