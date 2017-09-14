@@ -146,39 +146,28 @@ public class BlogRepositoryImplTest extends AbstractRepositoryTest {
 
     @Test
     public void testCreateUpdatesCache() throws Exception {
-        fetchFiveBlogsToCache();
-
-        // create should add a 6th item to the front of the cache
         Blog createdBlog = new Blog.Builder().title(TITLE).text(TEXT).build();
-        repository.create(createdBlog);
+        Blog result = repository.create(createdBlog);
+        assertThat(result.getTitle(), is(TITLE));
 
-        List<Blog> blogs = repository.getPageableBlogList(0, 10);
-        assertThat(blogs.size(), is(6));
-
-        createdBlog = blogs.get(0);
-        assertThat(createdBlog.getTitle(), is(TITLE));
-        assertThat(repository.findById(createdBlog.getId()), is(createdBlog));
+        Blog fetched = repository.findById(result.getId());
+        assertThat(fetched, is(result));
     }
 
     @Test
     public void testUpdateUpdatesCache() throws Exception {
-        fetchFiveBlogsToCache();
-
         Item item = new Item()
-                .withString(Blog.ID_PROPERTY, "3")
-                .withString(Blog.TITLE_PROPERTY, "3")
+                .withString(Blog.ID_PROPERTY, ID)
+                .withString(Blog.TITLE_PROPERTY, TITLE)
                 .withString(Blog.LOCATION_PROPERTY, LOCATION);
         when(mockTable.getItem(any(GetItemSpec.class))).thenReturn(item);
-        UpdateBlogRequest updateBlogRequest = new UpdateBlogRequest.Builder().blogId("3").location(LOCATION).build();
+        UpdateBlogRequest updateBlogRequest = new UpdateBlogRequest.Builder().blogId(ID).location(LOCATION).build();
         repository.update(updateBlogRequest);
 
-        List<Blog> blogs = repository.getPageableBlogList(0, 5);
-        assertThat(blogs.size(), is(5));
-
-        Blog updatedBlog = blogs.get(2);
-        assertThat(updatedBlog.getId(), is("3"));
+        Blog updatedBlog = repository.findById(ID);
+        assertThat(updatedBlog.getId(), is(ID));
         assertThat(updatedBlog.getLocation(), is(LOCATION));
-        assertThat(repository.findById("3"), is(updatedBlog));
+        assertThat(repository.findById(ID), is(updatedBlog));
     }
 
     @Test
