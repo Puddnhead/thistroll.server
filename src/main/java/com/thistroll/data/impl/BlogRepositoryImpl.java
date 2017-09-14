@@ -242,7 +242,6 @@ public class BlogRepositoryImpl implements BlogRepository {
 
             List<Blog> blogs = BlogMapper.mapQueryResultToBlogs(queryResult);
             listCache.addAll(blogs);
-            blogs.forEach(blog -> itemCache.put(blog.getId(), blog));
         }
     }
 

@@ -5,14 +5,16 @@ import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
-import com.amazonaws.services.dynamodbv2.model.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.thistroll.data.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -21,9 +23,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link BlogRepositoryImpl}. Not stictly speaking a unit test, as this tests the functionality of
@@ -190,7 +190,15 @@ public class BlogRepositoryImplTest extends AbstractRepositoryTest {
     @Test
     public void testGetCurrentThenGetPage() throws Exception {
         fetchFiveBlogsToCache();
-        repository.getMostRecentBlog();
+
+        QueryResult queryResult = mock(QueryResult.class);
+        when(queryResult.getItems()).thenReturn(Collections.singletonList(createQueryItem(19)));
+        when(queryResult.getCount()).thenReturn(1);
+        when(amazonDynamoDB.query(any(QueryRequest.class))).thenReturn(queryResult);
+
+        Blog currentBlog = repository.getMostRecentBlog();
+        assertThat(currentBlog.getId(), is("19"));
+
         List<Blog> blogs = repository.getPageableBlogList(0, 10);
         assertThat(blogs.size(), is(5));
     }
