@@ -5,8 +5,10 @@ import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
-import com.amazonaws.services.dynamodbv2.model.*;
-import com.google.common.collect.Lists;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.QueryResult;
+import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.data.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
@@ -30,9 +32,15 @@ public class BlogRepositoryImpl implements BlogRepository {
 
     private static final String TABLE_NAME = "blog";
 
-    private List<Blog> blogListCache = new ArrayList<>();
+    /**
+     * Caches responses to the pageable get blogs requests - does not contain blog text
+     */
+    private List<Blog> listCache = new ArrayList<>();
 
-    private Map<String, Blog> idToBlogMapCache = new HashMap<>();
+    /**
+     * Caches responses to the get blog requests - contains text
+     */
+    private Map<String, Blog> itemCache = new HashMap<>();
 
     private Map<String, AttributeValue> lastEvaluatedKey = null;
 
@@ -59,9 +67,9 @@ public class BlogRepositoryImpl implements BlogRepository {
         // persist item
         table.putItem(item);
 
-        // add the blog to the beginning of the cache
-        blogListCache.add(0, createdBlog);
-        idToBlogMapCache.put(createdBlog.getId(), createdBlog);
+        // clear blog list cache and add new blog to item cache
+        clearListCache();
+        itemCache.put(createdBlog.getId(), createdBlog);
         return createdBlog;
     }
 
@@ -86,20 +94,10 @@ public class BlogRepositoryImpl implements BlogRepository {
 
         Blog updatedBlog = fetchFromDBById(request.getBlogId());
 
-        // update cache if the blog is already there
-        if (idToBlogMapCache.containsKey(updatedBlog.getId())) {
-            idToBlogMapCache.put(updatedBlog.getId(), updatedBlog);
-
-            int foundIndex = -1;
-            for (int index = 0; index < blogListCache.size(); index++) {
-                if (blogListCache.get(index).getId().equals(updatedBlog.getId())) {
-                    foundIndex = index;
-                    break;
-                }
-            }
-            if (foundIndex != -1) {
-                blogListCache.set(foundIndex, updatedBlog);
-            }
+        // clear list cache and update cache if the blog is already there
+        clearListCache();
+        if (itemCache.containsKey(updatedBlog.getId())) {
+            itemCache.put(updatedBlog.getId(), updatedBlog);
         }
 
         return updatedBlog;
@@ -107,14 +105,17 @@ public class BlogRepositoryImpl implements BlogRepository {
 
     @Override
     public Blog findById(String id) {
-        Blog blog = null;
+        Blog blog;
 
         // if already cached, no need to make a DB call
-        if (idToBlogMapCache.containsKey(id)) {
-            blog = idToBlogMapCache.get(id);
+        if (itemCache.containsKey(id)) {
+            blog = itemCache.get(id);
         } else {
             // else fetch it from DB
             blog = fetchFromDBById(id);
+            if (blog != null) {
+                itemCache.put(id, blog);
+            }
         }
 
         return blog;
@@ -132,9 +133,12 @@ public class BlogRepositoryImpl implements BlogRepository {
 
     @Override
     public Blog getMostRecentBlog() {
-        // if in cache, don't make a DB call
-        if (blogListCache.size() > 0) {
-            return blogListCache.get(0);
+        // if in caches, don't make a DB call
+        if (listCache.size() > 0) {
+            Blog mostRecentSansText = listCache.get(0);
+            if (itemCache.containsKey(mostRecentSansText.getId())) {
+                return itemCache.get(mostRecentSansText.getId());
+            }
         }
 
         // else fetch from DB
@@ -157,8 +161,7 @@ public class BlogRepositoryImpl implements BlogRepository {
         Blog blog = blogs.get(0);
 
         // add to cache
-        blogListCache.add(0, blog);
-        idToBlogMapCache.put(blog.getId(), blog);
+        itemCache.put(blog.getId(), blog);
 
         return blog;
     }
@@ -176,21 +179,23 @@ public class BlogRepositoryImpl implements BlogRepository {
             return Outcome.FAILURE;
         }
 
-        // delete from cache if applicable
-        if (idToBlogMapCache.containsKey(id)) {
-            idToBlogMapCache.remove(id);
+        // delete from item cache if applicable
+        if (itemCache.containsKey(id)) {
+            itemCache.remove(id);
+        }
 
-            int foundIndex = -1;
-            for (int i = 0; i < blogListCache.size(); i++) {
-                if (blogListCache.get(i).getId().equals(id)) {
-                    foundIndex = i;
-                    break;
-                }
-            }
-            if (foundIndex != -1) {
-                blogListCache.remove(foundIndex);
+        // delete from list cache if applicable
+        int foundIndex = -1;
+        for (int i = 0; i < listCache.size(); i++) {
+            if (listCache.get(i).getId().equals(id)) {
+                foundIndex = i;
+                break;
             }
         }
+        if (foundIndex != -1) {
+            listCache.remove(foundIndex);
+        }
+
         return Outcome.SUCCESS;
     }
 
@@ -199,17 +204,17 @@ public class BlogRepositoryImpl implements BlogRepository {
         int start = pageNumber * pageSize,
                 end = start + pageSize;
 
-        while (!allBlogsFetched && blogListCache.size() < end) {
+        while (!allBlogsFetched && listCache.size() < end) {
             fetchNextBlogPage();
         }
 
-        if (blogListCache.size() <= start) {
+        if (listCache.size() <= start) {
             return Collections.emptyList();
         }
 
-        end = blogListCache.size() >= end ? end : blogListCache.size();
+        end = listCache.size() >= end ? end : listCache.size();
 
-        return blogListCache.subList(start, end);
+        return listCache.subList(start, end);
     }
 
     /**
@@ -236,8 +241,8 @@ public class BlogRepositoryImpl implements BlogRepository {
             }
 
             List<Blog> blogs = BlogMapper.mapQueryResultToBlogs(queryResult);
-            blogListCache.addAll(blogs);
-            blogs.forEach(blog -> idToBlogMapCache.put(blog.getId(), blog));
+            listCache.addAll(blogs);
+            blogs.forEach(blog -> itemCache.put(blog.getId(), blog));
         }
     }
 
@@ -255,6 +260,14 @@ public class BlogRepositoryImpl implements BlogRepository {
         if (StringUtils.isEmpty(blog.getText())) {
             throw new ValidationException("Cannot create blog without text");
         }
+    }
+
+    /**
+     * Utility function to clear the list cache and reset the all blogs fetched flag
+     */
+    private void clearListCache() {
+        listCache.clear();
+        allBlogsFetched = false;
     }
 
     /**

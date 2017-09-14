@@ -198,6 +198,14 @@ public class BlogRepositoryImplTest extends AbstractRepositoryTest {
         assertThat(repository.findById("5"), is(nullValue()));
     }
 
+    @Test
+    public void testGetCurrentThenGetPage() throws Exception {
+        fetchFiveBlogsToCache();
+        repository.getMostRecentBlog();
+        List<Blog> blogs = repository.getPageableBlogList(0, 10);
+        assertThat(blogs.size(), is(5));
+    }
+
     // return a map of string to attribute value with the provided id as id and title
     private Map<String, AttributeValue> createQueryItem(int id) {
         Map<String, AttributeValue> blog = new HashMap<>();
