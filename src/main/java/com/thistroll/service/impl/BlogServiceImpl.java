@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by micha on 7/11/2017.
@@ -18,6 +19,8 @@ import java.util.List;
 public class BlogServiceImpl implements BlogService {
 
     private BlogRepository blogRepository;
+
+    private int defaultPageSize;
 
     @Override
     public Blog getMostRecentBlog() {
@@ -55,8 +58,8 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Blog> getAllBlogs() {
-        return blogRepository.getAllBlogs();
+    public List<Blog> getBlogs(Optional<Integer> pageNumber, Optional<Integer> pageSize) {
+        return blogRepository.getPageableBlogList(pageNumber.orElse(0), pageSize.orElse(defaultPageSize));
     }
 
     @PreAuthorize("isAdmin()")
@@ -68,5 +71,10 @@ public class BlogServiceImpl implements BlogService {
     @Required
     public void setBlogRepository(BlogRepository blogRepository) {
         this.blogRepository = blogRepository;
+    }
+
+    @Required
+    public void setDefaultPageSize(int defaultPageSize) {
+        this.defaultPageSize = defaultPageSize;
     }
 }

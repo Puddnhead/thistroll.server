@@ -9,7 +9,8 @@
     <import resource="thistroll-data-beans.xml" />
 
     <bean id="com.thistroll.service.impl.blogservice" class="com.thistroll.service.impl.BlogServiceImpl"
-        p:blogRepository-ref="com.thistroll.data.blogrepository" />
+        p:blogRepository-ref="com.thistroll.data.blogrepository"
+        p:defaultPageSize="${blogs.defaultPageSize}"/>
 
     <bean id="com.thistroll.service.impl.userservice" class="com.thistroll.service.impl.UserServiceImpl"
         p:userRepository-ref="com.thistroll.data.userrepository" />

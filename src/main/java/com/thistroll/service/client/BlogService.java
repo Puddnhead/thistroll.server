@@ -5,6 +5,7 @@ import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by MVW on 7/11/2017.
@@ -48,11 +49,14 @@ public interface BlogService {
     Blog updateBlog(UpdateBlogRequest request);
 
     /**
-     * Return all blogs ordered from most recent to oldest, including only id, title, and createdOn
+     * Return a page of blogs ordered from most recent to oldest, including only id, title, and createdOn.
+     * pageNumber and pageSize are optional parameters
      *
+     * @param pageNumber optional ZERO-BASED page number. default is 0
+     * @param pageSize optional page size. default is a configurable property
      * @return all blogs ordered from most recent to oldest, including only id, title, and createdOn
      */
-    List<Blog> getAllBlogs();
+    List<Blog> getBlogs(Optional<Integer> pageNumber, Optional<Integer> pageSize);
 
     /**
      * Delete a blog

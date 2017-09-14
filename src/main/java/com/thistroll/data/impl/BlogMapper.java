@@ -62,32 +62,6 @@ public class BlogMapper {
     }
 
     /**
-     * Map a scan result to an ordered list of blogs
-     *
-     * @param scanResult the scan result
-     * @return a list of blogs
-     */
-    static List<Blog> mapScanResultToBlogs(ScanResult scanResult) {
-        List<Blog> blogs = new ArrayList<>();
-
-        for (Map<String, AttributeValue> item: scanResult.getItems()) {
-            Blog.Builder builder = new Blog.Builder()
-                    .id(item.get(Blog.ID_PROPERTY).getS())
-                    .title(item.get(Blog.TITLE_PROPERTY).getS());
-            if (item.get(Blog.CREATED_ON_PROPERTY) != null) {
-                builder.createdOn(new DateTime(Long.parseLong(item.get(Blog.CREATED_ON_PROPERTY).getN())));
-            }
-            if (item.get(Blog.LOCATION_PROPERTY) != null) {
-                builder.location(item.get(Blog.LOCATION_PROPERTY).getS());
-            }
-
-            blogs.add(0, builder.build());
-        }
-
-        return blogs;
-    }
-
-    /**
      * Maps an Item to Blog, handling cases for null dates
      *
      * @return the mapped blog or null if Item is null

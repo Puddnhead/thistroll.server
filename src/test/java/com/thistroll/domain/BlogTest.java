@@ -14,11 +14,5 @@ public class BlogTest {
     public void testEquals() throws Exception {
         EqualsVerifier.forClass(Blog.class).withRedefinedSuperclass().verify();
     }
-
-    @Test(expected = NullPointerException.class)
-    public void testValidation() throws Exception {
-        new Blog.Builder()
-                .text("someText")
-                .build();
-    }
+    
 }

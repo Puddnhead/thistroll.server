@@ -118,12 +118,7 @@ public class Blog extends AbstractPersistentObject {
             return this;
         }
 
-        private void validate() {
-            notEmpty(title);
-        }
-
         public Blog build() {
-            validate();
             return new Blog(this);
         }
     }

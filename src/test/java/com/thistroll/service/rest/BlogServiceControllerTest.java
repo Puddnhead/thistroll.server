@@ -9,12 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
@@ -93,9 +94,9 @@ public class BlogServiceControllerTest extends ControllerTestBase {
     }
 
     @Test
-    public void testGetAllBlogs() throws Exception {
-        when(blogRepository.getAllBlogs()).thenReturn(Arrays.asList(MOCK_BLOG, MOCK_BLOG));
-        mockMvc.perform(get("/blog/all"))
+    public void testGetBlogs() throws Exception {
+        when(blogRepository.getPageableBlogList(anyInt(), anyInt())).thenReturn(Collections.singletonList(MOCK_BLOG));
+        mockMvc.perform(get("/blog/page?pageNumber=4&pageSize=10"))
                 .andExpect(status().isOk());
     }
 

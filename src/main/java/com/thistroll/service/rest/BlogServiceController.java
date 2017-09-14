@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by MVW on 7/11/2017.
@@ -45,10 +46,11 @@ public class BlogServiceController implements BlogService {
         return blogService.updateBlog(request);
     }
 
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    // somewhat sloppy but ends up being /blogs
+    @RequestMapping(value = "/page", method = RequestMethod.GET)
     @Override
-    public @ResponseBody List<Blog> getAllBlogs() {
-        return blogService.getAllBlogs();
+    public @ResponseBody List<Blog> getBlogs(@RequestParam Optional<Integer> pageNumber, @RequestParam Optional<Integer> pageSize) {
+        return blogService.getBlogs(pageNumber, pageSize);
     }
 
     @RequestMapping(value = "/{blogId}", method = RequestMethod.DELETE)

@@ -4,14 +4,22 @@ import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
 import com.thistroll.service.exceptions.BlogNotFoundException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -31,7 +39,19 @@ public class BlogServiceImplTest {
     @Mock
     private Blog mockBlog;
 
+    @Captor
+    private ArgumentCaptor<Integer> pageNumberCaptor;
+
+    @Captor
+    private ArgumentCaptor<Integer> pageSizeCaptor;
+
     private static final String BLOG_ID = "webelieve";
+    private static final int PAGE_SIZE = 8;
+
+    @Before
+    public void setup() {
+        blogService.setDefaultPageSize(PAGE_SIZE);
+    }
 
     @Test
     public void testGetMostRecentBlog() throws Exception {
@@ -74,5 +94,27 @@ public class BlogServiceImplTest {
                 .blogId(BLOG_ID)
                 .build();
         blogService.updateBlog(request);
+    }
+
+    @Test
+    public void testGetBlogsDefaultPageAndSize() throws Exception {
+        when(blogRepository.getPageableBlogList(pageNumberCaptor.capture(), pageSizeCaptor.capture()))
+                .thenReturn(Collections.singletonList(mockBlog));
+        List<Blog> blogs = blogService.getBlogs(Optional.empty(), Optional.empty());
+        assertThat(blogs.size(), is(1));
+        assertThat(blogs.get(0), is(mockBlog));
+        assertThat(pageNumberCaptor.getValue(), is(0));
+        assertThat(pageSizeCaptor.getValue(), is(PAGE_SIZE));
+    }
+
+    @Test
+    public void testGetBlogsProvidedPageAndSize() throws Exception {
+        when(blogRepository.getPageableBlogList(pageNumberCaptor.capture(), pageSizeCaptor.capture()))
+                .thenReturn(Collections.singletonList(mockBlog));
+        List<Blog> blogs = blogService.getBlogs(Optional.of(2), Optional.of(10));
+        assertThat(blogs.size(), is(1));
+        assertThat(blogs.get(0), is(mockBlog));
+        assertThat(pageNumberCaptor.getValue(), is(2));
+        assertThat(pageSizeCaptor.getValue(), is(10));
     }
 }

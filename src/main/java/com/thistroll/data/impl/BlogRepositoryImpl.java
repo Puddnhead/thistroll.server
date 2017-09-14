@@ -6,21 +6,22 @@ import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.google.common.collect.Lists;
 import com.thistroll.data.api.BlogRepository;
+import com.thistroll.data.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.UpdateBlogRequest;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
+ * Repository to fetch blogs from dynamoDB. Caches results in memory and updates in memory as well if the items have
+ * been fetched to the cache.
+ *
  * Created by MVW on 7/13/2017.
  */
 public class BlogRepositoryImpl implements BlogRepository {
@@ -29,18 +30,38 @@ public class BlogRepositoryImpl implements BlogRepository {
 
     private static final String TABLE_NAME = "blog";
 
+    private List<Blog> blogListCache = new ArrayList<>();
+
+    private Map<String, Blog> idToBlogMapCache = new HashMap<>();
+
+    private Map<String, AttributeValue> lastEvaluatedKey = null;
+
+    private boolean allBlogsFetched = false;
+
     @Override
     public Blog create(Blog blog) {
+        validateBlog(blog);
         Blog createdBlog = createBlogWithGeneratedIdAndDates(blog);
         Table table = getBlogTable();
 
-        table.putItem(new Item().withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, createdBlog.getId())
+        // Required Fields
+        Item item = new Item().withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, createdBlog.getId())
                         .withString(Blog.TITLE_PROPERTY, createdBlog.getTitle())
-                        .withString(Blog.LOCATION_PROPERTY, createdBlog.getLocation())
                         .withString(Blog.TEXT_PROPERTY, createdBlog.getText())
                         .withLong(Blog.CREATED_ON_PROPERTY, createdBlog.getCreatedOn().getMillis())
-                        .withLong(Blog.LAST_UPDATED_ON_PROPERTY, createdBlog.getLastUpdatedOn().getMillis()));
+                        .withLong(Blog.LAST_UPDATED_ON_PROPERTY, createdBlog.getLastUpdatedOn().getMillis());
 
+        // Optional Fields
+        if (StringUtils.isNotEmpty(createdBlog.getLocation())) {
+            item = item.withString(Blog.LOCATION_PROPERTY, createdBlog.getLocation());
+        }
+
+        // persist item
+        table.putItem(item);
+
+        // add the blog to the beginning of the cache
+        blogListCache.add(0, createdBlog);
+        idToBlogMapCache.put(createdBlog.getId(), createdBlog);
         return createdBlog;
     }
 
@@ -63,11 +84,43 @@ public class BlogRepositoryImpl implements BlogRepository {
                 .withAttributeUpdate(attributeUpdates);
         table.updateItem(updateItemSpec);
 
-        return findById(request.getBlogId());
+        Blog updatedBlog = fetchFromDBById(request.getBlogId());
+
+        // update cache if the blog is already there
+        if (idToBlogMapCache.containsKey(updatedBlog.getId())) {
+            idToBlogMapCache.put(updatedBlog.getId(), updatedBlog);
+
+            int foundIndex = -1;
+            for (int index = 0; index < blogListCache.size(); index++) {
+                if (blogListCache.get(index).getId().equals(updatedBlog.getId())) {
+                    foundIndex = index;
+                    break;
+                }
+            }
+            if (foundIndex != -1) {
+                blogListCache.set(foundIndex, updatedBlog);
+            }
+        }
+
+        return updatedBlog;
     }
 
     @Override
     public Blog findById(String id) {
+        Blog blog = null;
+
+        // if already cached, no need to make a DB call
+        if (idToBlogMapCache.containsKey(id)) {
+            blog = idToBlogMapCache.get(id);
+        } else {
+            // else fetch it from DB
+            blog = fetchFromDBById(id);
+        }
+
+        return blog;
+    }
+
+    private Blog fetchFromDBById(String id) {
         Table table = getBlogTable();
 
         GetItemSpec spec = new GetItemSpec().withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE,
@@ -79,6 +132,12 @@ public class BlogRepositoryImpl implements BlogRepository {
 
     @Override
     public Blog getMostRecentBlog() {
+        // if in cache, don't make a DB call
+        if (blogListCache.size() > 0) {
+            return blogListCache.get(0);
+        }
+
+        // else fetch from DB
         AmazonDynamoDB amazonDynamoDB = connectionProvider.getAmazonDynamoDB();
         QueryRequest queryRequest = new QueryRequest()
                 .withTableName(TABLE_NAME)
@@ -95,7 +154,13 @@ public class BlogRepositoryImpl implements BlogRepository {
         }
 
         List<Blog> blogs = BlogMapper.mapQueryResultToBlogs(queryResult);
-        return blogs.get(0);
+        Blog blog = blogs.get(0);
+
+        // add to cache
+        blogListCache.add(0, blog);
+        idToBlogMapCache.put(blog.getId(), blog);
+
+        return blog;
     }
 
     @Override
@@ -110,24 +175,82 @@ public class BlogRepositoryImpl implements BlogRepository {
         if (outcome.getDeleteItemResult().getAttributes() == null) {
             return Outcome.FAILURE;
         }
+
+        // delete from cache if applicable
+        if (idToBlogMapCache.containsKey(id)) {
+            idToBlogMapCache.remove(id);
+
+            int foundIndex = -1;
+            for (int i = 0; i < blogListCache.size(); i++) {
+                if (blogListCache.get(i).getId().equals(id)) {
+                    foundIndex = i;
+                    break;
+                }
+            }
+            if (foundIndex != -1) {
+                blogListCache.remove(foundIndex);
+            }
+        }
         return Outcome.SUCCESS;
     }
 
     @Override
-    public List<Blog> getAllBlogs() {
-        AmazonDynamoDB amazonDynamoDB = connectionProvider.getAmazonDynamoDB();
-        ScanRequest scanRequest = new ScanRequest()
-                .withTableName(TABLE_NAME)
-                .withIndexName(Blog.CREATED_ON_INDEX)
-                .withAttributesToGet(Blog.ID_PROPERTY, Blog.TITLE_PROPERTY, Blog.LOCATION_PROPERTY, Blog.CREATED_ON_PROPERTY);
+    public List<Blog> getPageableBlogList(int pageNumber, int pageSize) {
+        int start = pageNumber * pageSize,
+                end = start + pageSize;
 
-        ScanResult scanResult = amazonDynamoDB.scan(scanRequest);
-        return BlogMapper.mapScanResultToBlogs(scanResult);
+        while (!allBlogsFetched && blogListCache.size() < end) {
+            fetchNextBlogPage();
+        }
+
+        if (blogListCache.size() <= start) {
+            return Collections.emptyList();
+        }
+
+        end = blogListCache.size() >= end ? end : blogListCache.size();
+
+        return blogListCache.subList(start, end);
     }
 
-    @Override
-    public List<Blog> getPageableBlogList(int pageNumber, int pageSize) {
-        throw new NotImplementedException("Not pageable yet");
+    /**
+     * Unless the "allBlogsFetched" flag has been set, fetch the next page of blogs and add it to the local cache
+     */
+    private void fetchNextBlogPage() {
+        if (!allBlogsFetched) {
+            AmazonDynamoDB amazonDynamoDB = connectionProvider.getAmazonDynamoDB();
+            QueryRequest queryRequest = new QueryRequest()
+                    .withTableName(TABLE_NAME)
+                    .withIndexName(Blog.CREATED_ON_INDEX)
+                    .withAttributesToGet(Blog.ID_PROPERTY, Blog.TITLE_PROPERTY, Blog.LOCATION_PROPERTY, Blog.CREATED_ON_PROPERTY)
+                    .withExclusiveStartKey(lastEvaluatedKey)
+                    .withScanIndexForward(false);
+
+            QueryResult queryResult = amazonDynamoDB.query(queryRequest);
+            lastEvaluatedKey = queryResult.getLastEvaluatedKey();
+            if (lastEvaluatedKey == null || lastEvaluatedKey.size() == 0) {
+                allBlogsFetched = true;
+            }
+
+            List<Blog> blogs = BlogMapper.mapQueryResultToBlogs(queryResult);
+            blogListCache.addAll(blogs);
+            blogs.forEach(blog -> idToBlogMapCache.put(blog.getId(), blog));
+        }
+    }
+
+    /**
+     * Checks that the blog has required fields id, title, and text
+     *
+     * @param blog the blog to validate
+     * @throws com.thistroll.data.exceptions.ValidationException if the blog is missing a required field
+     */
+    private void validateBlog(Blog blog) {
+        if (StringUtils.isEmpty(blog.getTitle())) {
+            throw new ValidationException("Cannot create blog without a title");
+        }
+
+        if (StringUtils.isEmpty(blog.getText())) {
+            throw new ValidationException("Cannot create blog without text");
+        }
     }
 
     /**

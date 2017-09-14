@@ -43,7 +43,7 @@ public class BlogRepositoryImplIntegrationTest {
     }
 
     @Test
-    public void testGetMostRecentBlogAndGetAllBlogs() throws Exception {
+    public void testGetMostRecentBlogAndGetBlogs() throws Exception {
         Blog blog1 = createBlogWithTitleAndText("Blog1", "Blog 1 Text");
         blog1 = blogRepository.create(blog1);
         Thread.sleep(2);
@@ -55,8 +55,8 @@ public class BlogRepositoryImplIntegrationTest {
         Blog result = blogRepository.getMostRecentBlog();
         assertThat(result, is(blog2));
 
-        // getAllBlogs() should return the most recent first
-        List<Blog> allBlogs = blogRepository.getAllBlogs();
+        // getBlogs() should return the most recent first
+        List<Blog> allBlogs = blogRepository.getPageableBlogList(0, 2);
         assertThat(allBlogs.get(0).getId(), is(blog2.getId()));
         assertThat(allBlogs.get(1).getId(), is(blog1.getId()));
         assertThat(allBlogs.get(0).getTitle(), is(blog2.getTitle()));
