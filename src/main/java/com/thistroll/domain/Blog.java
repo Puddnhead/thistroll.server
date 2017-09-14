@@ -24,7 +24,7 @@ public class Blog extends AbstractPersistentObject {
      */
     private final String text;
 
-    public static final String LOCATION_PROPERTY = "location";
+    public static final String LOCATION_PROPERTY = "blogLocation";
     public static final String TITLE_PROPERTY = "title";
     public static final String TEXT_PROPERTY = "text";
 

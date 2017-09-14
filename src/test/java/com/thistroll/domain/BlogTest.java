@@ -14,5 +14,5 @@ public class BlogTest {
     public void testEquals() throws Exception {
         EqualsVerifier.forClass(Blog.class).withRedefinedSuperclass().verify();
     }
-    
+
 }

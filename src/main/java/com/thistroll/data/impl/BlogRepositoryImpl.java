@@ -221,10 +221,14 @@ public class BlogRepositoryImpl implements BlogRepository {
             QueryRequest queryRequest = new QueryRequest()
                     .withTableName(TABLE_NAME)
                     .withIndexName(Blog.CREATED_ON_INDEX)
-                    .withAttributesToGet(Blog.ID_PROPERTY, Blog.TITLE_PROPERTY, Blog.LOCATION_PROPERTY, Blog.CREATED_ON_PROPERTY)
+                    .withProjectionExpression(StringUtils.join(Arrays.asList(
+                            Blog.ID_PROPERTY, Blog.TITLE_PROPERTY, Blog.LOCATION_PROPERTY, Blog.CREATED_ON_PROPERTY), ','))
                     .withExclusiveStartKey(lastEvaluatedKey)
-                    .withScanIndexForward(false);
-
+                    .withScanIndexForward(false)
+                    .withKeyConditionExpression("#key = :val")
+                    .withExpressionAttributeNames(Collections.singletonMap("#key", Blog.PARTITION_KEY_NAME))
+                    .withExpressionAttributeValues(Collections.singletonMap(
+                            ":val", new AttributeValue().withS(Blog.PARTITION_KEY_VALUE)));
             QueryResult queryResult = amazonDynamoDB.query(queryRequest);
             lastEvaluatedKey = queryResult.getLastEvaluatedKey();
             if (lastEvaluatedKey == null || lastEvaluatedKey.size() == 0) {
