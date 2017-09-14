@@ -1,5 +1,6 @@
 package com.thistroll.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thistroll.domain.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -65,6 +66,7 @@ public class User extends AbstractPersistentObject implements UserDetails {
         this.notificationsEnabled = builder.notificationsEnabled;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
@@ -77,26 +79,31 @@ public class User extends AbstractPersistentObject implements UserDetails {
         return grantedAuthorities;
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return null;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;

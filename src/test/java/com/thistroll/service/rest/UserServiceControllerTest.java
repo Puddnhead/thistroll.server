@@ -4,6 +4,7 @@ import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,26 @@ public class UserServiceControllerTest extends ControllerTestBase {
 
         String serializedCreateUserRequest = objectMapper.writeValueAsString(createUserRequest);
         MvcResult mvcResult = mockMvc.perform(post("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializedCreateUserRequest))
+                .andExpect(status().isOk())
+                .andReturn();
+        String responseBody = mvcResult.getResponse().getContentAsString();
+        assertThat(responseBody.contains(GENERATED_ID), is(true));
+    }
+
+    @Test
+    public void testRegisterUser() throws Exception {
+        when(userRepository.createUser(any(User.class), anyString())).thenReturn(createUser());
+
+        RegisterUserRequest request = new RegisterUserRequest.Builder()
+                .username(USERNAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        String serializedCreateUserRequest = objectMapper.writeValueAsString(request);
+        MvcResult mvcResult = mockMvc.perform(post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializedCreateUserRequest))
                 .andExpect(status().isOk())

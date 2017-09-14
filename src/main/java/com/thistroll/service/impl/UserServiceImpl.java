@@ -3,14 +3,18 @@ package com.thistroll.service.impl;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.domain.enums.UserRole;
 import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 import com.thistroll.service.exceptions.UserNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.Collections;
 
 /**
  * Implementation class for {@link UserService}
@@ -20,6 +24,19 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+
+    @Override
+    public User registerUser(RegisterUserRequest registerUserRequest) {
+        User user = new User.Builder()
+                .roles(Collections.singleton(UserRole.USER))
+                .email(registerUserRequest.getEmail())
+                .firstName(registerUserRequest.getFirstName())
+                .lastName(registerUserRequest.getLastName())
+                .notificationsEnabled(registerUserRequest.isNotificationsEnabled())
+                .username(registerUserRequest.getUsername())
+                .build();
+        return userRepository.createUser(user, registerUserRequest.getPassword());
+    }
 
     @PreAuthorize("isAdmin()")
     @Override

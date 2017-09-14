@@ -4,6 +4,7 @@ import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 import com.thistroll.service.exceptions.DeleteFailedException;
 import org.apache.commons.lang3.NotImplementedException;
@@ -21,6 +22,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserServiceController implements UserService {
 
     private UserService userService;
+
+    @RequestMapping(value="/register", method = RequestMethod.POST)
+    @Override
+    public @ResponseBody User registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
+        return userService.registerUser(registerUserRequest);
+    }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @Override

@@ -3,6 +3,7 @@ package com.thistroll.service.client;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 
 /**
@@ -11,6 +12,14 @@ import com.thistroll.service.client.dto.request.UpdateUserRequest;
  * Created by MVW on 8/26/2017.
  */
 public interface UserService {
+
+    /**
+     * Register a user
+     *
+     * @param registerUserRequest the registration request, omitting roles but including a plaintext password
+     * @return the generated user, including IDs and generated dates but omitting the password
+     */
+    User registerUser(RegisterUserRequest registerUserRequest);
 
     /**
      * Create a user

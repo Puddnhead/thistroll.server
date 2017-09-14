@@ -5,6 +5,7 @@ import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
@@ -80,6 +82,29 @@ public class UserServiceImplTest {
         assertThat(providatedUser.getFirstName(), is(FIRST_NAME));
         assertThat(providatedUser.getLastName(), is(LAST_NAME));
         assertThat(providatedUser.getRoles(), is(ROLES));
+        assertThat(providatedUser.isNotificationsEnabled(), is(NOTIFICATIONS_ENABLED));
+    }
+
+    @Test
+    public void testRegisterUser() throws Exception {
+        RegisterUserRequest request = new RegisterUserRequest.Builder()
+                .username(USERNAME)
+                .firstName(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email(EMAIL)
+                .notificationsEnabled(NOTIFICATIONS_ENABLED)
+                .password(PASSWORD)
+                .build();
+        User createdUser = userService.registerUser(request);
+        User providatedUser = userArgumentCaptor.getValue();
+
+        assertThat(createdUser, is(mockUser));
+        assertThat(passwordCaptor.getValue(), is(PASSWORD));
+        assertThat(providatedUser.getEmail(), is(EMAIL));
+        assertThat(providatedUser.getUsername(), is(USERNAME));
+        assertThat(providatedUser.getFirstName(), is(FIRST_NAME));
+        assertThat(providatedUser.getLastName(), is(LAST_NAME));
+        assertThat(providatedUser.getRoles(), is(Collections.singleton(UserRole.USER)));
         assertThat(providatedUser.isNotificationsEnabled(), is(NOTIFICATIONS_ENABLED));
     }
 }
