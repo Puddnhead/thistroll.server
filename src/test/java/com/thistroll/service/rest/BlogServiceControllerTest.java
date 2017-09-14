@@ -2,7 +2,7 @@ package com.thistroll.service.rest;
 
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
-import com.thistroll.service.client.dto.UpdateBlogRequest;
+import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

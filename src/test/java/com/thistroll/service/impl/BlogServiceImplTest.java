@@ -2,7 +2,7 @@ package com.thistroll.service.impl;
 
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
-import com.thistroll.service.client.dto.UpdateBlogRequest;
+import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import com.thistroll.service.exceptions.BlogNotFoundException;
 import org.junit.Before;
 import org.junit.Test;

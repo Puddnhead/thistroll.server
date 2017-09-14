@@ -3,7 +3,7 @@ package com.thistroll.service.rest;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.BlogService;
-import com.thistroll.service.client.dto.UpdateBlogRequest;
+import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;

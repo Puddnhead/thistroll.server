@@ -2,7 +2,7 @@ package com.thistroll.service.client;
 
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
-import com.thistroll.service.client.dto.UpdateBlogRequest;
+import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 
 import java.util.List;
 import java.util.Optional;

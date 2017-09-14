@@ -3,7 +3,7 @@ package com.thistroll.service.client;
 import com.thistroll.domain.Session;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
-import com.thistroll.service.client.dto.LoginRequest;
+import com.thistroll.service.client.dto.request.LoginRequest;
 import com.thistroll.service.exceptions.InvalidCredentialsException;
 
 /**

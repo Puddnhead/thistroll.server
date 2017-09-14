@@ -11,7 +11,7 @@ import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.thistroll.data.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
-import com.thistroll.service.client.dto.UpdateBlogRequest;
+import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.InjectMocks;

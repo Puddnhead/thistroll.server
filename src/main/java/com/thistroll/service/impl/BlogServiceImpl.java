@@ -4,7 +4,7 @@ import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.BlogService;
-import com.thistroll.service.client.dto.UpdateBlogRequest;
+import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import com.thistroll.service.exceptions.BlogNotFoundException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.prepost.PreAuthorize;

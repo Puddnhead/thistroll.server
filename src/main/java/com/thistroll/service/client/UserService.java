@@ -2,8 +2,8 @@ package com.thistroll.service.client;
 
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
-import com.thistroll.service.client.dto.CreateUserRequest;
-import com.thistroll.service.client.dto.UpdateUserRequest;
+import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.UpdateUserRequest;
 
 /**
  * Service for CRUD operations on users

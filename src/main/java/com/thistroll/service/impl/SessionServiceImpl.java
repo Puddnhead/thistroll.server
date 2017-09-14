@@ -8,7 +8,7 @@ import com.thistroll.domain.enums.Outcome;
 import com.thistroll.server.RequestValues;
 import com.thistroll.service.client.SessionService;
 import com.thistroll.service.client.UserService;
-import com.thistroll.service.client.dto.LoginRequest;
+import com.thistroll.service.client.dto.request.LoginRequest;
 import com.thistroll.service.exceptions.InvalidCredentialsException;
 import com.thistroll.service.exceptions.SessionNotFoundException;
 import com.thistroll.service.exceptions.UserNotFoundException;

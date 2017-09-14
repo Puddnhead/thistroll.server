@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
-import com.thistroll.service.client.dto.CreateUserRequest;
+import com.thistroll.service.client.dto.request.CreateUserRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

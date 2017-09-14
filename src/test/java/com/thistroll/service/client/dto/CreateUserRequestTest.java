@@ -1,9 +1,8 @@
 package com.thistroll.service.client.dto;
 
+import com.thistroll.service.client.dto.request.CreateUserRequest;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by MVW on 8/26/2017.

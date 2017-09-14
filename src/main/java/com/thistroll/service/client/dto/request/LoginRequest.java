@@ -1,4 +1,4 @@
-package com.thistroll.service.client.dto;
+package com.thistroll.service.client.dto.request;
 
 import java.util.Objects;
 

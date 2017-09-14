@@ -13,7 +13,7 @@ import com.thistroll.data.api.BlogRepository;
 import com.thistroll.data.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
-import com.thistroll.service.client.dto.UpdateBlogRequest;
+import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;

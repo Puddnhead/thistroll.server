@@ -3,7 +3,7 @@ package com.thistroll.service.rest;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.server.RequestValues;
-import com.thistroll.service.client.dto.LoginRequest;
+import com.thistroll.service.client.dto.request.LoginRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

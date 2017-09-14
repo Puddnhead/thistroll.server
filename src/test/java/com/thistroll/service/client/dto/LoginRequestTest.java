@@ -1,9 +1,8 @@
 package com.thistroll.service.client.dto;
 
+import com.thistroll.service.client.dto.request.LoginRequest;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LoginRequest}
