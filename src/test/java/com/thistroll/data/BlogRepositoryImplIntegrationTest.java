@@ -56,7 +56,7 @@ public class BlogRepositoryImplIntegrationTest {
         assertThat(result, is(blog2));
 
         // getBlogs() should return the most recent first
-        List<Blog> allBlogs = blogRepository.getPageableBlogList(0, 2);
+        List<Blog> allBlogs = blogRepository.getPageableBlogList(0, 2).getBlogs();
         assertThat(allBlogs.get(0).getId(), is(blog2.getId()));
         assertThat(allBlogs.get(1).getId(), is(blog1.getId()));
         assertThat(allBlogs.get(0).getTitle(), is(blog2.getTitle()));

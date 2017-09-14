@@ -4,6 +4,7 @@ import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.BlogService;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
+import com.thistroll.service.client.dto.response.GetBlogsResponse;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -49,7 +50,8 @@ public class BlogServiceController implements BlogService {
     // somewhat sloppy but ends up being /blogs
     @RequestMapping(value = "/page", method = RequestMethod.GET)
     @Override
-    public @ResponseBody List<Blog> getBlogs(@RequestParam Optional<Integer> pageNumber, @RequestParam Optional<Integer> pageSize) {
+    public @ResponseBody
+    GetBlogsResponse getBlogs(@RequestParam Optional<Integer> pageNumber, @RequestParam Optional<Integer> pageSize) {
         return blogService.getBlogs(pageNumber, pageSize);
     }
 

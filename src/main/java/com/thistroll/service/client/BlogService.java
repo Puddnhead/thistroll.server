@@ -3,6 +3,7 @@ package com.thistroll.service.client;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
+import com.thistroll.service.client.dto.response.GetBlogsResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,9 +55,9 @@ public interface BlogService {
      *
      * @param pageNumber optional ZERO-BASED page number. default is 0
      * @param pageSize optional page size. default is a configurable property
-     * @return all blogs ordered from most recent to oldest, including only id, title, and createdOn
+     * @return all blogs ordered from most recent to oldest, including only id, title, and createdOn, plus a lastPage flag
      */
-    List<Blog> getBlogs(Optional<Integer> pageNumber, Optional<Integer> pageSize);
+    GetBlogsResponse getBlogs(Optional<Integer> pageNumber, Optional<Integer> pageSize);
 
     /**
      * Delete a blog

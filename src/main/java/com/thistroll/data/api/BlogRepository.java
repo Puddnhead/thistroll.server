@@ -3,6 +3,7 @@ package com.thistroll.data.api;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
+import com.thistroll.service.client.dto.response.GetBlogsResponse;
 
 import java.util.List;
 
@@ -59,7 +60,7 @@ public interface BlogRepository {
      *
      * @param pageNumber a 1-based page number
      * @param pageSize the number of blogs per page
-     * @return a subset of all blogs determined by page number and size
+     * @return a subset of all blogs determined by page number and size and a flag denoting if this is the last page
      */
-    List<Blog> getPageableBlogList(int pageNumber, int pageSize);
+    GetBlogsResponse getPageableBlogList(int pageNumber, int pageSize);
 }

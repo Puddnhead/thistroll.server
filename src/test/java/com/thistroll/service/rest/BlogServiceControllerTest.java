@@ -3,6 +3,7 @@ package com.thistroll.service.rest;
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
+import com.thistroll.service.client.dto.response.GetBlogsResponse;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +96,8 @@ public class BlogServiceControllerTest extends ControllerTestBase {
 
     @Test
     public void testGetBlogs() throws Exception {
-        when(blogRepository.getPageableBlogList(anyInt(), anyInt())).thenReturn(Collections.singletonList(MOCK_BLOG));
+        when(blogRepository.getPageableBlogList(anyInt(), anyInt()))
+                .thenReturn(new GetBlogsResponse(Collections.singletonList(MOCK_BLOG), true));
         mockMvc.perform(get("/blog/page?pageNumber=4&pageSize=10"))
                 .andExpect(status().isOk());
     }

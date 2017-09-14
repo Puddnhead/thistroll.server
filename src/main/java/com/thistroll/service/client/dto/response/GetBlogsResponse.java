@@ -14,27 +14,27 @@ public class GetBlogsResponse {
 
     private final List<Blog> blogs;
 
-    private final boolean moreBlogs;
+    private final boolean lastPage;
 
     /**
      * No-arg constructor required by Jackson
      */
     public GetBlogsResponse() {
         this.blogs = null;
-        this.moreBlogs = false;
+        this.lastPage = false;
     }
 
-    public GetBlogsResponse(List<Blog> blogs, boolean moreBlogs) {
+    public GetBlogsResponse(List<Blog> blogs, boolean lastPage) {
         this.blogs = blogs;
-        this.moreBlogs = moreBlogs;
+        this.lastPage = lastPage;
     }
 
     public List<Blog> getBlogs() {
         return blogs;
     }
 
-    public boolean isMoreBlogs() {
-        return moreBlogs;
+    public boolean isLastPage() {
+        return lastPage;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class GetBlogsResponse {
         if (this == o) return true;
         if (o == null || !(o instanceof GetBlogsResponse)) return false;
         GetBlogsResponse that = (GetBlogsResponse) o;
-        return moreBlogs == that.moreBlogs &&
+        return lastPage == that.lastPage &&
                 Objects.equals(blogs, that.blogs);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(blogs, moreBlogs);
+        return Objects.hash(blogs, lastPage);
     }
 }

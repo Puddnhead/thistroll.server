@@ -12,6 +12,7 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.thistroll.data.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
+import com.thistroll.service.client.dto.response.GetBlogsResponse;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -136,7 +137,7 @@ public class BlogRepositoryImplTest extends AbstractRepositoryTest {
             return queryResultPage2;
         }).when(amazonDynamoDB).query(any(QueryRequest.class));
 
-        List<Blog> blogs = repository.getPageableBlogList(1, 4);
+        List<Blog> blogs = repository.getPageableBlogList(1, 4).getBlogs();
         assertThat(blogs.size(), is(4));
         assertThat(blogs.get(0).getId(), is("6"));
         assertThat(blogs.get(1).getId(), is("5"));
@@ -181,7 +182,7 @@ public class BlogRepositoryImplTest extends AbstractRepositoryTest {
         when(deleteItemResult.getAttributes()).thenReturn(attributes);
 
         repository.deleteBlog("5");
-        List<Blog> blogs = repository.getPageableBlogList(0, 10);
+        List<Blog> blogs = repository.getPageableBlogList(0, 10).getBlogs();
         assertThat(blogs.size(), is(4));
         assertThat(blogs.get(0).getId(), is("4"));
         assertThat(repository.findById("5"), is(nullValue()));
@@ -199,8 +200,28 @@ public class BlogRepositoryImplTest extends AbstractRepositoryTest {
         Blog currentBlog = repository.getMostRecentBlog();
         assertThat(currentBlog.getId(), is("19"));
 
-        List<Blog> blogs = repository.getPageableBlogList(0, 10);
+        List<Blog> blogs = repository.getPageableBlogList(0, 10).getBlogs();
         assertThat(blogs.size(), is(5));
+    }
+
+    @Test
+    public void testGetBlogsLastPageFlag() throws Exception {
+        fetchFiveBlogsToCache();
+
+        GetBlogsResponse response = repository.getPageableBlogList(0, 4);
+        assertThat(response.isLastPage(), is(false));
+
+        response = repository.getPageableBlogList(0, 5);
+        assertThat(response.isLastPage(), is(true));
+
+        response = repository.getPageableBlogList(4, 1);
+        assertThat(response.isLastPage(), is(true));
+
+        response = repository.getPageableBlogList(0, 10);
+        assertThat(response.isLastPage(), is(true));
+
+        response = repository.getPageableBlogList(1, 2);
+        assertThat(response.isLastPage(), is(false));
     }
 
     // return a map of string to attribute value with the provided id as id and title
@@ -224,7 +245,7 @@ public class BlogRepositoryImplTest extends AbstractRepositoryTest {
         when(amazonDynamoDB.query(any(QueryRequest.class))).thenReturn(queryResult);
 
         // fetch 5 items into the cache
-        List<Blog> blogs = repository.getPageableBlogList(0, 10);
+        List<Blog> blogs = repository.getPageableBlogList(0, 10).getBlogs();
         assertThat(blogs.size(), is(5));
     }
 

@@ -3,6 +3,7 @@ package com.thistroll.service.impl;
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
+import com.thistroll.service.client.dto.response.GetBlogsResponse;
 import com.thistroll.service.exceptions.BlogNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,8 +100,8 @@ public class BlogServiceImplTest {
     @Test
     public void testGetBlogsDefaultPageAndSize() throws Exception {
         when(blogRepository.getPageableBlogList(pageNumberCaptor.capture(), pageSizeCaptor.capture()))
-                .thenReturn(Collections.singletonList(mockBlog));
-        List<Blog> blogs = blogService.getBlogs(Optional.empty(), Optional.empty());
+                .thenReturn(new GetBlogsResponse(Collections.singletonList(mockBlog), true));
+        List<Blog> blogs = blogService.getBlogs(Optional.empty(), Optional.empty()).getBlogs();
         assertThat(blogs.size(), is(1));
         assertThat(blogs.get(0), is(mockBlog));
         assertThat(pageNumberCaptor.getValue(), is(0));
@@ -110,8 +111,8 @@ public class BlogServiceImplTest {
     @Test
     public void testGetBlogsProvidedPageAndSize() throws Exception {
         when(blogRepository.getPageableBlogList(pageNumberCaptor.capture(), pageSizeCaptor.capture()))
-                .thenReturn(Collections.singletonList(mockBlog));
-        List<Blog> blogs = blogService.getBlogs(Optional.of(2), Optional.of(10));
+                .thenReturn(new GetBlogsResponse(Collections.singletonList(mockBlog), true));
+        List<Blog> blogs = blogService.getBlogs(Optional.of(2), Optional.of(10)).getBlogs();
         assertThat(blogs.size(), is(1));
         assertThat(blogs.get(0), is(mockBlog));
         assertThat(pageNumberCaptor.getValue(), is(2));

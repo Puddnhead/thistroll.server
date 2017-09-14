@@ -14,6 +14,7 @@ import com.thistroll.data.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
+import com.thistroll.service.client.dto.response.GetBlogsResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
@@ -200,7 +201,7 @@ public class BlogRepositoryImpl implements BlogRepository {
     }
 
     @Override
-    public List<Blog> getPageableBlogList(int pageNumber, int pageSize) {
+    public GetBlogsResponse getPageableBlogList(int pageNumber, int pageSize) {
         int start = pageNumber * pageSize,
                 end = start + pageSize;
 
@@ -209,12 +210,14 @@ public class BlogRepositoryImpl implements BlogRepository {
         }
 
         if (listCache.size() <= start) {
-            return Collections.emptyList();
+            return new GetBlogsResponse(Collections.emptyList(), true);
         }
 
         end = listCache.size() >= end ? end : listCache.size();
 
-        return listCache.subList(start, end);
+        List<Blog> blogs = listCache.subList(start, end);
+        boolean isLastPage = allBlogsFetched && end == listCache.size();
+        return new GetBlogsResponse(blogs, isLastPage);
     }
 
     /**

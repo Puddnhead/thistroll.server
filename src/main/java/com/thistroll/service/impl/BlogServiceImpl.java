@@ -5,6 +5,7 @@ import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.BlogService;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
+import com.thistroll.service.client.dto.response.GetBlogsResponse;
 import com.thistroll.service.exceptions.BlogNotFoundException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,7 +59,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Blog> getBlogs(Optional<Integer> pageNumber, Optional<Integer> pageSize) {
+    public GetBlogsResponse getBlogs(Optional<Integer> pageNumber, Optional<Integer> pageSize) {
         return blogRepository.getPageableBlogList(pageNumber.orElse(0), pageSize.orElse(defaultPageSize));
     }
 
