@@ -3,8 +3,9 @@ package com.thistroll.service.client;
 import com.thistroll.domain.Session;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.exceptions.SessionNotFoundException;
 import com.thistroll.service.client.dto.request.LoginRequest;
-import com.thistroll.service.exceptions.InvalidCredentialsException;
+import com.thistroll.exceptions.InvalidCredentialsException;
 
 /**
  * Service for CRUD operations on Sessions, login, and logout
@@ -53,7 +54,7 @@ public interface SessionService {
      *
      * @param sessionId the session id
      * @return the session
-     * @throws com.thistroll.service.exceptions.SessionNotFoundException
+     * @throws SessionNotFoundException
      */
     Session getSession(String sessionId);
 

@@ -6,11 +6,10 @@ import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.BlogService;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import com.thistroll.service.client.dto.response.GetBlogsResponse;
-import com.thistroll.service.exceptions.BlogNotFoundException;
+import com.thistroll.exceptions.BlogNotFoundException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.util.List;
 import java.util.Optional;
 
 /**

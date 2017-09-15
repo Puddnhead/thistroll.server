@@ -1,7 +1,7 @@
 package com.thistroll.service.impl;
 
 import com.thistroll.service.client.TrollService;
-import com.thistroll.service.exceptions.UnsupportedSpeechException;
+import com.thistroll.exceptions.UnsupportedSpeechException;
 import org.joda.time.DateTime;
 
 import java.io.UnsupportedEncodingException;

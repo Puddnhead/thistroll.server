@@ -6,7 +6,7 @@ import com.thistroll.domain.enums.Outcome;
 import com.thistroll.server.RequestValues;
 import com.thistroll.service.client.SessionService;
 import com.thistroll.service.client.dto.request.LoginRequest;
-import com.thistroll.service.exceptions.InvalidCredentialsException;
+import com.thistroll.exceptions.InvalidCredentialsException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;

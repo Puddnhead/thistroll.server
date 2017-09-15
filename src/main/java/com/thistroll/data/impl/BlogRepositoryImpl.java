@@ -10,7 +10,7 @@ import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.thistroll.data.api.BlogRepository;
-import com.thistroll.data.exceptions.ValidationException;
+import com.thistroll.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
@@ -252,7 +252,7 @@ public class BlogRepositoryImpl implements BlogRepository {
      * Checks that the blog has required fields id, title, and text
      *
      * @param blog the blog to validate
-     * @throws com.thistroll.data.exceptions.ValidationException if the blog is missing a required field
+     * @throws ValidationException if the blog is missing a required field
      */
     private void validateBlog(Blog blog) {
         if (StringUtils.isEmpty(blog.getTitle())) {

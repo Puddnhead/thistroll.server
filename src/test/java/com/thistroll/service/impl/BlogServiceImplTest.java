@@ -4,7 +4,7 @@ import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import com.thistroll.service.client.dto.response.GetBlogsResponse;
-import com.thistroll.service.exceptions.BlogNotFoundException;
+import com.thistroll.exceptions.BlogNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

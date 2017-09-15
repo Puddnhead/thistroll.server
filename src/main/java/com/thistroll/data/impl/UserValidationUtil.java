@@ -1,12 +1,11 @@
 package com.thistroll.data.impl;
 
-import com.thistroll.data.exceptions.ValidationException;
+import com.thistroll.exceptions.ValidationException;
 import com.thistroll.domain.User;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -1,6 +1,8 @@
-package com.thistroll.service.exceptions;
+package com.thistroll.exceptions;
 
 /**
+ * Exception for bad troll input
+ *
  * Created by MVW on 7/26/2017.
  */
 public class UnsupportedSpeechException extends IllegalArgumentException {

@@ -4,7 +4,7 @@ import com.thistroll.domain.Session;
 import com.thistroll.domain.enums.Environments;
 import com.thistroll.server.RequestValues;
 import com.thistroll.service.client.SessionService;
-import com.thistroll.service.exceptions.SessionNotFoundException;
+import com.thistroll.exceptions.SessionNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 

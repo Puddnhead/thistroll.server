@@ -6,7 +6,7 @@ import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
-import com.thistroll.service.exceptions.DeleteFailedException;
+import com.thistroll.exceptions.DeleteFailedException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;

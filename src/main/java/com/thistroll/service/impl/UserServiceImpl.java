@@ -8,7 +8,7 @@ import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
-import com.thistroll.service.exceptions.UserNotFoundException;
+import com.thistroll.exceptions.UserNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;

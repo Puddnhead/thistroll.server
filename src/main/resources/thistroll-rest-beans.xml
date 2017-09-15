@@ -25,4 +25,7 @@
 
     <bean id="com.thistroll.service.rest.sessionservicecontroller" class="com.thistroll.service.rest.SessionServiceController"
         p:sessionService-ref="com.thistroll.service.impl.sessionservice" />
+
+    <!-- Controller advice -->
+    <bean class="com.thistroll.exceptions.ExceptionHandlerAdvice" />
 </beans>

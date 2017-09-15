@@ -2,10 +2,10 @@ package com.thistroll.service.client;
 
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.exceptions.BlogNotFoundException;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import com.thistroll.service.client.dto.response.GetBlogsResponse;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,7 +28,7 @@ public interface BlogService {
      *
      * @param id blog id
      * @return the blog
-     * @throws com.thistroll.service.exceptions.BlogNotFoundException if the blog cannot be found
+     * @throws BlogNotFoundException if the blog cannot be found
      */
     Blog getBlog(String id);
 
@@ -36,7 +36,7 @@ public interface BlogService {
      * Return the most recent blog
      *
      * @return the most recent blog
-     * @throws com.thistroll.service.exceptions.BlogNotFoundException if there are no blogs in the repository
+     * @throws BlogNotFoundException if there are no blogs in the repository
      */
     Blog getMostRecentBlog();
 
@@ -45,7 +45,7 @@ public interface BlogService {
      *
      * @param request the update blog request
      * @return the updated blog
-     * @throws com.thistroll.service.exceptions.BlogNotFoundException if the blog cannot be found
+     * @throws BlogNotFoundException if the blog cannot be found
      */
     Blog updateBlog(UpdateBlogRequest request);
 

@@ -7,7 +7,7 @@ import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.thistroll.data.api.UserRepository;
-import com.thistroll.data.exceptions.DuplicateUsernameException;
+import com.thistroll.exceptions.DuplicateUsernameException;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
+ * Implementation class for {@link UserRepository}
+ *
  * Created by MVW on 8/26/2017.
  */
 public class UserRepositoryImpl implements UserRepository {
@@ -35,22 +37,31 @@ public class UserRepositoryImpl implements UserRepository {
         UserValidationUtil.validatePassword(password);
 
         if (getUserByUsername(user.getUsername()) != null) {
-            throw new DuplicateUsernameException();
+            throw new DuplicateUsernameException("Create failed because a user already exists with username " + user.getUsername());
         }
 
         Table userTable = getUserTable();
         User createdUser = createUserWithGeneratedIdAndDates(user);
 
-        userTable.putItem(new Item().withPrimaryKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE, User.ID_PROPERTY, createdUser.getId())
+        // Required properties
+        Item item = new Item().withPrimaryKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE, User.ID_PROPERTY, createdUser.getId())
                 .withLong(User.CREATED_ON_PROPERTY, createdUser.getCreatedOn().getMillis())
                 .withLong(User.LAST_UPDATED_ON_PROPERTY, createdUser.getLastUpdatedOn().getMillis())
                 .withString(User.USERNAME_PROPERTY, createdUser.getUsername())
-                .withString(User.FIRST_NAME_PROPERTY, createdUser.getFirstName())
-                .withString(User.LAST_NAME_PROPERTY, createdUser.getLastName())
                 .withString(User.ROLES_PROPERTY, UserMapper.serializeRoles(createdUser.getRoles()))
                 .withString(User.EMAIL_PROPERTY, createdUser.getEmail())
                 .withBoolean(User.NOTIFICATIONS_PROPERTY, createdUser.isNotificationsEnabled())
-                .withString(User.PASSWORD_PROPERTY, hashPassword(password)));
+                .withString(User.PASSWORD_PROPERTY, hashPassword(password));
+
+        // Optional properties
+        if (StringUtils.isNotEmpty(createdUser.getFirstName())) {
+            item = item.withString(User.FIRST_NAME_PROPERTY, createdUser.getFirstName());
+        }
+        if (StringUtils.isNotEmpty(createdUser.getLastName())) {
+            item = item.withString(User.LAST_NAME_PROPERTY, createdUser.getLastName());
+        }
+
+        userTable.putItem(item);
 
         return createdUser;
     }
