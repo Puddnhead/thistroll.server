@@ -5,6 +5,7 @@ import com.thistroll.domain.enums.Outcome;
 import com.thistroll.exceptions.DeleteFailedException;
 import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.GetUserByEmailRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 import org.apache.commons.lang3.NotImplementedException;
@@ -25,7 +26,7 @@ public class UserServiceController implements UserService {
 
     private UserService userService;
 
-    @RequestMapping(value="/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     @Override
     public @ResponseBody User registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
         return userService.registerUser(registerUserRequest);
@@ -43,19 +44,25 @@ public class UserServiceController implements UserService {
         return userService.getUserById(id);
     }
 
-    @RequestMapping(value ="/username/{username}", method = RequestMethod.GET)
+    @RequestMapping(value = "/username/{username}", method = RequestMethod.GET)
     @Override
     public @ResponseBody User getUserByUsername(@PathVariable String username) {
         return userService.getUserByUsername(username);
     }
 
-    @RequestMapping(value="", method = RequestMethod.PUT)
+    @RequestMapping(value = "/email", method = RequestMethod.POST)
+    @Override
+    public @ResponseBody User getUserByEmail(@RequestBody GetUserByEmailRequest request) {
+        return userService.getUserByEmail(request);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     @Override
     public @ResponseBody User updateUser(@RequestBody UpdateUserRequest request) {
         return userService.updateUser(request);
     }
 
-    @RequestMapping(value="/{userId}")
+    @RequestMapping(value = "/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Override
     public @ResponseBody Outcome deleteUser(@PathVariable String userId) {
@@ -67,13 +74,13 @@ public class UserServiceController implements UserService {
         return outcome;
     }
 
-    @RequestMapping(value="/all")
+    @RequestMapping(value = "/all")
     @Override
     public @ResponseBody List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @RequestMapping(value="/notifications/email")
+    @RequestMapping(value = "/notifications/email")
     @Override
     public @ResponseBody String getEmailsForUsersWithNotificationsEnabled() {
         return userService.getEmailsForUsersWithNotificationsEnabled();

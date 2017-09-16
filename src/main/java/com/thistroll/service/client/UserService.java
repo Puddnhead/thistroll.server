@@ -3,6 +3,7 @@ package com.thistroll.service.client;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.GetUserByEmailRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 
@@ -35,7 +36,8 @@ public interface UserService {
      * Find a user by user id
      *
      * @param id the user id
-     * @return the user or null if it cannot be found
+     * @return the user
+     * @throws com.thistroll.exceptions.UserNotFoundException if the user cannot be found
      */
     User getUserById(String id);
 
@@ -43,9 +45,19 @@ public interface UserService {
      * Find a user by username
      *
      * @param username the username
-     * @return the user or null if it cannot be found
+     * @return the user
+     * @throws com.thistroll.exceptions.UserNotFoundException if the user cannot be found
      */
     User getUserByUsername(String username);
+
+    /**
+     * Find a user by email
+     *
+     * @param request the get user by email request
+     * @return the user
+     * @throws com.thistroll.exceptions.UserNotFoundException if the user cannot be found
+     */
+    User getUserByEmail(GetUserByEmailRequest request);
 
     /**
      * Find a user with a given username and password. Returns null if a user cannot be found or the password is

@@ -6,6 +6,7 @@ import com.thistroll.domain.enums.Outcome;
 import com.thistroll.domain.enums.UserRole;
 import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.GetUserByEmailRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 import com.thistroll.exceptions.UserNotFoundException;
@@ -71,6 +72,17 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.getUserByUsername(username);
         if (user == null) {
             throw new UserNotFoundException("Could not locate user with username: " + username);
+        }
+
+        return user;
+    }
+
+    @PreAuthorize("isAdmin()")
+    @Override
+    public User getUserByEmail(GetUserByEmailRequest request) {
+        User user = userRepository.getUserByEmail(request.getEmail());
+        if (user == null) {
+            throw new UserNotFoundException("Could not locate user with email: " + request.getEmail());
         }
 
         return user;

@@ -38,6 +38,14 @@ public interface UserRepository {
     User getUserByUsername(String username);
 
     /**
+     * Returns a user with the given email
+     *
+     * @param email the email
+     * @return a user with the given email or null
+     */
+    User getUserByEmail(String email);
+
+    /**
      * Update the given user
      *
      * @param user the user to update

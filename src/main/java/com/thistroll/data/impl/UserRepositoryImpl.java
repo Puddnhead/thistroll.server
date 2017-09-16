@@ -15,6 +15,7 @@ import com.google.common.cache.CacheBuilder;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.exceptions.DuplicateEmailException;
 import com.thistroll.exceptions.DuplicateUsernameException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +51,10 @@ public class UserRepositoryImpl implements UserRepository {
 
         if (getUserByUsername(user.getUsername()) != null) {
             throw new DuplicateUsernameException("Create failed because a user already exists with username " + user.getUsername());
+        }
+
+        if (getUserByEmail(user.getEmail()) != null) {
+            throw new DuplicateEmailException("Create failed because a user already exists with email " + user.getEmail());
         }
 
         Table userTable = getUserTable();
@@ -110,6 +115,23 @@ public class UserRepositoryImpl implements UserRepository {
             return null;
         }
         User user = UserMapper.mapItemToUser(item);
+        getUserCache().put(user.getId(), user);
+        return user;
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        Table table = getUserTable();
+        Index index = table.getIndex(User.EMAIL_INDEX);
+        QuerySpec spec = new QuerySpec()
+                .withHashKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE)
+                .withRangeKeyCondition(new RangeKeyCondition(User.EMAIL_PROPERTY).eq(email));
+        ItemCollection<QueryOutcome> items = index.query(spec);
+        if (!items.iterator().hasNext() || items.iterator().next() == null) {
+            return null;
+        }
+
+        User user = UserMapper.mapItemToUser(items.iterator().next());
         getUserCache().put(user.getId(), user);
         return user;
     }

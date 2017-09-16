@@ -4,6 +4,7 @@ import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
+import com.thistroll.service.client.dto.request.GetUserByEmailRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 import org.junit.Test;
@@ -139,6 +140,19 @@ public class UserServiceControllerTest extends ControllerTestBase {
         when(userRepository.getAllUsers()).thenReturn(Collections.singletonList(createUser()));
 
         mockMvc.perform(get("/user/notifications/email"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetUserByEmailAddress() throws Exception {
+        when(userRepository.getUserByEmail(EMAIL)).thenReturn(createUser());
+
+        GetUserByEmailRequest request = new GetUserByEmailRequest(EMAIL);
+        String serializedRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/user/email")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(serializedRequest))
                 .andExpect(status().isOk());
     }
 

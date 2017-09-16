@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
+import com.thistroll.exceptions.DuplicateEmailException;
 import com.thistroll.exceptions.DuplicateUsernameException;
 import com.thistroll.exceptions.ValidationException;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +28,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -42,13 +42,22 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
     private UserRepositoryImpl userRepository;
 
     @Mock
-    private Index mockIndex;
+    private Index mockUsernameIndex;
+
+    @Mock
+    private Index mockEmailIndex;
 
     @Mock
     private ItemCollection<QueryOutcome> mockItemCollection;
 
     @Mock
+    private ItemCollection<QueryOutcome> mockItemCollectionWithoutItems;
+
+    @Mock
     private IteratorSupport<Item, QueryOutcome> mockIteratorSupport;
+
+    @Mock
+    private IteratorSupport<Item, QueryOutcome> mockIteratorSupportWithoutItems;
 
     private static final String ID = UUID.randomUUID().toString();
     private static final String USERNAME = "BobbyBriscuit";
@@ -66,10 +75,16 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
 
     @Before
     public void setup() throws Exception {
-        when(mockTable.getIndex(anyString())).thenReturn(mockIndex);
-        when(mockIndex.query(any(QuerySpec.class))).thenReturn(mockItemCollection);
+        // By default these indexes will not return items. Tests need to stub the index to return the
+        // mockItemCollection and then stub the return values
+        when(mockTable.getIndex(User.USERNAME_INDEX)).thenReturn(mockUsernameIndex);
+        when(mockTable.getIndex(User.EMAIL_INDEX)).thenReturn(mockEmailIndex);
+        when(mockUsernameIndex.query(any(QuerySpec.class))).thenReturn(mockItemCollection);
+        when(mockEmailIndex.query(any(QuerySpec.class))).thenReturn(mockItemCollection);
         when(mockItemCollection.iterator()).thenReturn(mockIteratorSupport);
-        when(mockIteratorSupport.hasNext()).thenReturn(false);
+        when(mockItemCollectionWithoutItems.iterator()).thenReturn(mockIteratorSupportWithoutItems);
+        when(mockIteratorSupport.hasNext()).thenReturn(true);
+        when(mockIteratorSupportWithoutItems.hasNext()).thenReturn(false);
     }
 
     @Test
@@ -190,11 +205,31 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
         assertCommonFields(user);
     }
 
+    @Test
+    public void testGetByEmailWithNullValues() throws Exception {
+        Item item = createItemWithCommonValues();
+        when(mockIteratorSupport.hasNext()).thenReturn(true);
+        when(mockIteratorSupport.next()).thenReturn(item);
+
+        User user = userRepository.getUserByEmail(EMAIL);
+        assertCommonFields(user);
+    }
+
     @Test(expected = DuplicateUsernameException.class)
     public void testCreateUserFailsForDuplicateUsername() throws Exception {
+        when(mockEmailIndex.query(any(QuerySpec.class))).thenReturn(mockItemCollectionWithoutItems);
+        generateDuplicateException();
+    }
+
+    @Test(expected = DuplicateEmailException.class)
+    public void testCreateUserFailsForDuplicateEmail() throws Exception {
+        when(mockUsernameIndex.query(any(QuerySpec.class))).thenReturn(mockItemCollectionWithoutItems);
+        generateDuplicateException();
+    }
+
+    private void generateDuplicateException() {
         Item mockItem = mock(Item.class);
         when(mockItem.getString(User.ID_PROPERTY)).thenReturn(ID);
-        when(mockIteratorSupport.hasNext()).thenReturn(true);
         when(mockIteratorSupport.next()).thenReturn(mockItem);
 
         User user = createDefaultUserBuilder().build();

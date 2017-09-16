@@ -20,6 +20,12 @@ public class ExceptionHandlerAdvice {
     }
 
     @ExceptionHandler
+    public ResponseEntity handleException(DuplicateEmailException e) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                .body(new ErrorMessage(e.getMessage()));
+    }
+
+    @ExceptionHandler
     public ResponseEntity handleException(DeleteFailedException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(e.getMessage()));
