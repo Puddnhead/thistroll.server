@@ -1,11 +1,13 @@
 package com.thistroll.service.impl;
 
 import com.google.common.collect.Sets;
+import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -47,6 +50,7 @@ public class UserServiceImplTest {
     @Captor
     private ArgumentCaptor<String> idCaptor;
 
+    private static final String USER_ID = "abc124";
     private static final String USERNAME = "JoeDirt";
     private static final String FIRST_NAME = "Joseph";
     private static final String LAST_NAME = "Dirt";
@@ -106,5 +110,22 @@ public class UserServiceImplTest {
         assertThat(providatedUser.getLastName(), is(LAST_NAME));
         assertThat(providatedUser.getRoles(), is(Collections.singleton(UserRole.USER)));
         assertThat(providatedUser.isNotificationsEnabled(), is(NOTIFICATIONS_ENABLED));
+    }
+
+    @Test
+    public void testGetEmailsForUsersWithNotificationsEnabled() throws Exception {
+        when(userRepository.getAllUsers())
+                .thenReturn(Arrays.asList(createUser(), createUser(), createUser()));
+        String emailList = userService.getEmailsForUsersWithNotificationsEnabled();
+        assertThat(emailList, is(EMAIL + "," + EMAIL + "," + EMAIL));
+    }
+
+    private User createUser() {
+        return new User.Builder()
+                .id(USER_ID)
+                .username(USERNAME)
+                .email(EMAIL)
+                .notificationsEnabled(true)
+                .build();
     }
 }

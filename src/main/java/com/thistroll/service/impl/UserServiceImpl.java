@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation class for {@link UserService}
@@ -128,6 +129,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
         return userRepository.getAllUsers();
+    }
+
+    @PreAuthorize(("isAdmin()"))
+    @Override
+    public String getEmailsForUsersWithNotificationsEnabled() {
+        List<String> emails = getAllUsers().stream()
+                .filter(User::isNotificationsEnabled)
+                .map(User::getEmail)
+                .collect(Collectors.toList());
+        return StringUtils.join(emails, ',');
     }
 
     @Required

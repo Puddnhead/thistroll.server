@@ -134,6 +134,14 @@ public class UserServiceControllerTest extends ControllerTestBase {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void testGetEmailsForUsersWithNotificationsEnabled() throws Exception {
+        when(userRepository.getAllUsers()).thenReturn(Collections.singletonList(createUser()));
+
+        mockMvc.perform(get("/user/notifications/email"))
+                .andExpect(status().isOk());
+    }
+
     private User createUser() {
         return new User.Builder()
                 .id(GENERATED_ID)

@@ -83,4 +83,12 @@ public interface UserService {
      * @return a list of users
      */
     List<User> getAllUsers();
+
+    /**
+     * Fetch a comma-delimited list of email addresses (for easy paste in an email client) for all the users who have
+     * notifications enabled
+     *
+     * @return a comma-delimited list of emails
+     */
+    String getEmailsForUsersWithNotificationsEnabled();
 }

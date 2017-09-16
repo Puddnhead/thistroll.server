@@ -2,11 +2,11 @@ package com.thistroll.service.rest;
 
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.exceptions.DeleteFailedException;
 import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
-import com.thistroll.exceptions.DeleteFailedException;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
@@ -71,6 +71,12 @@ public class UserServiceController implements UserService {
     @Override
     public @ResponseBody List<User> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @RequestMapping(value="/notifications/email")
+    @Override
+    public @ResponseBody String getEmailsForUsersWithNotificationsEnabled() {
+        return userService.getEmailsForUsersWithNotificationsEnabled();
     }
 
     @Override
