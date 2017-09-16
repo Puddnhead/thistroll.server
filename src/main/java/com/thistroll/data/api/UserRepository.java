@@ -3,6 +3,8 @@ package com.thistroll.data.api;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 
+import java.util.List;
+
 /**
  * API for CRUD operations on {@link com.thistroll.domain.User} objects
  *
@@ -61,4 +63,11 @@ public interface UserRepository {
      * @return a user if one exists for the given credentials else null
      */
     User getUserWithCredentials(String username, String password);
+
+    /**
+     * Returns a list of all users in the database
+     *
+     * @return a list of all users in the database
+     */
+    List<User> getAllUsers();
 }

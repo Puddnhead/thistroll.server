@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Implementation class for {@link UserService}
@@ -121,6 +122,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Outcome deleteUser(String userId) {
         return userRepository.deleteUser(userId);
+    }
+
+    @PreAuthorize(("isAdmin()"))
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.getAllUsers();
     }
 
     @Required

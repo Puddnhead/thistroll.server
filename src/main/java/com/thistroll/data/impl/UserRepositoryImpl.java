@@ -1,12 +1,16 @@
 package com.thistroll.data.impl;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.*;
-import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
-import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
-import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
-import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.thistroll.data.api.UserRepository;
+import com.thistroll.domain.Blog;
 import com.thistroll.exceptions.DuplicateUsernameException;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
@@ -15,9 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Implementation class for {@link UserRepository}
@@ -29,6 +31,11 @@ public class UserRepositoryImpl implements UserRepository {
     private DynamoDBConnectionProvider connectionProvider;
 
     private static final String TABLE_NAME = "thistroll_user";
+
+    /**
+     * In-memory user cache
+     */
+    Cache<String, User> userCache = null;
 
     @Override
     public User createUser(User user, String password) {
@@ -63,18 +70,32 @@ public class UserRepositoryImpl implements UserRepository {
 
         userTable.putItem(item);
 
+        getUserCache().put(createdUser.getId(), createdUser);
+
         return createdUser;
     }
 
     @Override
     public User getUserById(String id) {
-        Table table = getUserTable();
+        Cache<String, User> cache = getUserCache();
 
+        // Check cache first
+        User user = cache.getIfPresent(id);
+        if (user != null) {
+            return user;
+        }
+
+        // Otherwise make a DB call
+        Table table = getUserTable();
         GetItemSpec spec = new GetItemSpec().withPrimaryKey(User.PARTITION_KEY_NAME, User.PARTITION_KEY_VALUE,
                 User.ID_PROPERTY, id);
         Item outcome = table.getItem(spec);
-
-        return UserMapper.mapItemToUser(outcome);
+        if (outcome == null) {
+            return null;
+        }
+        user = UserMapper.mapItemToUser(outcome);
+        cache.put(user.getId(), user);
+        return user;
     }
 
     @Override
@@ -83,7 +104,9 @@ public class UserRepositoryImpl implements UserRepository {
         if (item == null) {
             return null;
         }
-        return UserMapper.mapItemToUser(item);
+        User user = UserMapper.mapItemToUser(item);
+        getUserCache().put(user.getId(), user);
+        return user;
     }
 
     @Override
@@ -108,7 +131,10 @@ public class UserRepositoryImpl implements UserRepository {
                 .withAttributeUpdate(attributeUpdates);
         table.updateItem(updateItemSpec);
 
-        return getUserById(user.getId());
+        User updatedUser = getUserById(user.getId());
+        getUserCache().put(updatedUser.getId(), updatedUser);
+
+        return updatedUser;
     }
 
     @Override
@@ -121,6 +147,8 @@ public class UserRepositoryImpl implements UserRepository {
         if (outcome.getDeleteItemResult().getAttributes() == null) {
             return Outcome.FAILURE;
         }
+
+        getUserCache().invalidate(id);
         return Outcome.SUCCESS;
     }
 
@@ -131,12 +159,36 @@ public class UserRepositoryImpl implements UserRepository {
             String hashedPassword = item.getString(User.PASSWORD_PROPERTY);
             // If there is a user with the given username and their password matches the provided password
             if (StringUtils.isNotEmpty(hashedPassword) && hashedPassword.equals(hashPassword(password))) {
-                return UserMapper.mapItemToUser(item);
+                User user = UserMapper.mapItemToUser(item);
+                getUserCache().put(user.getId(), user);
+                return user;
             }
         }
 
         // Else return null
         return null;
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        Cache<String, User> cache = getUserCache();
+        Map<String, AttributeValue> lastEvaluatedKey;
+        AmazonDynamoDB dynamoDB = connectionProvider.getAmazonDynamoDB();
+        ScanRequest scanRequest = new ScanRequest()
+                .withTableName(TABLE_NAME);
+
+        do {
+            ScanResult result = dynamoDB.scan(scanRequest);
+            lastEvaluatedKey = result.getLastEvaluatedKey();
+            scanRequest = scanRequest.withExclusiveStartKey(lastEvaluatedKey);
+
+            List<User> pageOfUsers = UserMapper.mapItemsToUsers(result.getItems());
+            users.addAll(pageOfUsers);
+            pageOfUsers.forEach(user -> cache.put(user.getId(), user));
+        } while (lastEvaluatedKey != null);
+
+        return users;
     }
 
     private Item getUserItemByUsername(String username) {
@@ -172,6 +224,16 @@ public class UserRepositoryImpl implements UserRepository {
     private Table getUserTable() {
         DynamoDB dynamoDB = connectionProvider.getDynamoDB();
         return dynamoDB.getTable(TABLE_NAME);
+    }
+
+    private Cache<String, User> getUserCache() {
+        if (userCache != null) {
+            return userCache;
+        }
+
+        return CacheBuilder.newBuilder()
+                .maximumSize(500)
+                .build();
     }
 
     static String hashPassword(String password) {

@@ -6,6 +6,8 @@ import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 
+import java.util.List;
+
 /**
  * Service for CRUD operations on users
  *
@@ -74,4 +76,11 @@ public interface UserService {
      * @return success if the user was deleted otherwise failure
      */
     Outcome deleteUser(String userId);
+
+    /**
+     * Fetch all users
+     *
+     * @return a list of users
+     */
+    List<User> getAllUsers();
 }

@@ -4,10 +4,13 @@ import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.internal.IteratorSupport;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
-import com.thistroll.exceptions.DuplicateUsernameException;
-import com.thistroll.exceptions.ValidationException;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
+import com.thistroll.exceptions.DuplicateUsernameException;
+import com.thistroll.exceptions.ValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -17,9 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -27,8 +28,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Not strictly a unit test, as a lot of these tests test logic in the UserValidationUtil
@@ -192,8 +192,10 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
 
     @Test(expected = DuplicateUsernameException.class)
     public void testCreateUserFailsForDuplicateUsername() throws Exception {
+        Item mockItem = mock(Item.class);
+        when(mockItem.getString(User.ID_PROPERTY)).thenReturn(ID);
         when(mockIteratorSupport.hasNext()).thenReturn(true);
-        when(mockIteratorSupport.next()).thenReturn(mock(Item.class));
+        when(mockIteratorSupport.next()).thenReturn(mockItem);
 
         User user = createDefaultUserBuilder().build();
         userRepository.createUser(user, PASSWORD);
@@ -226,6 +228,29 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
         assertThat(user, is(nullValue()));
     }
 
+    @Test
+    public void testGetAllUsers() throws Exception {
+        List<Map<String, AttributeValue>> attributeValueMaps = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            attributeValueMaps.add(createAttributeValueMap());
+        }
+        ScanResult scanResult = mock(ScanResult.class);
+        when(scanResult.getItems()).thenReturn(attributeValueMaps);
+        doAnswer(invocationOnMock -> {
+            ScanRequest scanRequest = (ScanRequest)invocationOnMock.getArguments()[0];
+            if (scanRequest.getExclusiveStartKey() == null) {
+                when(scanResult.getLastEvaluatedKey())
+                    .thenReturn(Collections.singletonMap(User.ID_PROPERTY, new AttributeValue().withS(ID)));
+            } else {
+                when(scanResult.getLastEvaluatedKey()).thenReturn(null);
+            }
+            return scanResult;
+        }).when(amazonDynamoDB).scan(any(ScanRequest.class));
+
+        List<User> users = userRepository.getAllUsers();
+        assertThat(users.size(), is(10));
+    }
+
     private void assertCommonFields(User user) {
         assertThat(user.getId(), is(ID));
         assertThat(user.getUsername(), is(USERNAME));
@@ -249,5 +274,14 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
                 .withString(User.EMAIL_PROPERTY, EMAIL)
                 .withString(User.USERNAME_PROPERTY, USERNAME)
                 .withBoolean(User.NOTIFICATIONS_PROPERTY, NOTIFICATIONS_ENABLED);
+    }
+
+    private Map<String, AttributeValue> createAttributeValueMap() {
+        Map<String, AttributeValue> attributeValueMap = new HashMap<>();
+        attributeValueMap.put(User.ID_PROPERTY, new AttributeValue().withS(ID));
+        attributeValueMap.put(User.EMAIL_PROPERTY, new AttributeValue().withS(EMAIL));
+        attributeValueMap.put(User.USERNAME_PROPERTY, new AttributeValue().withS(USERNAME));
+        attributeValueMap.put(User.NOTIFICATIONS_PROPERTY, new AttributeValue().withBOOL(NOTIFICATIONS_ENABLED));
+        return attributeValueMap;
     }
 }

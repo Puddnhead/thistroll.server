@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Rest layer of {@link UserService}
  * Created by MVW on 8/26/2017.
@@ -63,6 +65,12 @@ public class UserServiceController implements UserService {
         }
 
         return outcome;
+    }
+
+    @RequestMapping(value="/all")
+    @Override
+    public @ResponseBody List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @Override

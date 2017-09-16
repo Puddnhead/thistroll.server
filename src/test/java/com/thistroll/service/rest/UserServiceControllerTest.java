@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.Collections;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -123,6 +124,14 @@ public class UserServiceControllerTest extends ControllerTestBase {
 
         mockMvc.perform(delete("/user/someId"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testGetAllUsers() throws Exception {
+        when(userRepository.getAllUsers()).thenReturn(Collections.singletonList(createUser()));
+
+        mockMvc.perform(get("/user/all"))
+                .andExpect(status().isOk());
     }
 
     private User createUser() {

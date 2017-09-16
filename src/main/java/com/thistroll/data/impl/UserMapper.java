@@ -1,20 +1,23 @@
 package com.thistroll.data.impl;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.thistroll.domain.Blog;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
 import org.joda.time.DateTime;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * Static utility class for mapping users
+ *
  * Created by MVW on 8/26/2017.
  */
-public class UserMapper {
+class UserMapper {
 
     static User mapItemToUser(Item item) {
         if (item == null) {
@@ -36,6 +39,39 @@ public class UserMapper {
         }
         if (item.isPresent(User.ROLES_PROPERTY) && !item.isNull(User.ROLES_PROPERTY)) {
             builder = builder.roles(UserMapper.deserializeRoles(item.getString(User.ROLES_PROPERTY)));
+        }
+        return builder.build();
+    }
+
+    static List<User> mapItemsToUsers(List<Map<String, AttributeValue>> items) {
+        return items.stream()
+                .map(UserMapper::mapAttributeMapToUser)
+                .collect(Collectors.toList());
+    }
+
+    static User mapAttributeMapToUser(Map<String, AttributeValue> attributeValueMap) {
+        User.Builder builder = new User.Builder()
+                .id(attributeValueMap.get(User.ID_PROPERTY).getS())
+                .username(attributeValueMap.get(User.USERNAME_PROPERTY).getS())
+                .email(attributeValueMap.get(User.EMAIL_PROPERTY).getS())
+                .notificationsEnabled(attributeValueMap.get(User.NOTIFICATIONS_PROPERTY).getBOOL());
+        if (attributeValueMap.containsKey(User.FIRST_NAME_PROPERTY)) {
+            builder = builder.firstName(attributeValueMap.get(User.FIRST_NAME_PROPERTY).getS());
+        }
+        if (attributeValueMap.containsKey(User.LAST_NAME_PROPERTY)) {
+            builder = builder.lastName((attributeValueMap.get(User.LAST_NAME_PROPERTY).getS()));
+        }
+        AttributeValue createdOnProperty = attributeValueMap.get(User.CREATED_ON_PROPERTY);
+        if (createdOnProperty != null) {
+            builder = builder.createdOn(new DateTime(createdOnProperty.getL()));
+        }
+        AttributeValue lastUpdatedOnProperty = attributeValueMap.get(User.LAST_UPDATED_ON_PROPERTY);
+        if (lastUpdatedOnProperty != null) {
+            builder = builder.lastUpdatedOn(new DateTime(lastUpdatedOnProperty.getL()));
+        }
+        AttributeValue rolesProperty = attributeValueMap.get(User.ROLES_PROPERTY);
+        if (rolesProperty != null) {
+            builder = builder.roles(UserMapper.deserializeRoles(rolesProperty.getS()));
         }
         return builder.build();
     }
