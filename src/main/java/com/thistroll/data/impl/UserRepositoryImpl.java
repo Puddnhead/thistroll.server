@@ -2,7 +2,10 @@ package com.thistroll.data.impl;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.*;
-import com.amazonaws.services.dynamodbv2.document.spec.*;
+import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
@@ -10,16 +13,18 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.thistroll.data.api.UserRepository;
-import com.thistroll.domain.Blog;
-import com.thistroll.exceptions.DuplicateUsernameException;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.exceptions.DuplicateUsernameException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Implementation class for {@link UserRepository}
@@ -35,7 +40,7 @@ public class UserRepositoryImpl implements UserRepository {
     /**
      * In-memory user cache
      */
-    Cache<String, User> userCache = null;
+    private Cache<String, User> userCache = null;
 
     @Override
     public User createUser(User user, String password) {

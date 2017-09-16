@@ -14,22 +14,22 @@ import java.util.regex.Pattern;
  *
  * Created by MVW on 8/29/2017.
  */
-public class UserValidationUtil {
+class UserValidationUtil {
 
-    public static final String USERNAME_REQUIRED = "User must have a username";
-    public static final String USERNAME_TOO_SHORT = "Username must be at least 4 characters";
-    public static final String USERNAME_TOO_LONG = "Username cannot be longer than 64 characters";
-    public static final String USERNAME_MUST_BE_ALPHANUMERIC = "Username must contain only the letters and numbers";
-    public static final String FIRST_NAME_TOO_LONG = "First name can have a maximum of 128 characters";
-    public static final String LAST_NAME_TOO_LONG = "Last name can have a maximum of 128 characters";
-    public static final String EMAIL_REQUIRED = "User must provide an email address";
-    public static final String EMAIL_TOO_LONG = "Email cannot contain more than 256 characters";
-    public static final String EMAIL_INVALID = "Email is invalid";
-    public static final String PASSWORD_REQUIRED = "User must have a password";
-    public static final String PASSWORD_TOO_SHORT = "Password must be at least 6 characters long";
-    public static final String PASSWORD_TOO_LONG = "Password must be no longer than 256 characters";
+    private static final String USERNAME_REQUIRED = "User must have a username";
+    private static final String USERNAME_TOO_SHORT = "Username must be at least 4 characters";
+    private static final String USERNAME_TOO_LONG = "Username cannot be longer than 64 characters";
+    private static final String USERNAME_MUST_BE_ALPHANUMERIC = "Username must contain only the letters and numbers";
+    private static final String FIRST_NAME_TOO_LONG = "First name can have a maximum of 128 characters";
+    private static final String LAST_NAME_TOO_LONG = "Last name can have a maximum of 128 characters";
+    private static final String EMAIL_REQUIRED = "User must provide an email address";
+    private static final String EMAIL_TOO_LONG = "Email cannot contain more than 256 characters";
+    private static final String EMAIL_INVALID = "Email is invalid";
+    private static final String PASSWORD_REQUIRED = "User must have a password";
+    private static final String PASSWORD_TOO_SHORT = "Password must be at least 6 characters long";
+    private static final String PASSWORD_TOO_LONG = "Password must be no longer than 256 characters";
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     /**
@@ -40,9 +40,9 @@ public class UserValidationUtil {
      *      Last name (optional) cannot be more than 128 characters
      *
      * @param user the user to validate
-     * @throws ValidationException
+     * @throws ValidationException if the user has validation errors
      */
-    public static void validateUser(User user) {
+    static void validateUser(User user) {
         List<String> validationErrors = new ArrayList<>();
 
         // Validate username
@@ -94,7 +94,7 @@ public class UserValidationUtil {
      *
      * @param password the password to validate
      */
-    public static void validatePassword(String password) {
+    static void validatePassword(String password) {
         if (StringUtils.isEmpty(password)) {
             throw new ValidationException(PASSWORD_REQUIRED);
         } else if (password.length() < 6) {

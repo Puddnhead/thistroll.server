@@ -30,6 +30,7 @@ public class User extends AbstractPersistentObject implements UserDetails {
     public static final String PASSWORD_PROPERTY = "password";
 
     public static final String USERNAME_INDEX = "usernameIndex";
+    public static final String EMAIL_INDEX = "emailIndex";
 
     private final String username;
 

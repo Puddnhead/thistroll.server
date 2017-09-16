@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Utility to generate a local DynamoDB schema
+ *
  * Created by MVW on 7/13/2017.
  */
 public class CreateTablesUtil {
@@ -108,6 +110,9 @@ public class CreateTablesUtil {
                             .withAttributeType("S"),
                     new AttributeDefinition()
                             .withAttributeName(User.USERNAME_PROPERTY)
+                            .withAttributeType("S"),
+                    new AttributeDefinition()
+                            .withAttributeName(User.EMAIL_PROPERTY)
                             .withAttributeType("S")
             );
 
@@ -124,21 +129,35 @@ public class CreateTablesUtil {
             GlobalSecondaryIndex usernameIndex = new GlobalSecondaryIndex()
                     .withIndexName(User.USERNAME_INDEX)
                     .withProvisionedThroughput(new ProvisionedThroughput()
-                            .withReadCapacityUnits((long) 10)
-                            .withWriteCapacityUnits((long) 1))
+                            .withReadCapacityUnits(10L)
+                            .withWriteCapacityUnits(1L))
                     .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
 
-            List<KeySchemaElement> indexKeySchema = new ArrayList<>();
-
-            indexKeySchema.add(new KeySchemaElement()
+            List<KeySchemaElement> usernameIndexKeySchema = new ArrayList<>();
+            usernameIndexKeySchema.add(new KeySchemaElement()
                     .withAttributeName(User.PARTITION_KEY_NAME)
                     .withKeyType(KeyType.HASH));  //Partition key
-            indexKeySchema.add(new KeySchemaElement()
+            usernameIndexKeySchema.add(new KeySchemaElement()
                     .withAttributeName(User.USERNAME_PROPERTY)
                     .withKeyType(KeyType.RANGE));  //Sort key
+            usernameIndex.setKeySchema(usernameIndexKeySchema);
 
-            usernameIndex.setKeySchema(indexKeySchema);
+            // Email index
+            GlobalSecondaryIndex emailIndex = new GlobalSecondaryIndex()
+                    .withIndexName(User.EMAIL_INDEX)
+                    .withProvisionedThroughput(new ProvisionedThroughput()
+                            .withReadCapacityUnits(10L)
+                            .withWriteCapacityUnits(1L))
+                    .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
 
+            List<KeySchemaElement> emailIndexKeySchema = new ArrayList<>();
+            emailIndexKeySchema.add(new KeySchemaElement()
+                    .withAttributeName(User.PARTITION_KEY_NAME)
+                    .withKeyType(KeyType.HASH));
+            emailIndexKeySchema.add(new KeySchemaElement()
+                    .withAttributeName(User.EMAIL_PROPERTY)
+                    .withKeyType(KeyType.RANGE));
+            emailIndex.setKeySchema(emailIndexKeySchema);
 
             CreateTableRequest createTableRequest = new CreateTableRequest()
                     .withTableName(TABLE_NAME)
@@ -147,7 +166,7 @@ public class CreateTablesUtil {
                             .withWriteCapacityUnits((long) 1))
                     .withAttributeDefinitions(attributeDefinitions)
                     .withKeySchema(tableKeySchema)
-                    .withGlobalSecondaryIndexes(usernameIndex);
+                    .withGlobalSecondaryIndexes(usernameIndex, emailIndex);
 
             Table table = dynamoDB.createTable(createTableRequest);
             table.waitForActive();
