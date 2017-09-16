@@ -1,13 +1,11 @@
 package com.thistroll.service.impl;
 
 import com.google.common.collect.Sets;
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
