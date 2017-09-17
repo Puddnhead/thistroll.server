@@ -43,6 +43,11 @@ public class BlogRepositoryImpl implements BlogRepository {
      */
     private Map<String, Blog> itemCache = new HashMap<>();
 
+    /**
+     * Cached reference to the current blog
+     */
+    private Blog currentBlog = null;
+
     private Map<String, AttributeValue> lastEvaluatedKey = null;
 
     private boolean allBlogsFetched = false;
@@ -71,6 +76,7 @@ public class BlogRepositoryImpl implements BlogRepository {
         // clear blog list cache and add new blog to item cache
         clearListCache();
         itemCache.put(createdBlog.getId(), createdBlog);
+        currentBlog = createdBlog;
         return createdBlog;
     }
 
@@ -99,6 +105,9 @@ public class BlogRepositoryImpl implements BlogRepository {
         clearListCache();
         if (itemCache.containsKey(updatedBlog.getId())) {
             itemCache.put(updatedBlog.getId(), updatedBlog);
+        }
+        if (currentBlog != null && currentBlog.getId().equals(updatedBlog.getId())) {
+            currentBlog = updatedBlog;
         }
 
         return updatedBlog;
@@ -134,12 +143,9 @@ public class BlogRepositoryImpl implements BlogRepository {
 
     @Override
     public Blog getMostRecentBlog() {
-        // if in caches, don't make a DB call
-        if (listCache.size() > 0) {
-            Blog mostRecentSansText = listCache.get(0);
-            if (itemCache.containsKey(mostRecentSansText.getId())) {
-                return itemCache.get(mostRecentSansText.getId());
-            }
+        // first check if we cached it already
+        if (currentBlog != null) {
+            return currentBlog;
         }
 
         // else fetch from DB
@@ -195,6 +201,11 @@ public class BlogRepositoryImpl implements BlogRepository {
         }
         if (foundIndex != -1) {
             listCache.remove(foundIndex);
+        }
+
+        // unset the cached current blog if applicable
+        if (currentBlog != null && currentBlog.getId().equals(id)) {
+            currentBlog = null;
         }
 
         return Outcome.SUCCESS;
