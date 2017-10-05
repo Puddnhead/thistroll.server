@@ -1,4 +1,4 @@
-package com.thistroll.service.impl;
+package com.thistroll.troll;
 
 import com.thistroll.service.client.TrollService;
 import com.thistroll.exceptions.UnsupportedSpeechException;

@@ -20,7 +20,7 @@
         p:imageBucketUrl="${blogImages.bucketUrl}"
         p:s3ClientProvider-ref="com.thistroll.data.s3clientprovider" />
 
-    <bean id="com.thistroll.service.impl.hardcodedtrollservice" class="com.thistroll.service.impl.HardcodedTrollService" />
+    <bean id="com.thistroll.service.impl.hardcodedtrollservice" class="com.thistroll.troll.HardcodedTrollService" />
 
     <bean id="com.thistroll.service.impl.sessionservice" class="com.thistroll.service.impl.SessionServiceImpl"
           p:userService-ref="com.thistroll.service.impl.userservice"
