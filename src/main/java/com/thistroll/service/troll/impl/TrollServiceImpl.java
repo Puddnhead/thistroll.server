@@ -1,14 +1,12 @@
 package com.thistroll.service.troll.impl;
 
-import com.thistroll.exceptions.UnsupportedSpeechException;
+import com.thistroll.service.troll.api.SpeechNormalizationService;
 import com.thistroll.service.troll.api.SpeechType;
 import com.thistroll.service.troll.api.SpeechTypeResolver;
 import com.thistroll.service.troll.repositories.RandomResponseRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +19,11 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
 
     private static final Map<String, String> HARDCODED_ANSWERS;
 
+    // The troll service was born on July 21st, 2017
     private static final DateTime BIRTHDATE = new DateTime(2017, 7, 21, 0, 0);
 
     private SpeechTypeResolver speechTypeResolver;
+    private SpeechNormalizationService speechNormalizationService;
 
     private RandomResponseRepository statementRandomResponseRepository;
     private RandomResponseRepository openEndedQuestionRandomResponseRepository;
@@ -39,7 +39,7 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
     public String trollSpeak(String statement) {
         HARDCODED_ANSWERS.put("how old are you", calculateAge());
 
-        String normalized = normalizeSpeech(statement);
+        String normalized = speechNormalizationService.normalize(statement);
         String response = HARDCODED_ANSWERS.get(normalized);
 
         if (response == null) {
@@ -57,21 +57,6 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
         }
 
         return response;
-    }
-
-    private String normalizeSpeech(String statement) {
-        String normalized;
-        try {
-            normalized = URLDecoder.decode(statement, "UTF-8")
-                    .replaceAll("\\?", "")
-                    .toLowerCase()
-                    .replaceAll("what is", "what's")
-                    .trim();
-        } catch (UnsupportedEncodingException e) {
-            throw new UnsupportedSpeechException("Could not decode speech");
-        }
-
-        return normalized;
     }
 
     private static String calculateAge() {
@@ -93,6 +78,11 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
     @Required
     public void setSpeechTypeResolver(SpeechTypeResolver speechTypeResolver) {
         this.speechTypeResolver = speechTypeResolver;
+    }
+
+    @Required
+    public void setSpeechNormalizationService(SpeechNormalizationService speechNormalizationService) {
+        this.speechNormalizationService = speechNormalizationService;
     }
 
     @Required
