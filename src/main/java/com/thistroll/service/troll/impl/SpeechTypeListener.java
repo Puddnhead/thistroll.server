@@ -23,7 +23,7 @@ public class SpeechTypeListener extends SpeechBaseListener {
         this.speechType = SpeechType.YES_NO_QUESTION;
     }
 
-    public SpeechType getSpeechType() {
+    SpeechType getSpeechType() {
         return speechType;
     }
 }
