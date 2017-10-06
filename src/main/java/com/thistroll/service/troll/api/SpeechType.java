@@ -1,4 +1,4 @@
-package com.thistroll.troll.api;
+package com.thistroll.service.troll.api;
 
 /**
  * Types of speech with different expected responses

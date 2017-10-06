@@ -1,4 +1,4 @@
-package com.thistroll.troll.api;
+package com.thistroll.service.troll.api;
 
 /**
  * Resolves some speech into a known type

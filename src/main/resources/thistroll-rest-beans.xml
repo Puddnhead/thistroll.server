@@ -21,7 +21,7 @@
         p:blogImagesService-ref="com.thistroll.service.impl.blogimagesservice" />
 
     <bean id="com.thistroll.service.rest.trollservicecontroller" class="com.thistroll.service.rest.TrollServiceController"
-        p:trollService-ref="com.thistroll.service.impl.hardcodedtrollservice" />
+        p:trollService-ref="com.thistroll.service.troll.impl.trollservice" />
 
     <bean id="com.thistroll.service.rest.sessionservicecontroller" class="com.thistroll.service.rest.SessionServiceController"
         p:sessionService-ref="com.thistroll.service.impl.sessionservice" />
