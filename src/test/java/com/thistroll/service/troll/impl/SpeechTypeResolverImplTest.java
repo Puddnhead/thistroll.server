@@ -6,6 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.*;
 
 /**
@@ -83,6 +84,19 @@ public class SpeechTypeResolverImplTest {
         assertOpenEnded("i forget, how old are you");
         assertOpenEnded("bummer. what are you doing for christmas?");
         assertOpenEnded("bummer. what are you doing for christmas");
+
+        assertOpenEnded("were the legislature to vote for impeachment, what would Trump do?");
+        assertOpenEnded("suppose the legislature were to vote for impeachment - what would Trump do?");
+
+        assertStatement("why on earth I tried, I have no idea");
+
+        assertStatement("when in doubt, drink");
+
+        assertStatement("what a mess");
+
+        assertStatement("how he did it, I have no idea");
+
+        assertStatement("as to who called, I can't say");
     }
 
     private void assertOpenEnded(String speech) {
