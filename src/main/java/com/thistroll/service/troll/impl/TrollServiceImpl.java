@@ -31,13 +31,13 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
 
     static {
         HARDCODED_ANSWERS = new HashMap<>();
-        HARDCODED_ANSWERS.put("WHAT'S YOUR NAME", "I'm Pan! Mucho gusto.");
-        HARDCODED_ANSWERS.put("WHAT'S THE CAPITAL OF UKRAINE", "Kiev of course!");
+        HARDCODED_ANSWERS.put("what's your name", "I'm Pan! Mucho gusto.");
+        HARDCODED_ANSWERS.put("what's the capital of ukraine", "Kiev of course!");
     }
 
     @Override
     public String trollSpeak(String statement) {
-        HARDCODED_ANSWERS.put("HOW OLD ARE YOU", calculateAge());
+        HARDCODED_ANSWERS.put("how old are you", calculateAge());
 
         String normalized = normalizeSpeech(statement);
         String response = HARDCODED_ANSWERS.get(normalized);
@@ -64,8 +64,8 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
         try {
             normalized = URLDecoder.decode(statement, "UTF-8")
                     .replaceAll("\\?", "")
-                    .toUpperCase()
-                    .replaceAll("WHAT IS", "WHAT'S")
+                    .toLowerCase()
+                    .replaceAll("what is", "what's")
                     .trim();
         } catch (UnsupportedEncodingException e) {
             throw new UnsupportedSpeechException("Could not decode speech");
