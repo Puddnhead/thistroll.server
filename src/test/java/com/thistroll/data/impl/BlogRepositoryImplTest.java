@@ -9,6 +9,8 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
+import com.thistroll.data.mappers.BlogMapper;
+import com.thistroll.data.util.DynamoDBConnectionProvider;
 import com.thistroll.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;

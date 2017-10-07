@@ -44,6 +44,12 @@ public class ExceptionHandlerAdvice {
     }
 
     @ExceptionHandler
+    public ResponseEntity handleException(SpeechNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorMessage(e.getCustomMessage()));
+    }
+
+    @ExceptionHandler
     public ResponseEntity handleException(SessionNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(e.getCustomMessage()));

@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.thistroll.data.impl.S3ClientProvider;
+import com.thistroll.data.util.S3ClientProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +21,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
+ * Rest test for {@link BlogImagesServiceController}
+ *
  * Created by MVW on 7/29/2017.
  */
 public class BlogImagesServiceControllerTest extends ControllerTestBase {
 
-    AmazonS3 amazonS3 = mock(AmazonS3.class);
-    ObjectListing objectListing = mock(ObjectListing.class);
-    S3ObjectSummary folderSummary = mock(S3ObjectSummary.class);
-    S3ObjectSummary fileSummary = mock(S3ObjectSummary.class);
+    private AmazonS3 amazonS3 = mock(AmazonS3.class);
+    private ObjectListing objectListing = mock(ObjectListing.class);
+    private S3ObjectSummary folderSummary = mock(S3ObjectSummary.class);
+    private S3ObjectSummary fileSummary = mock(S3ObjectSummary.class);
 
-    public static final String FOLDER_KEY = "bogus/";
-    public static final String FILE_KEY = "folder/file";
+    private static final String FOLDER_KEY = "bogus/";
+    private static final String FILE_KEY = "folder/file";
 
     @Autowired
-    S3ClientProvider s3ClientProvider;
+    private S3ClientProvider s3ClientProvider;
 
     @Before
     public void setup() {

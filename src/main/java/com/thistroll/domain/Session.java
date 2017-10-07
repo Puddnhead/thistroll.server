@@ -21,7 +21,7 @@ public class Session extends AbstractPersistentObject {
     /**
      * No-arg constructor required by Jackson
      */
-    public Session() {
+    private Session() {
         super();
         this.userDetails = null;
         this.expirationTime = null;

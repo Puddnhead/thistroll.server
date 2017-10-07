@@ -1,9 +1,11 @@
-package com.thistroll.data.impl;
+package com.thistroll.data.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 /**
+ * Provider to build a standard S3Client
+ *
  * Created by MVW on 7/29/2017.
  */
 public class S3ClientProvider {

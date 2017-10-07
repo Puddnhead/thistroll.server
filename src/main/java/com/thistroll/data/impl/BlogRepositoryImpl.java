@@ -10,6 +10,8 @@ import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.thistroll.data.api.BlogRepository;
+import com.thistroll.data.mappers.BlogMapper;
+import com.thistroll.data.util.DynamoDBConnectionProvider;
 import com.thistroll.exceptions.ValidationException;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;

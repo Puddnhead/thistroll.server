@@ -1,9 +1,8 @@
-package com.thistroll.data.impl;
+package com.thistroll.data.mappers;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.thistroll.domain.Blog;
 import org.joda.time.DateTime;
 
@@ -22,7 +21,7 @@ public class BlogMapper {
      * @param queryResult result of the query
      * @return a list of blogs
      */
-    static List<Blog> mapQueryResultToBlogs(QueryResult queryResult) {
+    public static List<Blog> mapQueryResultToBlogs(QueryResult queryResult) {
         List<Blog> blogs = new ArrayList<>();
 
         for (Map<String, AttributeValue> item: queryResult.getItems()) {
@@ -66,7 +65,7 @@ public class BlogMapper {
      *
      * @return the mapped blog or null if Item is null
      */
-    static Blog mapItemToBlog(Item item) {
+    public static Blog mapItemToBlog(Item item) {
         if (item == null) {
             return null;
         }

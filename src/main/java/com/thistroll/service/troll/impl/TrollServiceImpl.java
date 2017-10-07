@@ -1,11 +1,14 @@
 package com.thistroll.service.troll.impl;
 
+import com.thistroll.data.api.SpeechRepository;
+import com.thistroll.domain.Speech;
 import com.thistroll.service.troll.api.SpeechNormalizationService;
 import com.thistroll.service.troll.api.SpeechType;
 import com.thistroll.service.troll.api.SpeechTypeResolver;
 import com.thistroll.service.troll.repositories.RandomResponseRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,31 +32,99 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
     private RandomResponseRepository openEndedQuestionRandomResponseRepository;
     private RandomResponseRepository yesNoQuestionRandomResponseRepository;
 
+    private SpeechRepository knownSpeechRepository;
+    private SpeechRepository speechWithoutResponsesRepository;
+
+    private int maximumSpeechLength;
+
     static {
         HARDCODED_ANSWERS = new HashMap<>();
-        HARDCODED_ANSWERS.put("what's your name", "I'm Pan! Mucho gusto.");
-        HARDCODED_ANSWERS.put("what's the capital of ukraine", "Kiev of course!");
+        HARDCODED_ANSWERS.put("what is your name?", "I'm Pan! Pleasure to meet you.");
+        HARDCODED_ANSWERS.put("what is the capital of ukraine?", "Kiev of course!");
     }
 
     @Override
-    public String trollSpeak(String statement) {
-        HARDCODED_ANSWERS.put("how old are you", calculateAge());
+    public String trollSpeak(String text) {
+        HARDCODED_ANSWERS.put("how old are you?", calculateAge());
 
-        String normalized = speechNormalizationService.normalize(statement);
+        String normalized = speechNormalizationService.normalize(text);
         String response = HARDCODED_ANSWERS.get(normalized);
 
         if (response == null) {
-            SpeechType speechType = speechTypeResolver.resolve(statement);
-            switch (speechType) {
-                case OPEN_ENDED_QUESTION:
-                    response = openEndedQuestionRandomResponseRepository.getRandomResponse();
-                    break;
-                case YES_NO_QUESTION:
-                    response = yesNoQuestionRandomResponseRepository.getRandomResponse();
-                    break;
-                default:
-                    response = statementRandomResponseRepository.getRandomResponse();
+            Speech speech = knownSpeechRepository.getSpeechByText(normalized);
+            if (speech != null) {
+                response = speech.getRandomResponse();
             }
+        }
+
+        if (response == null) {
+            Speech speech = speechWithoutResponsesRepository.getSpeechByText(normalized);
+            if (speech == null && normalized.length() < maximumSpeechLength) {
+                speechWithoutResponsesRepository.saveSpeech(new Speech.Builder().text(normalized).build());
+            }
+            response = getRandomResponse(normalized);
+        }
+
+        return response;
+    }
+
+    @PreAuthorize("isAdmin()")
+    @Override
+    public Speech getNextSpeechWithNoResponse() {
+        return speechWithoutResponsesRepository.getNextSpeech();
+    }
+
+    @PreAuthorize("isAdmin()")
+    @Override
+    public Speech updateResponses(Speech speech) {
+        Speech updated;
+
+        Speech speechWithoutResponses = speech.getId() != null
+                ? speechWithoutResponsesRepository.getSpeechById(speech.getId())
+                : speechWithoutResponsesRepository.getSpeechByText(speech.getText());
+
+        if (speechWithoutResponses != null) {
+            speechWithoutResponsesRepository.deleteSpeech(speechWithoutResponses.getId());
+        }
+
+        Speech knownSpeech = speech.getId() != null
+                ? knownSpeechRepository.getSpeechById(speech.getId())
+                : knownSpeechRepository.getSpeechByText(speech.getText());
+
+        if (knownSpeech != null) {
+            updated = knownSpeechRepository.updateSpeech(speech);
+        } else {
+            updated = knownSpeechRepository.saveSpeech(speech);
+        }
+
+        return updated;
+    }
+
+    @PreAuthorize("isAdmin()")
+    @Override
+    public int getSpeechWithoutResponsesCount() {
+        return speechWithoutResponsesRepository.getTotalNumberOfSpeeches();
+    }
+
+    @PreAuthorize("isAdmin()")
+    @Override
+    public int getKnownSpeechCount() {
+        return knownSpeechRepository.getTotalNumberOfSpeeches();
+    }
+
+    private String getRandomResponse(String speech) {
+        String response;
+
+        SpeechType speechType = speechTypeResolver.resolve(speech);
+        switch (speechType) {
+            case OPEN_ENDED_QUESTION:
+                response = openEndedQuestionRandomResponseRepository.getRandomResponse();
+                break;
+            case YES_NO_QUESTION:
+                response = yesNoQuestionRandomResponseRepository.getRandomResponse();
+                break;
+            default:
+                response = statementRandomResponseRepository.getRandomResponse();
         }
 
         return response;
@@ -98,5 +169,20 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
     @Required
     public void setYesNoQuestionRandomResponseRepository(RandomResponseRepository yesNoQuestionRandomResponseRepository) {
         this.yesNoQuestionRandomResponseRepository = yesNoQuestionRandomResponseRepository;
+    }
+
+    @Required
+    public void setKnownSpeechRepository(SpeechRepository knownSpeechRepository) {
+        this.knownSpeechRepository = knownSpeechRepository;
+    }
+
+    @Required
+    public void setSpeechWithoutResponsesRepository(SpeechRepository speechWithoutResponsesRepository) {
+        this.speechWithoutResponsesRepository = speechWithoutResponsesRepository;
+    }
+
+    @Required
+    public void setMaximumSpeechLength(int maximumSpeechLength) {
+        this.maximumSpeechLength = maximumSpeechLength;
     }
 }

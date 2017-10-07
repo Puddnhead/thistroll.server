@@ -1,4 +1,4 @@
-package com.thistroll.data.impl;
+package com.thistroll.data.util;
 
 import com.thistroll.exceptions.ValidationException;
 import com.thistroll.domain.User;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  *
  * Created by MVW on 8/29/2017.
  */
-class UserValidationUtil {
+public class UserValidationUtil {
 
     private static final String USERNAME_REQUIRED = "User must have a username";
     private static final String USERNAME_TOO_SHORT = "Username must be at least 4 characters";
@@ -42,7 +42,7 @@ class UserValidationUtil {
      * @param user the user to validate
      * @throws ValidationException if the user has validation errors
      */
-    static void validateUser(User user) {
+    public static void validateUser(User user) {
         List<String> validationErrors = new ArrayList<>();
 
         // Validate username
@@ -94,7 +94,7 @@ class UserValidationUtil {
      *
      * @param password the password to validate
      */
-    static void validatePassword(String password) {
+    public static void validatePassword(String password) {
         if (StringUtils.isEmpty(password)) {
             throw new ValidationException(PASSWORD_REQUIRED);
         } else if (password.length() < 6) {

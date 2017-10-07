@@ -1,5 +1,6 @@
 package com.thistroll.service.rest;
 
+import com.thistroll.domain.Speech;
 import com.thistroll.service.client.TrollService;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
@@ -21,8 +22,32 @@ public class TrollServiceController implements TrollService {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @Override
-    public @ResponseBody String trollSpeak(@RequestBody String statement) {
-        return trollService.trollSpeak(statement);
+    public @ResponseBody String trollSpeak(@RequestBody String speech) {
+        return trollService.trollSpeak(speech);
+    }
+
+    @RequestMapping(value = "/next", method = RequestMethod.GET)
+    @Override
+    public @ResponseBody Speech getNextSpeechWithNoResponse() {
+        return trollService.getNextSpeechWithNoResponse();
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @Override
+    public @ResponseBody Speech updateResponses(@RequestBody Speech speech) {
+        return trollService.updateResponses(speech);
+    }
+
+    @RequestMapping(value = "/noresponses/count", method = RequestMethod.GET)
+    @Override
+    public @ResponseBody int getSpeechWithoutResponsesCount() {
+        return trollService.getSpeechWithoutResponsesCount();
+    }
+
+    @RequestMapping(value = "/knownspeech/count", method = RequestMethod.GET)
+    @Override
+    public @ResponseBody int getKnownSpeechCount() {
+        return trollService.getKnownSpeechCount();
     }
 
     @Required

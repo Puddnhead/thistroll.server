@@ -1,5 +1,7 @@
 package com.thistroll.service.client;
 
+import com.thistroll.domain.Speech;
+
 /**
  * Service for talking to trolls
  *
@@ -8,10 +10,39 @@ package com.thistroll.service.client;
 public interface TrollService {
 
     /**
-     * Returns a troll's response to the given statement
+     * Returns a troll's response to the given speech
      *
-     * @param statement and sort of statement
+     * @param speech any type of speech
      * @return some trollspeak
      */
-    String trollSpeak(String statement);
+    String trollSpeak(String speech);
+
+    /**
+     * Returns the next speech with no responses
+     *
+     * @return the next speech with no responses
+     */
+    Speech getNextSpeechWithNoResponse();
+
+    /**
+     * Update the responses for the provided speech
+     *
+     * @param speech the speech to update
+     * @return the updated speech
+     */
+    Speech updateResponses(Speech speech);
+
+    /**
+     * Return the total number of speeches without known responses
+     *
+     * @return the total number of speeches without known responses
+     */
+    int getSpeechWithoutResponsesCount();
+
+    /**
+     * Return the total number of speeches in the repository for which a response is known
+     *
+     * @return the total number of speeches in the repository for which a response is known
+     */
+    int getKnownSpeechCount();
 }

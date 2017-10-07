@@ -2,9 +2,9 @@ package com.thistroll.domain;
 
 import java.util.Objects;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-
 /**
+ * Domain representation of a blog
+ *
  * Created by MVW on 7/13/2017.
  */
 public class Blog extends AbstractPersistentObject {

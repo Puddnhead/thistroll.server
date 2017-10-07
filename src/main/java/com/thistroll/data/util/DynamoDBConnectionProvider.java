@@ -1,4 +1,4 @@
-package com.thistroll.data.impl;
+package com.thistroll.data.util;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;

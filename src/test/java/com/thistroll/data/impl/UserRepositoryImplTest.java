@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.thistroll.data.util.DynamoDBConnectionProvider;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.UserRole;
 import com.thistroll.exceptions.DuplicateEmailException;

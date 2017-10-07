@@ -47,7 +47,7 @@ public class User extends AbstractPersistentObject implements UserDetails {
     /**
      * No-arg constructor for Jackson
      */
-    public User() {
+    private User() {
         super();
         this.username = null;
         this.roles = null;

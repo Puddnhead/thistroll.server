@@ -1,4 +1,4 @@
-package com.thistroll.data.impl;
+package com.thistroll.data.mappers;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
  *
  * Created by MVW on 8/26/2017.
  */
-class UserMapper {
+public class UserMapper {
 
-    static User mapItemToUser(Item item) {
+    public static User mapItemToUser(Item item) {
         if (item == null) {
             return null;
         }
@@ -43,13 +43,13 @@ class UserMapper {
         return builder.build();
     }
 
-    static List<User> mapItemsToUsers(List<Map<String, AttributeValue>> items) {
+    public static List<User> mapItemsToUsers(List<Map<String, AttributeValue>> items) {
         return items.stream()
                 .map(UserMapper::mapAttributeMapToUser)
                 .collect(Collectors.toList());
     }
 
-    static User mapAttributeMapToUser(Map<String, AttributeValue> attributeValueMap) {
+    public static User mapAttributeMapToUser(Map<String, AttributeValue> attributeValueMap) {
         User.Builder builder = new User.Builder()
                 .id(attributeValueMap.get(User.ID_PROPERTY).getS())
                 .username(attributeValueMap.get(User.USERNAME_PROPERTY).getS())
@@ -82,7 +82,7 @@ class UserMapper {
      * @param roles roles to serialize
      * @return a comma-delimited string
      */
-    static String serializeRoles(Set<UserRole> roles) {
+    public static String serializeRoles(Set<UserRole> roles) {
         String serialized = "";
         boolean first = true;
 
@@ -103,7 +103,7 @@ class UserMapper {
      * @param roles a comma-delimited list of roles
      * @return a set of UserRoles
      */
-    static Set<UserRole> deserializeRoles(String roles) {
+    public static Set<UserRole> deserializeRoles(String roles) {
         List<String> rolesList = Arrays.asList(roles.split(","));
         return rolesList.stream()
                 .map(UserRole::valueOf)

@@ -20,7 +20,7 @@ public class SpeechNormalizationServiceImpl implements SpeechNormalizationServic
     /**
      * Punctuation-stripping occurs after toLowerCase(), so no need to worry about uppercase letters
      */
-    static Set<Character> RECOGNIZED_CHARACTERS = Sets.newHashSet(
+    private static Set<Character> RECOGNIZED_CHARACTERS = Sets.newHashSet(
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm' ,'n', 'o', 'p', 'q', 'r', 's', 't',
                 't', 'u', 'v', 'w', 'x', 'y', 'z',
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -52,6 +52,8 @@ public class SpeechNormalizationServiceImpl implements SpeechNormalizationServic
         normalized = normalized.replaceAll("hadn't", "had not");
         normalized = normalized.replaceAll("haven't", "have not");
         normalized = normalized.replaceAll("he's", "he is");
+        normalized = normalized.replaceAll("how's", "how is");
+        normalized = normalized.replaceAll("how're", "how are");
         normalized = normalized.replaceAll("i'm", "i am");
         normalized = normalized.replaceAll("isn't", "is not");
         normalized = normalized.replaceAll("isnt", "is not");
@@ -65,7 +67,11 @@ public class SpeechNormalizationServiceImpl implements SpeechNormalizationServic
         normalized = normalized.replaceAll("we're", "we are");
         normalized = normalized.replaceAll("werent", "were not");
         normalized = normalized.replaceAll("weren't", "were not");
+        normalized = normalized.replaceAll("what're", "what are");
+        normalized = normalized.replaceAll("what's", "what is");
         normalized = normalized.replaceAll("what've", "what have");
+        normalized = normalized.replaceAll("who's", "who is");
+        normalized = normalized.replaceAll("who're", "who are");
         normalized = normalized.replaceAll("won't", "will not");
         normalized = normalized.replaceAll("wouldn't", "would not");
         normalized = normalized.replaceAll("wouldnt", "would not");

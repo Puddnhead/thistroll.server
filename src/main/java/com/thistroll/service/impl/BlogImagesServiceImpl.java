@@ -3,7 +3,7 @@ package com.thistroll.service.impl;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.thistroll.data.impl.S3ClientProvider;
+import com.thistroll.data.util.S3ClientProvider;
 import com.thistroll.service.client.BlogImagesService;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Implementation class for {@link BlogImagesService}
+ *
  * Created by MVW on 7/29/2017.
  */
 public class BlogImagesServiceImpl implements BlogImagesService {
@@ -26,14 +28,12 @@ public class BlogImagesServiceImpl implements BlogImagesService {
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest()
                 .withBucketName(bucketName).withPrefix(blogId);
         ObjectListing objects = s3ClientProvider.getS3Client().listObjects(listObjectsRequest);
-        List<String> vals = objects.getObjectSummaries()
+        return objects.getObjectSummaries()
                 .stream()
                 .map(S3ObjectSummary::getKey)
                 .filter(key -> key.charAt(key.length() -1) != '/') // remove directory listing
                 .map(filename -> imageBucketUrl + filename)
                 .collect(Collectors.toList());
-
-        return vals;
     }
 
     @Required

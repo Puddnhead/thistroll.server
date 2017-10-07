@@ -8,27 +8,30 @@
        xmlns="http://www.springframework.org/schema/beans">
 
     <bean id="com.thistroll.service.troll.impl.trollservice" class="com.thistroll.service.troll.impl.TrollServiceImpl"
-          p:speechTypeResolver-ref="com.thistroll.service.troll.impl.speechtyperesolver"
-          p:speechNormalizationService-ref="com.thistroll.service.troll.impl.speechnormalizationservice"
-          p:statementRandomResponseRepository-ref="com.thistroll.service.troll.repositories.statementrandomresponserepository"
-          p:openEndedQuestionRandomResponseRepository-ref="com.thistroll.service.troll.repositories.openendedquestionrandomresponserepository"
-          p:yesNoQuestionRandomResponseRepository-ref="com.thistroll.service.troll.repositories.yesnoquestionrepository" />
+        p:speechTypeResolver-ref="com.thistroll.service.troll.impl.speechtyperesolver"
+        p:speechNormalizationService-ref="com.thistroll.service.troll.impl.speechnormalizationservice"
+        p:statementRandomResponseRepository-ref="com.thistroll.service.troll.repositories.statementrandomresponserepository"
+        p:openEndedQuestionRandomResponseRepository-ref="com.thistroll.service.troll.repositories.openendedquestionrandomresponserepository"
+        p:yesNoQuestionRandomResponseRepository-ref="com.thistroll.service.troll.repositories.yesnoquestionrepository"
+        p:knownSpeechRepository-ref="com.thistroll.data.knownspeechesrepository"
+        p:speechWithoutResponsesRepository-ref="com.thistroll.data.speechwithoutresponsesrepository"
+        p:maximumSpeechLength="${troll.maximumSpeechLength}"/>
 
     <bean id="com.thistroll.service.troll.impl.speechtyperesolver"
-          class="com.thistroll.service.troll.impl.SpeechTypeResolverImpl"
-          c:printTree="false"/>
+        class="com.thistroll.service.troll.impl.SpeechTypeResolverImpl"
+        c:printTree="false"/>
 
     <bean id="com.thistroll.service.troll.impl.speechnormalizationservice"
-          class="com.thistroll.service.troll.impl.SpeechNormalizationServiceImpl"
-          p:speechTypeResolver-ref="com.thistroll.service.troll.impl.speechtyperesolver" />
+        class="com.thistroll.service.troll.impl.SpeechNormalizationServiceImpl"
+        p:speechTypeResolver-ref="com.thistroll.service.troll.impl.speechtyperesolver" />
 
     <!-- Random answer repositories -->
     <bean id="com.thistroll.service.troll.repositories.statementrandomresponserepository"
-          class="com.thistroll.service.troll.repositories.StatementRandomResponseRepository" />
+        class="com.thistroll.service.troll.repositories.StatementRandomResponseRepository" />
 
     <bean id="com.thistroll.service.troll.repositories.openendedquestionrandomresponserepository"
-          class="com.thistroll.service.troll.repositories.OpenEndedQuestionRandomResponseRepository" />
+        class="com.thistroll.service.troll.repositories.OpenEndedQuestionRandomResponseRepository" />
 
     <bean id="com.thistroll.service.troll.repositories.yesnoquestionrepository"
-          class="com.thistroll.service.troll.repositories.YesNoQuestionRandomResponseRepository" />
+        class="com.thistroll.service.troll.repositories.YesNoQuestionRandomResponseRepository" />
 </beans>

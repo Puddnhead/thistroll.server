@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.thistroll.data.impl.S3ClientProvider;
+import com.thistroll.data.util.S3ClientProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,18 +39,18 @@ public class BlogImagesServiceImplTest {
     private AmazonS3 amazonS3;
 
     @Mock
-    ObjectListing objectListing;
+    private ObjectListing objectListing;
 
     @Mock
-    S3ObjectSummary folderSummary;
+    private S3ObjectSummary folderSummary;
 
     @Mock
-    S3ObjectSummary fileSummary;
+    private S3ObjectSummary fileSummary;
 
-    public static final String BUCKET_URL = "http://bucket/";
-    public static final String BUCKET_NAME = "chocolate";
-    public static final String FOLDER_KEY = "folder/";
-    public static final String FILE_KEY = "folder/file";
+    private static final String BUCKET_URL = "http://bucket/";
+    private static final String BUCKET_NAME = "chocolate";
+    private static final String FOLDER_KEY = "folder/";
+    private static final String FILE_KEY = "folder/file";
 
     @Before
     public void setup() {

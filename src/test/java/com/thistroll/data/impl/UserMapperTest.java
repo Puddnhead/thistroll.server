@@ -1,6 +1,7 @@
 package com.thistroll.data.impl;
 
 import com.google.common.collect.Sets;
+import com.thistroll.data.mappers.UserMapper;
 import com.thistroll.domain.enums.UserRole;
 import org.junit.Test;
 
@@ -10,6 +11,8 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 /**
+ * Unit test for {@link UserMapper}
+ *
  * Created by MVW on 8/26/2017.
  */
 public class UserMapperTest {
