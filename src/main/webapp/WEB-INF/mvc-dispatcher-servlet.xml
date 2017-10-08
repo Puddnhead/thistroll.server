@@ -28,7 +28,8 @@
     <import resource="classpath*:spring-security-context.xml" />
 
     <!-- Servlet Filters -->
-    <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter" />
+    <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter"
+        p:allowedOrigins="${accessControl.allowedOrigins}"/>
 
     <bean id="com.thistroll.server.filters.sessionFilter" class="com.thistroll.server.filters.SessionFilter"
         p:sessionService-ref="com.thistroll.service.impl.sessionservice"
