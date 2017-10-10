@@ -4,7 +4,7 @@
     <groupId>com.springapp</groupId>
     <artifactId>thistroll.server</artifactId>
     <packaging>war</packaging>
-    <version>3.0.6</version>
+    <version>3.0.7</version>
     <name>thistroll.server</name>
 
     <!--Custom repository:-->
@@ -113,13 +113,6 @@
             <artifactId>log4j-web</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-log4j</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        -->
 
         <!-- Test Dependencies -->
         <dependency>

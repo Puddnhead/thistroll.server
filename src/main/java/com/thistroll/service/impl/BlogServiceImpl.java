@@ -3,12 +3,10 @@ package com.thistroll.service.impl;
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.exceptions.BlogNotFoundException;
 import com.thistroll.service.client.BlogService;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import com.thistroll.service.client.dto.response.GetBlogsResponse;
-import com.thistroll.exceptions.BlogNotFoundException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -22,8 +20,6 @@ public class BlogServiceImpl implements BlogService {
 
     private BlogRepository blogRepository;
 
-    private static final Logger LOGGER = LogManager.getLogger(BlogServiceImpl.class);
-
     private int defaultPageSize;
 
     @Override
@@ -32,7 +28,6 @@ public class BlogServiceImpl implements BlogService {
         if (blog == null) {
             throw new BlogNotFoundException("No blogs available");
         }
-        LOGGER.info("Fetching most recent blog");
         return blog;
     }
 
@@ -48,7 +43,6 @@ public class BlogServiceImpl implements BlogService {
         if (blog == null) {
             throw new BlogNotFoundException("Could not find blog with id " + id);
         }
-        LOGGER.info("Fetching blog \"" + blog.getTitle() + "\" with id \"" + id + "\"");
         return blog;
     }
 
