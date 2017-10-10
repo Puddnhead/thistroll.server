@@ -4,6 +4,8 @@ import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.domain.enums.UserRole;
+import com.thistroll.server.logging.ThrowsError;
+import com.thistroll.server.logging.ThrowsWarning;
 import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.GetUserByEmailRequest;
@@ -28,6 +30,7 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
 
+    @ThrowsError
     @Override
     public User registerUser(RegisterUserRequest registerUserRequest) {
         User user = new User.Builder()
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public User createUser(CreateUserRequest createUserRequest) {
         User user = new User.Builder()
@@ -56,6 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsWarning
     @Override
     public User getUserById(String id) {
         User user = userRepository.getUserById(id);
@@ -67,6 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsWarning
     @Override
     public User getUserByUsername(String username) {
         User user = userRepository.getUserByUsername(username);
@@ -78,6 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsWarning
     @Override
     public User getUserByEmail(GetUserByEmailRequest request) {
         User user = userRepository.getUserByEmail(request.getEmail());
@@ -88,12 +95,14 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @ThrowsWarning
     @Override
     public User getUserWithCredentials(String username, String password) {
         return userRepository.getUserWithCredentials(username, password);
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public User updateUser(UpdateUserRequest request) {
         User previousState = null;
@@ -132,18 +141,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public Outcome deleteUser(String userId) {
         return userRepository.deleteUser(userId);
     }
 
     @PreAuthorize(("isAdmin()"))
+    @ThrowsError
     @Override
     public List<User> getAllUsers() {
         return userRepository.getAllUsers();
     }
 
     @PreAuthorize(("isAdmin()"))
+    @ThrowsError
     @Override
     public String getEmailsForUsersWithNotificationsEnabled() {
         List<String> emails = getAllUsers().stream()

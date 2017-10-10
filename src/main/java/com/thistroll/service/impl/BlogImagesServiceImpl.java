@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.thistroll.data.util.S3ClientProvider;
+import com.thistroll.server.logging.ThrowsError;
 import com.thistroll.service.client.BlogImagesService;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -23,6 +24,7 @@ public class BlogImagesServiceImpl implements BlogImagesService {
 
     private String imageBucketUrl;
 
+    @ThrowsError
     @Override
     public List<String> getImages(String blogId) {
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest()

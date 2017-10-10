@@ -6,6 +6,8 @@ import com.thistroll.domain.Session;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.server.RequestValues;
+import com.thistroll.server.logging.ThrowsError;
+import com.thistroll.server.logging.ThrowsWarning;
 import com.thistroll.service.client.SessionService;
 import com.thistroll.service.client.UserService;
 import com.thistroll.service.client.dto.request.LoginRequest;
@@ -32,6 +34,7 @@ public class SessionServiceImpl implements SessionService {
 
     private UserService userService;
 
+    @ThrowsWarning
     @Override
     public Session login(LoginRequest loginRequest) throws InvalidCredentialsException {
         User user = userService.getUserWithCredentials(loginRequest.getUsername(), loginRequest.getPassword());
@@ -41,6 +44,7 @@ public class SessionServiceImpl implements SessionService {
         return createSessionForUser(user);
     }
 
+    @ThrowsError
     @Override
     public Outcome logout() {
         Outcome outcome = Outcome.FAILURE;
@@ -57,6 +61,7 @@ public class SessionServiceImpl implements SessionService {
         return outcome;
     }
 
+    @ThrowsError
     @Override
     public Session createSessionByUserId(String userId) {
         User user = userService.getUserById(userId);
@@ -67,6 +72,7 @@ public class SessionServiceImpl implements SessionService {
         return createSessionForUser(user);
     }
 
+    @ThrowsError
     @Override
     public Session createSessionForUser(User user) {
         Cache<String, Session> cache = getSessionCache();
@@ -84,6 +90,7 @@ public class SessionServiceImpl implements SessionService {
         return session;
     }
 
+    @ThrowsWarning
     @Override
     public Session getSession(String sessionId) {
         Cache cache = getSessionCache();
@@ -104,6 +111,7 @@ public class SessionServiceImpl implements SessionService {
         return updatedSession;
     }
 
+    @ThrowsError
     @Override
     public Outcome deleteSession(String sessionId) {
         Outcome outcome;

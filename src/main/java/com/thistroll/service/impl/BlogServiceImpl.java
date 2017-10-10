@@ -4,6 +4,8 @@ import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.exceptions.BlogNotFoundException;
+import com.thistroll.server.logging.ThrowsError;
+import com.thistroll.server.logging.ThrowsWarning;
 import com.thistroll.service.client.BlogService;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import com.thistroll.service.client.dto.response.GetBlogsResponse;
@@ -22,6 +24,7 @@ public class BlogServiceImpl implements BlogService {
 
     private int defaultPageSize;
 
+    @ThrowsWarning
     @Override
     public Blog getMostRecentBlog() {
         Blog blog = blogRepository.getMostRecentBlog();
@@ -32,12 +35,14 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public Blog createBlog(Blog blog) {
         return blogRepository.create(blog);
     }
 
     @Override
+    @ThrowsWarning
     public Blog getBlog(String id) {
         Blog blog = blogRepository.findById(id);
         if (blog == null) {
@@ -47,6 +52,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public Blog updateBlog(UpdateBlogRequest request) {
         Blog oldBlog = getBlog(request.getBlogId());
@@ -57,12 +63,14 @@ public class BlogServiceImpl implements BlogService {
         return blogRepository.update(request);
     }
 
+    @ThrowsError
     @Override
     public GetBlogsResponse getBlogs(Optional<Integer> pageNumber, Optional<Integer> pageSize) {
         return blogRepository.getPageableBlogList(pageNumber.orElse(0), pageSize.orElse(defaultPageSize));
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public Outcome deleteBlog(String blogId) {
         return blogRepository.deleteBlog(blogId);

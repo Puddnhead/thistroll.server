@@ -2,6 +2,7 @@ package com.thistroll.service.troll.impl;
 
 import com.thistroll.data.api.SpeechRepository;
 import com.thistroll.domain.Speech;
+import com.thistroll.server.logging.ThrowsError;
 import com.thistroll.service.troll.api.SpeechNormalizationService;
 import com.thistroll.service.troll.api.SpeechType;
 import com.thistroll.service.troll.api.SpeechTypeResolver;
@@ -43,6 +44,7 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
         HARDCODED_ANSWERS.put("what is the capital of ukraine?", "Kiev of course!");
     }
 
+    @ThrowsError
     @Override
     public String trollSpeak(String text) {
         HARDCODED_ANSWERS.put("how old are you?", calculateAge());
@@ -69,12 +71,14 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public Speech getNextSpeechWithNoResponse() {
         return speechWithoutResponsesRepository.getNextSpeech();
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public Speech updateResponses(Speech speech) {
         Speech updated;
@@ -101,12 +105,14 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public int getSpeechWithoutResponsesCount() {
         return speechWithoutResponsesRepository.getTotalNumberOfSpeeches();
     }
 
     @PreAuthorize("isAdmin()")
+    @ThrowsError
     @Override
     public int getKnownSpeechCount() {
         return knownSpeechRepository.getTotalNumberOfSpeeches();
