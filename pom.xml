@@ -20,6 +20,7 @@
         <spring.version>4.1.1.RELEASE</spring.version>
         <jackson.version>2.8.9</jackson.version>
         <antlr.version>4.7</antlr.version>
+        <log4j.version>2.9.1</log4j.version>
     </properties>
 
     <dependencies>
@@ -96,6 +97,29 @@
             <version>${antlr.version}</version>
         </dependency>
 
+        <!-- log4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-log4j</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        -->
 
         <!-- Test Dependencies -->
         <dependency>
