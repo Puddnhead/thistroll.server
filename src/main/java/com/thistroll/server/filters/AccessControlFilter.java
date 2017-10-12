@@ -1,5 +1,6 @@
 package com.thistroll.server.filters;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.servlet.*;
@@ -25,10 +26,10 @@ public class AccessControlFilter implements Filter {
         String origin = ((HttpServletRequest)servletRequest).getHeader("Origin");
 
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-        if (allowedOrigins.contains(origin)) {
+        if (StringUtils.isNotEmpty(origin) && allowedOrigins.contains(origin)) {
             httpServletResponse.addHeader("Access-Control-Allow-Origin", origin);
         } else {
-            httpServletResponse.addHeader("Access-Control-Allow-Origin", null);
+            httpServletResponse.addHeader("Access-Control-Allow-Origin", "null");
         }
         httpServletResponse.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         httpServletResponse.addHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
