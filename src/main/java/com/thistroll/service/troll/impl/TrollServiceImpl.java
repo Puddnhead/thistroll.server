@@ -2,7 +2,9 @@ package com.thistroll.service.troll.impl;
 
 import com.thistroll.data.api.SpeechRepository;
 import com.thistroll.domain.Speech;
+import com.thistroll.exceptions.SpeechNotFoundException;
 import com.thistroll.server.logging.ThrowsError;
+import com.thistroll.server.logging.ThrowsWarning;
 import com.thistroll.service.troll.api.SpeechNormalizationService;
 import com.thistroll.service.troll.api.SpeechType;
 import com.thistroll.service.troll.api.SpeechTypeResolver;
@@ -68,6 +70,23 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
         }
 
         return response;
+    }
+
+    @PreAuthorize("isAdmin()")
+    @ThrowsWarning
+    @Override
+    public Speech getSpeechByText(String text) {
+        String normalized = speechNormalizationService.normalize(text);
+        Speech speech = knownSpeechRepository.getSpeechByText(normalized);
+        if (speech == null) {
+            speech = speechWithoutResponsesRepository.getSpeechByText(normalized);
+        }
+
+        if (speech == null) {
+            throw new SpeechNotFoundException("No speech with the given text");
+        }
+
+        return speech;
     }
 
     @PreAuthorize("isAdmin()")

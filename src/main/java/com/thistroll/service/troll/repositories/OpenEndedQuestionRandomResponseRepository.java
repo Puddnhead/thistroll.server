@@ -12,7 +12,7 @@ public class OpenEndedQuestionRandomResponseRepository implements RandomResponse
         "I'll look into it and get back to you.",
         "I'm going to need some time to figure that one out.",
         "Who knows. I'll look into it for you.",
-        "43. According to a cool sci-fi writer the answer is always 43.",
+        "42. According to a cool sci-fi writer the answer is always 42.",
         "I really wish I could help you. I'll ask my creator about it.",
         "Some day I'll have an answer for you, but sadly right now I do not.",
         "Dunno.",

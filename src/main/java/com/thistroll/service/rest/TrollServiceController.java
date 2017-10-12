@@ -26,6 +26,12 @@ public class TrollServiceController implements TrollService {
         return trollService.trollSpeak(speech);
     }
 
+    @RequestMapping(value ="/speech", method = RequestMethod.POST)
+    @Override
+    public @ResponseBody Speech getSpeechByText(@RequestBody String text) {
+        return trollService.getSpeechByText(text);
+    }
+
     @RequestMapping(value = "/next", method = RequestMethod.GET)
     @Override
     public @ResponseBody Speech getNextSpeechWithNoResponse() {

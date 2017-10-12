@@ -14,6 +14,7 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,6 +60,20 @@ public class TrollServiceControllerTest extends ControllerTestBase {
         MvcResult mvcResult = mockMvc.perform(put("/troll")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serializedRequest))
+                .andExpect(status().isOk())
+                .andReturn();
+        String result = mvcResult.getResponse().getContentAsString();
+        assertThat(result.contains("someId"), is(true));
+    }
+
+    @Test
+    public void testGetSpeechByText() throws Exception {
+        when(knownSpeechRepository.getSpeechByText(anyString()))
+                .thenReturn(new Speech.Builder().id("someId").text("blah").build());
+
+        MvcResult mvcResult = mockMvc.perform(post("/troll/speech")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("what's up"))
                 .andExpect(status().isOk())
                 .andReturn();
         String result = mvcResult.getResponse().getContentAsString();

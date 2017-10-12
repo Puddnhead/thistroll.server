@@ -18,6 +18,14 @@ public interface TrollService {
     String trollSpeak(String speech);
 
     /**
+     * Returns a persisted speech with the given text
+     *
+     * @param text text
+     * @return a persisted speech with the given text
+     */
+    Speech getSpeechByText(String text);
+
+    /**
      * Returns the next speech with no responses
      *
      * @return the next speech with no responses
