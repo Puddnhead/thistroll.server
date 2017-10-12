@@ -55,9 +55,9 @@ public class BlogServiceImpl implements BlogService {
     @ThrowsError
     @Override
     public Blog updateBlog(UpdateBlogRequest request) {
-        Blog oldBlog = getBlog(request.getBlogId());
+        Blog oldBlog = getBlog(request.getId());
         if (oldBlog == null) {
-            throw new BlogNotFoundException("Could not find a blog with id " + request.getBlogId());
+            throw new BlogNotFoundException("Could not find a blog with id " + request.getId());
         }
 
         return blogRepository.update(request);

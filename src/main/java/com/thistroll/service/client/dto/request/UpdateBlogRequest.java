@@ -9,7 +9,7 @@ import java.util.Objects;
  */
 public class UpdateBlogRequest {
 
-    private String blogId;
+    private String id;
 
     private String title;
 
@@ -21,21 +21,21 @@ public class UpdateBlogRequest {
      * No-arg constructor for Jackson
      */
     private UpdateBlogRequest() {
-        this.blogId = null;
+        this.id = null;
         this.title = null;
         this.location = null;
         this.text = null;
     }
 
     private UpdateBlogRequest(Builder builder) {
-        this.blogId = builder.blogId;
+        this.id = builder.id;
         this.title = builder.title;
         this.location = builder.location;
         this.text = builder.text;
     }
 
-    public String getBlogId() {
-        return blogId;
+    public String getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -55,7 +55,7 @@ public class UpdateBlogRequest {
         if (this == o) return true;
         if (o == null || !(o instanceof UpdateBlogRequest)) return false;
         UpdateBlogRequest that = (UpdateBlogRequest) o;
-        return Objects.equals(blogId, that.blogId) &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(location, that.location) &&
                 Objects.equals(text, that.text);
@@ -63,17 +63,17 @@ public class UpdateBlogRequest {
 
     @Override
     public final int hashCode() {
-        return Objects.hash(blogId, title, location, text);
+        return Objects.hash(id, title, location, text);
     }
 
     public static final class Builder {
-        private String blogId;
+        private String id;
         private String title;
         private String location;
         private String text;
 
-        public Builder blogId(String blogId) {
-            this.blogId = blogId;
+        public Builder id(String id) {
+            this.id = id;
             return this;
         }
 

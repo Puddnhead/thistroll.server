@@ -164,7 +164,7 @@ public class BlogRepositoryImplTest extends AbstractRepositoryTest {
                 .withString(Blog.TITLE_PROPERTY, TITLE)
                 .withString(Blog.LOCATION_PROPERTY, LOCATION);
         when(mockTable.getItem(any(GetItemSpec.class))).thenReturn(item);
-        UpdateBlogRequest updateBlogRequest = new UpdateBlogRequest.Builder().blogId(ID).location(LOCATION).build();
+        UpdateBlogRequest updateBlogRequest = new UpdateBlogRequest.Builder().id(ID).location(LOCATION).build();
         repository.update(updateBlogRequest);
 
         Blog updatedBlog = repository.findById(ID);

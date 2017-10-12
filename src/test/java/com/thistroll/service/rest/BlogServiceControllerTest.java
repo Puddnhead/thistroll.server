@@ -105,7 +105,7 @@ public class BlogServiceControllerTest extends ControllerTestBase {
     @Test
     public void testUpdateBlog() throws Exception {
         UpdateBlogRequest updateBlogRequest = new UpdateBlogRequest.Builder()
-                .blogId(GENERATED_ID)
+                .id(GENERATED_ID)
                 .build();
         String serializedUpdateRequest = objectMapper.writeValueAsString(updateBlogRequest);
         when(blogRepository.findById(GENERATED_ID)).thenReturn(MOCK_BLOG);

@@ -2,9 +2,9 @@ package com.thistroll.service.impl;
 
 import com.thistroll.data.api.BlogRepository;
 import com.thistroll.domain.Blog;
+import com.thistroll.exceptions.BlogNotFoundException;
 import com.thistroll.service.client.dto.request.UpdateBlogRequest;
 import com.thistroll.service.client.dto.response.GetBlogsResponse;
-import com.thistroll.exceptions.BlogNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -81,7 +80,7 @@ public class BlogServiceImplTest {
     @Test
     public void testUpdateBlog() throws Exception {
         UpdateBlogRequest request = new UpdateBlogRequest.Builder()
-                .blogId(BLOG_ID)
+                .id(BLOG_ID)
                 .build();
         when(blogRepository.findById(BLOG_ID)).thenReturn(mockBlog);
         when(blogRepository.update(request)).thenReturn(mockBlog);
@@ -92,7 +91,7 @@ public class BlogServiceImplTest {
     @Test(expected = BlogNotFoundException.class)
     public void testUpdateBlogThrowsExceptionForUnknownBlog() throws Exception {
         UpdateBlogRequest request = new UpdateBlogRequest.Builder()
-                .blogId(BLOG_ID)
+                .id(BLOG_ID)
                 .build();
         blogService.updateBlog(request);
     }

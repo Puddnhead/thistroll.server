@@ -88,7 +88,10 @@ public class BlogRepositoryImpl implements BlogRepository {
 
         List<AttributeUpdate> attributeUpdates = new ArrayList<>();
         attributeUpdates.add(new AttributeUpdate(Blog.LAST_UPDATED_ON_PROPERTY).put(new DateTime().getMillis()));
-        attributeUpdates.add(new AttributeUpdate(Blog.LOCATION_PROPERTY).put(request.getLocation()));
+
+        if (StringUtils.isNotEmpty(request.getLocation())) {
+            attributeUpdates.add(new AttributeUpdate(Blog.LOCATION_PROPERTY).put(request.getLocation()));
+        }
         if (StringUtils.isNotEmpty(request.getTitle())) {
             attributeUpdates.add(new AttributeUpdate(Blog.TITLE_PROPERTY).put(request.getTitle()));
         }
@@ -97,11 +100,11 @@ public class BlogRepositoryImpl implements BlogRepository {
         }
 
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
-                .withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, request.getBlogId())
+                .withPrimaryKey(Blog.PARTITION_KEY_NAME, Blog.PARTITION_KEY_VALUE, Blog.ID_PROPERTY, request.getId())
                 .withAttributeUpdate(attributeUpdates);
         table.updateItem(updateItemSpec);
 
-        Blog updatedBlog = fetchFromDBById(request.getBlogId());
+        Blog updatedBlog = fetchFromDBById(request.getId());
 
         // clear list cache and update cache if the blog is already there
         clearListCache();
