@@ -27,8 +27,13 @@
     <import resource="classpath*:spring-security-context.xml" />
 
     <!-- Servlet Filters -->
-    <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter"
-        p:allowedOrigins="${accessControl.allowedOrigins}"/>
+    <bean id="com.thistroll.server.filters.accessControlFilter" class="com.thistroll.server.filters.AccessControlFilter">
+        <property name="allowedOrigins">
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String" value="${accessControl.allowedOrigins}"/>
+            </bean>
+        </property>
+    </bean>
 
     <bean id="com.thistroll.server.filters.sessionFilter" class="com.thistroll.server.filters.SessionFilter"
         p:sessionService-ref="com.thistroll.service.impl.sessionservice"
