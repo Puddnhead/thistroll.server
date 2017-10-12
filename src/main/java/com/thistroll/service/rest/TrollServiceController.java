@@ -1,6 +1,7 @@
 package com.thistroll.service.rest;
 
 import com.thistroll.domain.Speech;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.service.client.TrollService;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
@@ -26,10 +27,16 @@ public class TrollServiceController implements TrollService {
         return trollService.trollSpeak(speech);
     }
 
-    @RequestMapping(value ="/speech", method = RequestMethod.POST)
+    @RequestMapping(value = "/speech", method = RequestMethod.POST)
     @Override
     public @ResponseBody Speech getSpeechByText(@RequestBody String text) {
         return trollService.getSpeechByText(text);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @Override
+    public @ResponseBody Outcome deleteSpeech(@RequestBody String idOrText) {
+        return trollService.deleteSpeech(idOrText);
     }
 
     @RequestMapping(value = "/next", method = RequestMethod.GET)

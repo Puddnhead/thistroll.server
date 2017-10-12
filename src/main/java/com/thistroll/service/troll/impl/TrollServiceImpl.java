@@ -2,6 +2,7 @@ package com.thistroll.service.troll.impl;
 
 import com.thistroll.data.api.SpeechRepository;
 import com.thistroll.domain.Speech;
+import com.thistroll.domain.enums.Outcome;
 import com.thistroll.exceptions.SpeechNotFoundException;
 import com.thistroll.server.logging.ThrowsError;
 import com.thistroll.server.logging.ThrowsWarning;
@@ -87,6 +88,34 @@ public class TrollServiceImpl implements com.thistroll.service.client.TrollServi
         }
 
         return speech;
+    }
+
+    @PreAuthorize("isAdmin()")
+    @ThrowsError
+    @Override
+    public Outcome deleteSpeech(String idOrText) {
+        Outcome outcome = Outcome.FAILURE;
+        String normalized = speechNormalizationService.normalize(idOrText);
+
+        Speech speech = knownSpeechRepository.getSpeechById(idOrText);
+        if (speech == null) {
+            speech = knownSpeechRepository.getSpeechByText(normalized);
+        }
+        if (speech != null) {
+            knownSpeechRepository.deleteSpeech(speech.getId());
+            outcome = Outcome.SUCCESS;
+        }
+
+        speech = speechWithoutResponsesRepository.getSpeechById(idOrText);
+        if (speech == null) {
+            speech = speechWithoutResponsesRepository.getSpeechByText(normalized);
+        }
+        if (speech != null) {
+            speechWithoutResponsesRepository.deleteSpeech(speech.getId());
+            outcome = Outcome.SUCCESS;
+        }
+
+        return outcome;
     }
 
     @PreAuthorize("isAdmin()")

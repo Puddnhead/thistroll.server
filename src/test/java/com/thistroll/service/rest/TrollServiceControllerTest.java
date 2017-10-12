@@ -79,6 +79,14 @@ public class TrollServiceControllerTest extends ControllerTestBase {
         String result = mvcResult.getResponse().getContentAsString();
         assertThat(result.contains("someId"), is(true));
     }
+    
+    @Test
+    public void testDeleteSpeech() throws Exception {
+        mockMvc.perform(post("/troll/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("what's up"))
+                .andExpect(status().isOk());
+    }
 
     @Test
     public void testGetNoResponseCount() throws Exception {

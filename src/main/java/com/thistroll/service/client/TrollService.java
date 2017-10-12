@@ -1,6 +1,7 @@
 package com.thistroll.service.client;
 
 import com.thistroll.domain.Speech;
+import com.thistroll.domain.enums.Outcome;
 
 /**
  * Service for talking to trolls
@@ -24,6 +25,14 @@ public interface TrollService {
      * @return a persisted speech with the given text
      */
     Speech getSpeechByText(String text);
+
+    /**
+     * Delete a speech that matches the given ID or text
+     *
+     * @param idOrText either a speech id or text
+     * @return success if a a speech was deleted
+     */
+    Outcome deleteSpeech(String idOrText);
 
     /**
      * Returns the next speech with no responses
