@@ -37,6 +37,15 @@ public class TTSecurityExpressionRoot
         return isAdmin;
     }
 
+    /**
+     * Returns true if the request has a current session
+     *
+     * @return true if the request belongs to a current session
+     */
+    public boolean isLoggedIn() {
+        return RequestValues.getSession() != null;
+    }
+
     @Override
     public void setFilterObject(Object filterObject) {
 

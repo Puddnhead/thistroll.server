@@ -21,8 +21,11 @@
         p:s3ClientProvider-ref="com.thistroll.data.s3clientprovider" />
 
     <bean id="com.thistroll.service.impl.sessionservice" class="com.thistroll.service.impl.SessionServiceImpl"
-          p:userService-ref="com.thistroll.service.impl.userservice"
-          p:sessionExpirationInMillis="${session.expirationInMillis}" />
+        p:userService-ref="com.thistroll.service.impl.userservice"
+        p:sessionExpirationInMillis="${session.expirationInMillis}" />
+
+    <bean id="com.thistroll.service.impl.blogcommentservice" class="com.thistroll.service.impl.BlogCommentServiceImpl"
+        p:blogCommentRepository-ref="com.thistroll.data.blogcommentrepository" />
 
     <import resource="thistroll-service-troll-beans.xml" />
 

@@ -23,7 +23,10 @@
         p:connectionProvider-ref="com.thistroll.data.dynamodbconnectionprovider" />
 
     <bean id="com.thistroll.data.knownspeechesrepository"
-          class="com.thistroll.data.impl.KnownSpeechRepository"
-          p:connectionProvider-ref="com.thistroll.data.dynamodbconnectionprovider" />
+        class="com.thistroll.data.impl.KnownSpeechRepository"
+        p:connectionProvider-ref="com.thistroll.data.dynamodbconnectionprovider" />
 
+    <bean id="com.thistroll.data.blogcommentrepository"
+        class="com.thistroll.data.impl.BlogCommentRepositoryImpl"
+        p:connectionProvider-ref="com.thistroll.data.dynamodbconnectionprovider" />
 </beans>

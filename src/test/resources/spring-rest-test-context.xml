@@ -29,6 +29,12 @@
     <bean id="com.thistroll.data.knownspeechesrepository" class="org.mockito.Mockito" factory-method="mock"
           c:classToMock="com.thistroll.data.api.SpeechRepository" />
 
+    <bean id="com.thistroll.data.speechwithoutresponsesrepository" class="org.mockito.Mockito" factory-method="mock"
+          c:classToMock="com.thistroll.data.api.SpeechRepository" />
+
+    <bean id="com.thistroll.data.blogcommentrepository" class="org.mockito.Mockito" factory-method="mock"
+          c:classToMock="com.thistroll.data.api.BlogCommentRepository" />
+
     <!-- Other mocks -->
     <bean id="com.thistroll.data.s3clientprovider" class="org.mockito.Mockito" factory-method="mock"
           c:classToMock="com.thistroll.data.util.S3ClientProvider" />

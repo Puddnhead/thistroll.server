@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.thistroll.data.impl.BlogCommentRepositoryImpl;
 import com.thistroll.data.impl.KnownSpeechRepository;
 import com.thistroll.data.impl.SpeechWithoutResponsesRepository;
 import com.thistroll.domain.Blog;
@@ -309,7 +310,7 @@ public class CreateTablesUtil {
 
 
             CreateTableRequest createTableRequest = new CreateTableRequest()
-                    .withTableName(BlogComment.TABLE_NAME)
+                    .withTableName(BlogCommentRepositoryImpl.TABLE_NAME)
                     .withProvisionedThroughput(new ProvisionedThroughput()
                             .withReadCapacityUnits((long) 5)
                             .withWriteCapacityUnits((long) 1))
