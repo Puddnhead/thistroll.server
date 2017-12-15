@@ -10,6 +10,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -27,7 +28,9 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     @Override
     public BlogComment addComment(BlogComment blogComment) {
         String username = RequestValues.getSession().getUserDetails().getUsername();
-        String sanitizedComment = Jsoup.clean(blogComment.getComment(), Whitelist.simpleText());
+        String comment = blogComment.getComment();
+        String sanitizedComment = StringUtils.isEmpty(comment) ? null :
+                Jsoup.clean(blogComment.getComment(), Whitelist.simpleText());
         BlogComment commentWithCurrentUser = new BlogComment.Builder()
                 .comment(sanitizedComment)
                 .blogId(blogComment.getBlogId())
