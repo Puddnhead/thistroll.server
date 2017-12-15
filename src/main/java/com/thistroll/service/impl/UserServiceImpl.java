@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -150,15 +151,15 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize(("isAdmin()"))
     @ThrowsError
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
+    public List<User> getAllUsers(Optional<Integer> pageNumber, Optional<Integer> pageSize) {
+        return userRepository.getAllUsers(pageNumber, pageSize);
     }
 
     @PreAuthorize(("isAdmin()"))
     @ThrowsError
     @Override
     public String getEmailsForUsersWithNotificationsEnabled() {
-        List<String> emails = getAllUsers().stream()
+        List<String> emails = getAllUsers(Optional.empty(), Optional.empty()).stream()
                 .filter(User::isNotificationsEnabled)
                 .map(User::getEmail)
                 .collect(Collectors.toList());

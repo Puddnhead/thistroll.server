@@ -8,6 +8,7 @@ import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service for CRUD operations on users
@@ -90,11 +91,13 @@ public interface UserService {
     Outcome deleteUser(String userId);
 
     /**
-     * Fetch all users
+     * Fetch all users. If pageNumber is omitted, pageSize is ignored and all users are fetched
      *
+     * @param pageNumber optional page number
+     * @param pageSize optional page size - ignored if page number is omitted
      * @return a list of users
      */
-    List<User> getAllUsers();
+    List<User> getAllUsers(Optional<Integer> pageNumber, Optional<Integer> pageSize);
 
     /**
      * Fetch a comma-delimited list of email addresses (for easy paste in an email client) for all the users who have

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Rest layer of {@link UserService}
@@ -76,8 +77,8 @@ public class UserServiceController implements UserService {
 
     @RequestMapping(value = "/all")
     @Override
-    public @ResponseBody List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public @ResponseBody List<User> getAllUsers(@RequestParam Optional<Integer> pageNumber, @RequestParam Optional<Integer> pageSize) {
+        return userService.getAllUsers(pageNumber, pageSize);
     }
 
     @RequestMapping(value = "/notifications/email")

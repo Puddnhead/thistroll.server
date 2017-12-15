@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -129,7 +130,7 @@ public class UserServiceControllerTest extends ControllerTestBase {
 
     @Test
     public void testGetAllUsers() throws Exception {
-        when(userRepository.getAllUsers()).thenReturn(Collections.singletonList(createUser()));
+        when(userRepository.getAllUsers(Optional.empty(), Optional.empty())).thenReturn(Collections.singletonList(createUser()));
 
         mockMvc.perform(get("/user/all"))
                 .andExpect(status().isOk());
@@ -137,7 +138,7 @@ public class UserServiceControllerTest extends ControllerTestBase {
 
     @Test
     public void testGetEmailsForUsersWithNotificationsEnabled() throws Exception {
-        when(userRepository.getAllUsers()).thenReturn(Collections.singletonList(createUser()));
+        when(userRepository.getAllUsers(Optional.empty(), Optional.empty())).thenReturn(Collections.singletonList(createUser()));
 
         mockMvc.perform(get("/user/notifications/email"))
                 .andExpect(status().isOk());

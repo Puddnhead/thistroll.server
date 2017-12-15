@@ -272,19 +272,38 @@ public class UserRepositoryImplTest extends AbstractRepositoryTest {
         }
         ScanResult scanResult = mock(ScanResult.class);
         when(scanResult.getItems()).thenReturn(attributeValueMaps);
+        stubFetchingUsersForTenUsers(scanResult);
+
+        List<User> users = userRepository.getAllUsers(Optional.empty(), Optional.empty());
+        assertThat(users.size(), is(10));
+    }
+
+    @Test
+    public void testGetAllUsersPagination() throws Exception {
+        List<Map<String, AttributeValue>> attributeValueMaps = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            attributeValueMaps.add(createAttributeValueMap());
+        }
+        ScanResult scanResult = mock(ScanResult.class);
+        when(scanResult.getItems()).thenReturn(attributeValueMaps);
+
+        stubFetchingUsersForTenUsers(scanResult);
+
+        List<User> users = userRepository.getAllUsers(Optional.of(2), Optional.of(4));
+        assertThat(users.size(), is(2));
+    }
+
+    private void stubFetchingUsersForTenUsers(ScanResult scanResult) throws Exception {
         doAnswer(invocationOnMock -> {
             ScanRequest scanRequest = (ScanRequest)invocationOnMock.getArguments()[0];
             if (scanRequest.getExclusiveStartKey() == null) {
                 when(scanResult.getLastEvaluatedKey())
-                    .thenReturn(Collections.singletonMap(User.ID_PROPERTY, new AttributeValue().withS(ID)));
+                        .thenReturn(Collections.singletonMap(User.ID_PROPERTY, new AttributeValue().withS(ID)));
             } else {
                 when(scanResult.getLastEvaluatedKey()).thenReturn(null);
             }
             return scanResult;
         }).when(amazonDynamoDB).scan(any(ScanRequest.class));
-
-        List<User> users = userRepository.getAllUsers();
-        assertThat(users.size(), is(10));
     }
 
     private void assertCommonFields(User user) {

@@ -4,6 +4,7 @@ import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * API for CRUD operations on {@link com.thistroll.domain.User} objects
@@ -73,9 +74,11 @@ public interface UserRepository {
     User getUserWithCredentials(String username, String password);
 
     /**
-     * Returns a list of all users in the database
+     * Returns a list of all users in the database. page size is ignored if pageNumber is omitted
      *
+     * @param pageNumber optional page number
+     * @param pageSize optional page size - ignored if page number is omitted
      * @return a list of all users in the database
      */
-    List<User> getAllUsers();
+    List<User> getAllUsers(Optional<Integer> pageNumber, Optional<Integer> pageSize);
 }

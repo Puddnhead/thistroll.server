@@ -47,7 +47,6 @@ public class BlogServiceController implements BlogService {
         return blogService.updateBlog(request);
     }
 
-    // somewhat sloppy but ends up being /blogs
     @RequestMapping(value = "/page", method = RequestMethod.GET)
     @Override
     public @ResponseBody

@@ -17,6 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
@@ -112,7 +113,7 @@ public class UserServiceImplTest {
 
     @Test
     public void testGetEmailsForUsersWithNotificationsEnabled() throws Exception {
-        when(userRepository.getAllUsers())
+        when(userRepository.getAllUsers(Optional.empty(), Optional.empty()))
                 .thenReturn(Arrays.asList(createUser(), createUser(), createUser()));
         String emailList = userService.getEmailsForUsersWithNotificationsEnabled();
         assertThat(emailList, is(EMAIL + "," + EMAIL + "," + EMAIL));

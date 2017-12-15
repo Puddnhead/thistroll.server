@@ -25,10 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Implementation class for {@link UserRepository}
@@ -40,6 +37,7 @@ public class UserRepositoryImpl implements UserRepository {
     private DynamoDBConnectionProvider connectionProvider;
 
     private static final String TABLE_NAME = "thistroll_user";
+    private static final int DEFAULT_PAGE_SIZE = 50;
 
     /**
      * In-memory user cache
@@ -200,8 +198,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers(Optional<Integer> pageNumber, Optional<Integer> pageSize) {
         List<User> users = new ArrayList<>();
+        Integer lastUser = null;
+        int actualPageSize = pageSize.orElse(DEFAULT_PAGE_SIZE);
+
+        if (pageNumber.isPresent()) {
+            lastUser = pageNumber.get() * actualPageSize + actualPageSize;
+        }
+
         Cache<String, User> cache = getUserCache();
         Map<String, AttributeValue> lastEvaluatedKey;
         AmazonDynamoDB dynamoDB = connectionProvider.getAmazonDynamoDB();
@@ -216,7 +221,21 @@ public class UserRepositoryImpl implements UserRepository {
             List<User> pageOfUsers = UserMapper.mapItemsToUsers(result.getItems());
             users.addAll(pageOfUsers);
             pageOfUsers.forEach(user -> cache.put(user.getId(), user));
-        } while (lastEvaluatedKey != null);
+            // go until we've fetched all users or as many as have been requested
+        } while (lastEvaluatedKey != null && (lastUser == null || lastUser >= users.size()));
+
+        if (pageNumber.isPresent()) {
+            int startIndex = pageNumber.get() * actualPageSize;
+            int endIndex = (startIndex + actualPageSize) > users.size()
+                    ? users.size()
+                    : startIndex + actualPageSize;
+
+            if (startIndex < users.size()) {
+                users = users.subList(startIndex, endIndex);
+            } else {
+                users.clear();
+            }
+        }
 
         return users;
     }
