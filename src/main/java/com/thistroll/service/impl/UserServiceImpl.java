@@ -4,6 +4,10 @@ import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
 import com.thistroll.domain.enums.UserRole;
+import com.thistroll.exceptions.RecaptchaValidationException;
+import com.thistroll.exceptions.UserNotFoundException;
+import com.thistroll.server.RecaptchaVerificationService;
+import com.thistroll.server.RecaptchaVerificationServiceImpl;
 import com.thistroll.server.logging.ThrowsError;
 import com.thistroll.server.logging.ThrowsWarning;
 import com.thistroll.service.client.UserService;
@@ -11,7 +15,6 @@ import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.GetUserByEmailRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
 import com.thistroll.service.client.dto.request.UpdateUserRequest;
-import com.thistroll.exceptions.UserNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Required;
@@ -31,9 +34,15 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
 
+    private RecaptchaVerificationService recaptchaVerificationService;
+
     @ThrowsError
     @Override
     public User registerUser(RegisterUserRequest registerUserRequest) {
+        if (!recaptchaVerificationService.verify(registerUserRequest.getGrecaptchaResponse())) {
+            throw new RecaptchaValidationException();
+        }
+
         User user = new User.Builder()
                 .roles(Collections.singleton(UserRole.USER))
                 .email(registerUserRequest.getEmail())
@@ -169,5 +178,10 @@ public class UserServiceImpl implements UserService {
     @Required
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Required
+    public void setRecaptchaVerificationService(RecaptchaVerificationService recaptchaVerificationService) {
+        this.recaptchaVerificationService = recaptchaVerificationService;
     }
 }

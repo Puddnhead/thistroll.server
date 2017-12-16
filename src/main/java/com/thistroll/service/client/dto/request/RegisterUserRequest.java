@@ -21,6 +21,8 @@ public class RegisterUserRequest {
 
     private final boolean notificationsEnabled;
 
+    private final String grecaptchaResponse;
+
     /**
      * No-arg constructor for Jackson
      */
@@ -31,6 +33,7 @@ public class RegisterUserRequest {
         this.lastName = null;
         this.password = null;
         this.notificationsEnabled = false;
+        this.grecaptchaResponse = null;
     }
 
     private RegisterUserRequest(Builder builder) {
@@ -40,6 +43,7 @@ public class RegisterUserRequest {
         this.lastName = builder.lastName;
         this.password = builder.password;
         this.notificationsEnabled = builder.notificationsEnabled;
+        this.grecaptchaResponse = builder.grecaptchaResponse;
     }
 
     public String getUsername() {
@@ -66,6 +70,10 @@ public class RegisterUserRequest {
         return notificationsEnabled;
     }
 
+    public String getGrecaptchaResponse() {
+        return grecaptchaResponse;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
@@ -76,12 +84,13 @@ public class RegisterUserRequest {
                 Objects.equals(email, that.email) &&
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
-                Objects.equals(password, that.password);
+                Objects.equals(password, that.password) &&
+                Objects.equals(grecaptchaResponse, that.grecaptchaResponse);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(username, email, firstName, lastName, password, notificationsEnabled);
+        return Objects.hash(username, email, firstName, lastName, password, notificationsEnabled, grecaptchaResponse);
     }
 
     public static final class Builder {
@@ -91,6 +100,7 @@ public class RegisterUserRequest {
         private String lastName;
         private String password;
         private boolean notificationsEnabled = false;
+        private String grecaptchaResponse;
 
         public Builder username(String username) {
             this.username = username;
@@ -119,6 +129,11 @@ public class RegisterUserRequest {
 
         public Builder notificationsEnabled(boolean notificationsEnabled) {
             this.notificationsEnabled = notificationsEnabled;
+            return this;
+        }
+
+        public Builder grecaptchaResponse(String grecaptchaResponse) {
+            this.grecaptchaResponse = grecaptchaResponse;
             return this;
         }
 

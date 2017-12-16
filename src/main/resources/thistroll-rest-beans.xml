@@ -29,6 +29,10 @@
     <bean id="com.thistroll.service.rest.blogcommentservicecontroller" class="com.thistroll.service.rest.BlogCommentServiceController"
         p:blogCommentService-ref="com.thistroll.service.impl.blogcommentservice" />
 
+    <!-- Recaptcha Client -->
+    <bean id="com.thistroll.server.recaptchaverificationservice" class="com.thistroll.server.RecaptchaVerificationServiceImpl"
+          p:secret="${recaptcha.secret}" />
+
     <!-- Controller advice -->
     <bean class="com.thistroll.exceptions.ExceptionHandlerAdvice" />
 </beans>

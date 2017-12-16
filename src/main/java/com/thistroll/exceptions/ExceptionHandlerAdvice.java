@@ -72,4 +72,10 @@ public class ExceptionHandlerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
                 .body(new ErrorMessage(e.getMessage()));
     }
+
+    @ExceptionHandler
+    public ResponseEntity handleException(RecaptchaValidationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorMessage("Invalid Recaptcha Response"));
+    }
 }

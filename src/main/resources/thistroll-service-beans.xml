@@ -13,7 +13,8 @@
         p:defaultPageSize="${blogs.defaultPageSize}"/>
 
     <bean id="com.thistroll.service.impl.userservice" class="com.thistroll.service.impl.UserServiceImpl"
-        p:userRepository-ref="com.thistroll.data.userrepository" />
+        p:userRepository-ref="com.thistroll.data.userrepository"
+        p:recaptchaVerificationService-ref="com.thistroll.server.recaptchaverificationservice" />
 
     <bean id="com.thistroll.service.impl.blogimagesservice" class="com.thistroll.service.impl.BlogImagesServiceImpl"
         p:bucketName="${blogImages.bucketName}"

@@ -3,6 +3,7 @@ package com.thistroll.service.rest;
 import com.thistroll.data.api.UserRepository;
 import com.thistroll.domain.User;
 import com.thistroll.domain.enums.Outcome;
+import com.thistroll.server.RecaptchaVerificationService;
 import com.thistroll.service.client.dto.request.CreateUserRequest;
 import com.thistroll.service.client.dto.request.GetUserByEmailRequest;
 import com.thistroll.service.client.dto.request.RegisterUserRequest;
@@ -34,6 +35,9 @@ public class UserServiceControllerTest extends ControllerTestBase {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RecaptchaVerificationService recaptchaVerificationService;
+
     private static final String GENERATED_ID = UUID.randomUUID().toString();
     private static final String USERNAME = "SamBradford";
     private static final String EMAIL = "sammy@vikings.com";
@@ -61,6 +65,7 @@ public class UserServiceControllerTest extends ControllerTestBase {
 
     @Test
     public void testRegisterUser() throws Exception {
+        when(recaptchaVerificationService.verify(anyString())).thenReturn(true);
         when(userRepository.createUser(any(User.class), anyString())).thenReturn(createUser());
 
         RegisterUserRequest request = new RegisterUserRequest.Builder()

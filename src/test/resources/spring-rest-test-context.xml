@@ -39,4 +39,6 @@
     <bean id="com.thistroll.data.s3clientprovider" class="org.mockito.Mockito" factory-method="mock"
           c:classToMock="com.thistroll.data.util.S3ClientProvider" />
 
+    <bean id="com.thistroll.server.recaptchaverificationservice" class="org.mockito.Mockito" factory-method="mock"
+          c:classToMock="com.thistroll.server.RecaptchaVerificationService" />
 </beans>
