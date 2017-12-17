@@ -7,6 +7,7 @@ import com.thistroll.service.client.SessionService;
 import com.thistroll.exceptions.SessionNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
+import sun.misc.Request;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -33,9 +34,13 @@ public class SessionFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        setSessionInRequestValues(servletRequest, servletResponse);
-        setSessionCookieInResponseIfNotLoggingInOrOut(servletRequest);
-        filterChain.doFilter(servletRequest, servletResponse);
+        try {
+            setSessionInRequestValues(servletRequest, servletResponse);
+            setSessionCookieInResponseIfNotLoggingInOrOut(servletRequest);
+            filterChain.doFilter(servletRequest, servletResponse);
+        } finally {
+            RequestValues.setSession(null);
+        }
     }
 
     @Override

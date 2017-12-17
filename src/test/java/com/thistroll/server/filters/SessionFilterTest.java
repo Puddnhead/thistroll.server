@@ -77,8 +77,23 @@ public class SessionFilterTest {
         when(httpServletRequest.getCookies()).thenReturn(cookies);
         when(sessionService.getSession(SESSION_ID)).thenReturn(session);
 
+        doAnswer(invocationOnMock -> {
+                assertThat(RequestValues.getSession(), is(session));
+                return null;
+            })
+            .when(filterChain).doFilter(httpServletRequest, httpServletResponse);
+
         sessionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
-        assertThat(RequestValues.getSession(), is(session));
+    }
+
+    @Test
+    public void testClearsSessionAfterRequest() throws Exception {
+        cookies = new Cookie[] { sessionCookie };
+        when(httpServletRequest.getCookies()).thenReturn(cookies);
+        when(sessionService.getSession(SESSION_ID)).thenReturn(session);
+
+        sessionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
+        assertThat(RequestValues.getSession(), is(nullValue()));
     }
 
     @Test

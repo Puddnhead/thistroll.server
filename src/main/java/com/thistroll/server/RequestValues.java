@@ -31,15 +31,11 @@ public class RequestValues {
         httpServletResponseThreadLocal.set(httpServletResponse);
     }
 
-    /**
-     * After setting cookie in response, deletes the session from the thread local so that it will not be reused
-     */
     public static void setSessionCookieHeaderInResponse() {
         HttpServletResponse httpServletResponse = httpServletResponseThreadLocal.get();
         Session session = sessionThreadLocal.get();
         Cookie cookie = createSessionCookie(session);
         httpServletResponse.addCookie(cookie);
-        setSession(null);
     }
 
     /**
