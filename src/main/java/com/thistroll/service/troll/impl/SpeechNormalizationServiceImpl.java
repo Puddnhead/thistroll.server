@@ -41,7 +41,8 @@ public class SpeechNormalizationServiceImpl implements SpeechNormalizationServic
 
     private String removeContractions(String text) {
         // TODO: better normalization of all the nots - 'are not the beasleys' should be 'are the beasleys not'
-        String normalized = text.replaceAll("aren't", "are not");
+        String normalized = text.replaceAll("’", "'");
+        normalized = normalized.replaceAll("aren't", "are not");
         normalized = normalized.replaceAll("can't", "cannot");
         normalized = normalized.replaceAll("couldn't", "could not");
         normalized = normalized.replaceAll("couldnt", "could not");
