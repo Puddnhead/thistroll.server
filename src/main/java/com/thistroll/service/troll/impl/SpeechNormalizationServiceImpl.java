@@ -41,7 +41,7 @@ public class SpeechNormalizationServiceImpl implements SpeechNormalizationServic
 
     private String removeContractions(String text) {
         // TODO: better normalization of all the nots - 'are not the beasleys' should be 'are the beasleys not'
-        String normalized = text.replaceAll("’", "'");
+        String normalized = text.replaceAll("\u2019", "'");
         normalized = normalized.replaceAll("aren't", "are not");
         normalized = normalized.replaceAll("can't", "cannot");
         normalized = normalized.replaceAll("couldn't", "could not");
@@ -54,6 +54,7 @@ public class SpeechNormalizationServiceImpl implements SpeechNormalizationServic
         normalized = normalized.replaceAll("haven't", "have not");
         normalized = normalized.replaceAll("he's", "he is");
         normalized = normalized.replaceAll("how's", "how is");
+        normalized = normalized.replaceAll("hows", "how is");
         normalized = normalized.replaceAll("how're", "how are");
         normalized = normalized.replaceAll("i'm", "i am");
         normalized = normalized.replaceAll("isn't", "is not");
@@ -70,9 +71,16 @@ public class SpeechNormalizationServiceImpl implements SpeechNormalizationServic
         normalized = normalized.replaceAll("weren't", "were not");
         normalized = normalized.replaceAll("what're", "what are");
         normalized = normalized.replaceAll("what's", "what is");
+        normalized = normalized.replaceAll("whats", "what is");
         normalized = normalized.replaceAll("what've", "what have");
+        normalized = normalized.replaceAll("when's", "when is");
+        normalized = normalized.replaceAll("whens", "when is");
+        normalized = normalized.replaceAll("where's", "where is");
+        normalized = normalized.replaceAll("wheres", "where is");
         normalized = normalized.replaceAll("who's", "who is");
+        normalized = normalized.replaceAll("whos", "who is");
         normalized = normalized.replaceAll("who're", "who are");
+        normalized = normalized.replaceAll("why's", "why is");
         normalized = normalized.replaceAll("won't", "will not");
         normalized = normalized.replaceAll("wouldn't", "would not");
         normalized = normalized.replaceAll("wouldnt", "would not");
