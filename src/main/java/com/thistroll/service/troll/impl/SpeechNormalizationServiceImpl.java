@@ -91,7 +91,7 @@ public class SpeechNormalizationServiceImpl implements SpeechNormalizationServic
     }
 
     private String normalizeWhiteSpace(String text) {
-        return text.replaceAll("[\t\r\n]", " ");
+        return text.trim().replaceAll("[\t\r\n]", " ");
     }
     
     private String stripPunctuation(String text) {
