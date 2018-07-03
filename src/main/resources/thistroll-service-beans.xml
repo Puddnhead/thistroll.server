@@ -28,6 +28,8 @@
     <bean id="com.thistroll.service.impl.blogcommentservice" class="com.thistroll.service.impl.BlogCommentServiceImpl"
         p:blogCommentRepository-ref="com.thistroll.data.blogcommentrepository" />
 
+    <bean id="com.thistroll.service.impl.productservice" class="com.thistroll.service.impl.ProductServiceImpl" />
+
     <import resource="thistroll-service-troll-beans.xml" />
 
 </beans>
