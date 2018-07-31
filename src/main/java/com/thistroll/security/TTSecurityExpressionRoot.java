@@ -3,11 +3,9 @@ package com.thistroll.security;
 import com.thistroll.domain.Session;
 import com.thistroll.domain.enums.UserRole;
 import com.thistroll.server.RequestValues;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * Security expression root to add custom security expressions

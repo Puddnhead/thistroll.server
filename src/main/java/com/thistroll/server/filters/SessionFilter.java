@@ -2,12 +2,11 @@ package com.thistroll.server.filters;
 
 import com.thistroll.domain.Session;
 import com.thistroll.domain.enums.Environments;
+import com.thistroll.exceptions.SessionNotFoundException;
 import com.thistroll.server.RequestValues;
 import com.thistroll.service.client.SessionService;
-import com.thistroll.exceptions.SessionNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
-import sun.misc.Request;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -28,7 +27,7 @@ public class SessionFilter implements Filter {
     private String environment;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
          // do nothing
     }
 
